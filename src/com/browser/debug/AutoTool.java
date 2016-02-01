@@ -1,64 +1,53 @@
 package com.browser.debug;
 
+import java.awt.Component;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.DefaultComboBoxModel;
-
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.interactions.Actions;
-
-import com.browser.page.PageElements;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.ButtonGroup;
-import javax.swing.JTextPane;
-import javax.swing.SwingConstants;
 
-import java.awt.Component;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JCheckBox;
+import com.browser.page.ElementBean;
+import com.browser.page.PageBean;
+import com.browser.page.PageElements;
+import com.browser.page.PageTree;
 
 public class AutoTool {
 
@@ -79,12 +68,9 @@ public class AutoTool {
 	private String sCommand;	
 
 	private HashMap<String, PageNode> pageNodeMap  = new LinkedHashMap<String, PageNode>();
-	private File file = null;
-	//final static String currentDirectoryPath = "C:\\QA\\Cucumber\\Projects\\Web - GreenDot & Affinity\\features\\pages";
+	private File file = null;	
 	static String CucumberDirectoryPath = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\Projects\\Web - GreenDot & Affinity\\features\\pages";
-	final static String ATFDirectoryPath = "C:\\QA\\ATF\\projects\\";
 	public JScrollPane elementsScrollPane;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private final ButtonGroup actionButtonGroup = new ButtonGroup();
 	
 	private JComboBox browserType;	
@@ -180,7 +166,6 @@ public class AutoTool {
 										oWebDriver.navigate().refresh();
 										System.out.println("reload page");
 									} catch (InterruptedException e) {
-										// TODO Auto-generated catch block
 										e.printStackTrace();
 									} 
 								 }
@@ -342,31 +327,29 @@ public class AutoTool {
 			
 			public void valueChanged(TreeSelectionEvent e) {
 				DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-				
+				String pageurl = "";
+				//new Added
 				if(selectionNode!=null)
-				{		
-					String sPageUrl = "";
+				{
 					
-					if(selectionNode.isLeaf())
+					if(selectionNode.getUserObject() instanceof PageBean)
 					{
-						sPageUrl = pageNodeMap.get(selectionNode.getParent().toString()).url;
-						pageNameField.setText(selectionNode.getParent().toString());
-						elementField.setText(selectionNode.toString().trim());
-						elementTag.setText(pageNodeMap.get(selectionNode.getParent().toString()).elementsMap.get(selectionNode.toString().trim()));
-						
-						ElementHelper.setElementName(selectionNode.toString().trim());
-						AutoTool.PageName = selectionNode.getParent().toString();
-					}
-					else if(!selectionNode.isRoot())
-					{
-						sPageUrl = pageNodeMap.get(selectionNode.toString()).url;
+						pageurl = ((PageBean)selectionNode.getUserObject()).getUrl();
 						pageNameField.setText(selectionNode.toString());
 						elementField.setText("");
 						elementTag.setText("");
-						AutoTool.PageName = selectionNode.toString();
-					}
-					url.setText(sPageUrl);
 						
+						
+					}
+					else if(selectionNode.getUserObject() instanceof ElementBean)
+					{
+						pageurl = ((PageBean)((DefaultMutableTreeNode) selectionNode.getParent()).getUserObject()).getUrl();
+						pageNameField.setText(((PageBean)((DefaultMutableTreeNode) selectionNode.getParent()).getUserObject()).getPageName());
+						elementField.setText(((ElementBean)selectionNode.getUserObject()).getElementName());
+						elementTag.setText(((ElementBean)selectionNode.getUserObject()).getSelector());
+					}
+					url.setText(pageurl);
+					
 				}
 
 			}
@@ -784,27 +767,13 @@ public class AutoTool {
 				if(file!=null&&returnVal == JFileChooser.APPROVE_OPTION)
 				{
 					tree.setModel(treeModel);
-					DefaultMutableTreeNode node = null;
+					DefaultMutableTreeNode node = null;	
 					
-					PageNode pageNode;	
-					pageNode = new PageNode(file);
-					pageNodeMap.put(pageNode.pageName, pageNode);	
-	
-					node = new DefaultMutableTreeNode(pageNode.pageName);
+					String path = file.getAbsolutePath();
+					PageTree pageTree = new PageTree(path);
+					node = pageTree.getPageNode();
 					
-					
-					Iterator<Entry<String, String>> key = pageNode.elementsMap.entrySet().iterator();
-					
-					while(key.hasNext())
-					{
-						java.util.Map.Entry entry = (java.util.Map.Entry)key.next();
-						node.add(new DefaultMutableTreeNode(entry.getKey()));
-						//TODO for further using 
-						DefaultMutableTreeNode elementnode = new DefaultMutableTreeNode();
-						elementnode.setUserObject(entry.getClass());
-					 
-					}
-					//rootNode.add(node_1);
+
 					treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
 					
 					tree.revalidate();
@@ -891,11 +860,8 @@ public class AutoTool {
 				{
 					logTextPane.setText(logTextPane.getText() + "Inspect only works for firefox" + "\n");
 					return;
-				}
-				
-				Actions action = new Actions(oWebDriver);
-				//action.sendKeys(Keys.CONTROL, Keys.SHIFT + "c").perform();		
-				
+				}				
+
 				String selector = null;
 				try {
 					//this line to trigger firepath inspect mode					
@@ -904,10 +870,7 @@ public class AutoTool {
 					//this line to get selector once element is inspected
 					selector = oWebDriver.manage().ime().getActiveEngine();
 					
-					//oWebDriver.getTitle();
-					//selector = oWebDriver.getPageSource();
 				} catch (NoSuchElementException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					if(e.toString().contains("Please make sure firepath is open"))		
 						logTextPane.setText(logTextPane.getText() + "Please make sure firepath is open" + "\n");
