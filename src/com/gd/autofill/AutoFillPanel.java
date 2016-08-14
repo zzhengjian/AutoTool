@@ -1,19 +1,19 @@
 package com.gd.autofill;
 
-import java.lang.reflect.Field;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Map.Entry;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JPanel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import com.browser.debug.Customer;
+import com.browser.debug.Driver;
 
 public class AutoFillPanel extends JPanel {
 	private JComboBox<String> cbxCustomerType;
@@ -58,6 +58,7 @@ public class AutoFillPanel extends JPanel {
 		cbxAddressType.setModel(addrTypes);
 		
 		btnFill = new JButton("Fill");
+
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -94,7 +95,14 @@ public class AutoFillPanel extends JPanel {
 	}
 	
 	private void CreateEvents() {
-		// TODO Auto-generated method stub
+		btnFill.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				String registerCustomerType = (String) cbxCustomerType.getSelectedItem();
+				String addressType = (String) cbxAddressType.getSelectedItem();
+				AutoFillHelper.fill(Driver.oWebDriver, registerCustomerType, addressType);
+			}
+		});
 		
 	}
 }

@@ -154,7 +154,7 @@ public class Customer {
 	
 	public static HashMap<String, String[]> loadAddresses()
 	{
-		File customertypeFile= new File("C:/QA/AutoTool/conf/AddressType");
+		File customertypeFile= new File(Property.DefaultPath,"/conf/AddressType");
 		
 		HashMap<String, String[]> addressMap = new HashMap<String, String[]>();
 		FileReader fr = null;
@@ -197,7 +197,7 @@ public class Customer {
 	
 	public static HashMap<String, String> loadRegisterCustomerTypes()
 	{
-		File customertypeFile= new File("C:/QA/AutoTool/conf/RegisterCustomertype");
+		File customertypeFile= new File(Property.DefaultPath,"/conf/RegisterCustomertype");
 		
 		HashMap<String, String> custTypeMap = new LinkedHashMap<String, String>();
 		FileReader fr = null;
@@ -244,7 +244,7 @@ public class Customer {
 	
 	public static ArrayList<String> loadProjects()
 	{
-		File customertypeFile= new File("C:/QA/AutoTool/conf/Project.ini");
+		File customertypeFile= new File(Property.DefaultPath,"/conf/Project.ini");
 		
 		ArrayList<String> projectlist = new ArrayList<String>();
 		FileReader fr = null;

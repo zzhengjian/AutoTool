@@ -2,16 +2,13 @@ package com.gd.pageobject;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.Select;
+
+import com.browser.debug.Customer;
 
 public class GDFlex_SendMyCard {
 
 	public final static String url = "https://www.greendot.com/signup/send-my-card";
-
-	@FindBy(css = ".section-heading--dotted")
-	WebElement oPersonalInformation_h2_Title;
-
-	@FindBy(css = ".section-heading--dotted>span")
-	WebElement oPersonalInformation_Text;
 
 	@FindBy(css = "[for='FirstName']>span")
 	WebElement oFirstName_Text;
@@ -64,14 +61,8 @@ public class GDFlex_SendMyCard {
 	@FindBy(css = "#IsMobilePhone")
 	WebElement oIsMobilePhone_RadioButton;
 
-	@FindBy(css = ".input-container--phone-type>div:nth-of-type(1)>div>label")
-	WebElement oMobilePhone_Label;
-
 	@FindBy(css = "#IsMobilePhone")
 	WebElement oIsMobilePhone_RadioButton_1;
-
-	@FindBy(css = ".input-container--phone-type>div:nth-of-type(2)>div>label")
-	WebElement oHomePhone_Label;
 
 	@FindBy(css = "[for='Email']>span")
 	WebElement oEmail_Text;
@@ -85,12 +76,6 @@ public class GDFlex_SendMyCard {
 	@FindBy(css = "#SSN")
 	WebElement oSsn_Input;
 
-	@FindBy(css = ".page2-js>section:nth-of-type(1)>div:nth-of-type(8)>div:nth-of-type(2)>a")
-	WebElement oInputHelpLink_Link;
-
-	@FindBy(css = ".page2-js>section:nth-of-type(1)>div:nth-of-type(8)>div:nth-of-type(2)>a>i")
-	WebElement oIconHelpInput_Icon;
-
 	@FindBy(css = "[for='DateOfBirth']>span")
 	WebElement oDateOfBirth_Text;
 
@@ -103,12 +88,6 @@ public class GDFlex_SendMyCard {
 	@FindBy(css = "#AtmPin")
 	WebElement oAtmPin_Input;
 
-	@FindBy(css = ".page2-js>section:nth-of-type(1)>div:nth-of-type(10)>div>div:nth-of-type(2)>a")
-	WebElement oInputHelpLink_Link_1;
-
-	@FindBy(css = ".page2-js>section:nth-of-type(1)>div:nth-of-type(10)>div>div:nth-of-type(2)>a>i")
-	WebElement oIconHelpInput_Icon_1;
-
 	@FindBy(css = "#choosePinForMeLink")
 	WebElement oChooseSecurePin_Label;
 
@@ -120,12 +99,6 @@ public class GDFlex_SendMyCard {
 
 	@FindBy(css = "h5")
 	WebElement oSendMeDaily_h5_Title;
-
-	@FindBy(css = ".double-pad-bottom.triple-gap-top.triple-gap-top>div:nth-of-type(2)>p")
-	WebElement oCarrierMessageAnd_Text;
-
-	@FindBy(css = ".double-pad-bottom.triple-gap-top.triple-gap-top>div:nth-of-type(2)>p>a")
-	WebElement oAccountAlertsTerms_Link;
 
 	@FindBy(css = "#IsAgreedToEmailAlerts")
 	WebElement oIsAgreedToEmailAlerts_CheckBox;
@@ -148,19 +121,37 @@ public class GDFlex_SendMyCard {
 	@FindBy(css = "[for='IsAgreedToECA']>a")
 	WebElement oElectronicCommunicationsAgreement_Link;
 
-	@FindBy(css = ".double-pad-bottom.triple-gap-top.triple-gap-top>div:nth-of-type(3)>p")
-	WebElement oThisAgreementStates_Text;
-
-	@FindBy(css = ".double-gap-top.gap-bottom.gap-bottom")
-	WebElement oByClickingContinue_Text;
-
-	@FindBy(css = ".double-gap-top.gap-bottom.gap-bottom>a")
-	WebElement oPrivacyPolicy_Link;
-
 	@FindBy(css = "#submit-button")
 	WebElement oContinue_Button;
+	
+	
+	public void submitCustomerInfo(String registerCustomerType, String addressType)
+	{
+		oFirstName_Input.sendKeys(Customer.FirstName);
+		oLastName_Input.sendKeys(Customer.LastName);
+		oPhone_Input.sendKeys(Customer.CellPhone);
+		oEmail_Input.sendKeys(Customer.Email);
+		oDateOfBirth_Input.sendKeys(Customer.DOB);
+		oAtmPin_Input.sendKeys(Customer.Pin);
+		
 
-	@FindBy(css = ".align-center")
-	WebElement oImportantInformationAbout_Text;
+		//Customer Type
+		oSsn_Input.sendKeys(Customer.getGeneratedSSN(registerCustomerType));
+		
+		//Address Type
+		Select stateSelect = new Select(oState_DropDown);
+		oStreet_Input.sendKeys(Customer.addressMap.get(addressType)[1]);
+		oApartment_Input.sendKeys(Customer.addressMap.get(addressType)[2]);
+		oCity_Input.sendKeys(Customer.addressMap.get(addressType)[3]);		
+		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
+		oZip_Input.sendKeys(Customer.addressMap.get(addressType)[5]);			
+		
+		submit();
+	}
+	
+	public void submit()
+	{
+		oContinue_Button.click();		
+	}
 
 }
