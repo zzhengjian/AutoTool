@@ -46,9 +46,11 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.browser.page.ElementBean;
 import com.browser.page.PageBean;
-import com.browser.page.PageElements;
 import com.browser.page.PageTree;
 import com.gd.loginhelper.TestFrame;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class AutoTool {
 
@@ -74,10 +76,10 @@ public class AutoTool {
 	public JScrollPane elementsScrollPane;
 	private final ButtonGroup actionButtonGroup = new ButtonGroup();
 	
-	private JComboBox browserType;	
-	private JComboBox commandName;	
-	private JComboBox commandBox;
-	private JComboBox assertComboBox;
+	private JComboBox<String> browserType;	
+	private JComboBox<String> commandName;	
+	private JComboBox<String> commandBox;
+	private JComboBox<String> assertComboBox;
 	
 	private JRadioButton rdbtnNavigation;
 	private JRadioButton rdbtnElementOperation;
@@ -97,6 +99,7 @@ public class AutoTool {
     
     public static String PageName = "";
     private JButton btnLogin;
+    private JMenuBar menuBar;
     
 	/**
 	 * Launch the application.
@@ -193,7 +196,7 @@ public class AutoTool {
 					}
 					else
 					{
-						//TODO nothing
+						
 					}
 					
 					
@@ -244,13 +247,7 @@ public class AutoTool {
 		frame.getContentPane().add(btnSend);
 		
 		commandName = new JComboBox();
-		Commands commands = new Commands();
-		//commandName.setModel(new DefaultComboBoxModel(commands.getAllCommands()));
 		commandName.setModel(new DefaultComboBoxModel(new String[] {"click", "clear", "getCurrentUrl","getTitle", "sendKeys", "mouseover","isDisplayed", "isEnabled", "isSelected", "getText", "getTagName","getElementSelector", "getAlertText", "acceptAlert", "dismissAlert", "execute", "getCssValue", "getAttribute", "getWindowHandle", "getWindowHandles","switchToWindow", "getElementInfo","addNewElement","updateElement"}));
-		//List<String> commands =  Arrays.asList(DebugWebElement.ElementKeyword);
-		//commands.addAll(Arrays.asList(DebugRemoteDriver.WebDriverKeyword));		
-		//commandName.setModel(new DefaultComboBoxModel(commands.toArray()));
-		commandName.setToolTipText("");
 		commandName.setBounds(66, 196, 87, 22);
 		frame.getContentPane().add(commandName);
 		
@@ -641,47 +638,6 @@ public class AutoTool {
 			}
 		});
 		
-		final JComboBox customerTypeBox = new JComboBox();
-		customerTypeBox.setModel(new DefaultComboBoxModel(new String[] {"Approved", "Declined", "NASDecline", "RiskCodeDecline", "NASWithKBA", "Negative Match", "Prison Address", "Deceased", "OFAC Approved", "OFAC NAS", "OFAC Failed"}));
-		customerTypeBox.setBounds(609, 509, 130, 21);
-		frame.getContentPane().add(customerTypeBox);
-		
-		final JComboBox addressTypeBox = new JComboBox();
-		addressTypeBox.setModel(new DefaultComboBoxModel(new String[] {"Approved_Address", "Premises_Partial_Address", "Street_Partial_Address", "Invalid_Address", "Interaction_Required_Address", "Multiple_Address", "PO_Box_Address", "General_Delivery_Address", "Rural_Route_Address", "Highway_Contract_Route_Address"}));
-		addressTypeBox.setBounds(610, 558, 145, 21);
-		frame.getContentPane().add(addressTypeBox);
-		
-		JButton btnFill = new JButton("Fill");
-		btnFill.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {				
-				
-					try {
-						window.frame.setVisible(false);
-						if(oWebDriver!=null)
-						{
-							new PageElements(oWebDriver).fillCustomerInfo(oWebDriver.getCurrentUrl(), customerTypeBox.getSelectedItem().toString(), addressTypeBox.getSelectedItem().toString());
-						}
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					} finally{
-						window.frame.setVisible(true);
-					}
-				
-				
-			}
-		});
-		btnFill.setBounds(624, 591, 71, 23);
-		frame.getContentPane().add(btnFill);
-		
-		JLabel lblCustomerType = new JLabel("Customer Type");
-		lblCustomerType.setBounds(609, 488, 94, 14);
-		frame.getContentPane().add(lblCustomerType);
-		
-		JLabel lblAddressType = new JLabel("Address Type");
-		lblAddressType.setBounds(609, 538, 94, 14);
-		frame.getContentPane().add(lblAddressType);
-		
 		JButton btnRefreshButton = new JButton("refresh");
 		btnRefreshButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -908,6 +864,19 @@ public class AutoTool {
 		});
 		btnLogin.setBounds(206, 27, 91, 23);
 		frame.getContentPane().add(btnLogin);
+		
+		menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 756, 21);
+		frame.getContentPane().add(menuBar);
+		
+		JMenu mnPlugins = new JMenu("Plug-ins");
+		menuBar.add(mnPlugins);
+		
+		JMenuItem mntmLoginHelper = new JMenuItem("Login Helper");
+		mnPlugins.add(mntmLoginHelper);
+		
+		JMenuItem mntmAutoFill = new JMenuItem("Auto Fill");
+		mnPlugins.add(mntmAutoFill);
 		
 
 	}

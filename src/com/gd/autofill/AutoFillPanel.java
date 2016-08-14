@@ -16,6 +16,11 @@ import com.browser.debug.Customer;
 import com.browser.debug.Driver;
 
 public class AutoFillPanel extends JPanel {
+
+	/**
+	 * AutoFill Helper UI
+	 */
+	private static final long serialVersionUID = 1937334088373615834L;
 	private JComboBox<String> cbxCustomerType;
 	private JComboBox<String> cbxAddressType;
 	private JLabel lblCustomerType;

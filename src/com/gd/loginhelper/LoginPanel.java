@@ -22,6 +22,10 @@ import com.browser.debug.Customer;
 import com.browser.debug.Driver;
 
 public class LoginPanel extends JPanel {
+	/**
+	 * Login Helper UI
+	 */
+	private static final long serialVersionUID = -1807850528422559367L;
 	private JLabel lblProductcode;
 	private JLabel lblAccountage;
 	private JLabel lblAmount;

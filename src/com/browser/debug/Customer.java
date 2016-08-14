@@ -156,14 +156,13 @@ public class Customer {
 	{
 		File customertypeFile= new File(Property.DefaultPath,"/conf/AddressType");
 		
-		HashMap<String, String[]> addressMap = new HashMap<String, String[]>();
+		HashMap<String, String[]> addressMap = new LinkedHashMap<String, String[]>();
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {
 			fr = new FileReader(customertypeFile);
 			br = new BufferedReader(fr);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -206,7 +205,6 @@ public class Customer {
 			fr = new FileReader(customertypeFile);
 			br = new BufferedReader(fr);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -253,7 +251,6 @@ public class Customer {
 			fr = new FileReader(customertypeFile);
 			br = new BufferedReader(fr);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
