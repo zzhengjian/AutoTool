@@ -76,17 +76,17 @@ public class DebugWebElement extends RemoteWebElement {
 		this.outline = (String)oJavascriptExecutor.executeScript("var outline = arguments[0].style.outline; arguments[0].style.outline='3px solid red'; return outline;", oWebElement);
 		this.background = (String)oJavascriptExecutor.executeScript("var outline = arguments[0].style.background; arguments[0].style.background ='yellow'; return outline;", oWebElement);
 		
-		Utils.sleepFor(2);
+		Utils.sleepFor(1);
 		unHighlightMe();
 		Utils.sleepFor(1);
 		oJavascriptExecutor.executeScript("return arguments[0].style.outline='3px solid red';", oWebElement);	
 		oJavascriptExecutor.executeScript("return arguments[0].style.background ='yellow';", oWebElement);
-		Utils.sleepFor(2);
+		Utils.sleepFor(1);
 		unHighlightMe();
 		Utils.sleepFor(1);
 		oJavascriptExecutor.executeScript("return arguments[0].style.outline='3px solid red';", oWebElement);	
 		oJavascriptExecutor.executeScript("return arguments[0].style.background ='yellow';", oWebElement);
-		Utils.sleepFor(2);
+		Utils.sleepFor(1);
 		unHighlightMe();
 	}
 	

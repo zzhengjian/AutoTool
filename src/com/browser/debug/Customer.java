@@ -6,13 +6,18 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
 public class Customer {
 	
+	public static String UserId = "";
+	public static String Password = "NECTESTAU0";
 	
 	public static String FirstName = "Gordon";
 	public static String LastName = "James";
@@ -25,7 +30,9 @@ public class Customer {
 	
 	public static String[] sCustomerType ;//= {"Approved","Declined","NASDecline","RiskCodeDecline","NASWithKBA","Negative Match","Prison Address","Deceased","OFAC Approved","OFAC NAS"};
 	
-	public static HashMap<String, String> ssnMaps = new HashMap<String, String>();
+	public static HashMap<String, String> ssnMaps = loadRegisterCustomerTypes();	
+	public static HashMap<String, String[]> addressMap = loadAddresses();
+	public static ArrayList<String> projectList = loadProjects();
 	
 	public static String[] sAdddressType;
 	//QAS Addresses
@@ -44,16 +51,12 @@ public class Customer {
 	//Addresses without QAS
 	public final static String[] Rural_Route_Address = {"Rural_Route_Address","RR 5 Box 453","","Butler","MO","64730"};
 	public final static String[] Highway_Contract_Route_Address = {"Highway_Contract_Route_Address","HC 1 Box 21","","Gillett","TX","78116"};
-	private Properties setting = new Properties();
-	
+	private Properties setting = new Properties();	
 	
 	
 	public Customer()
-	{
-		
+	{		
 		init();
-		//getCustomerType();
-
 	}
 	
 	public Customer(String customerType)
@@ -66,18 +69,25 @@ public class Customer {
 	private void init()
 	
 	{
+		try {
+			setting.load(new BufferedReader(new FileReader(new File(Property.DefaultPath , "/conf/setting.conf"))));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		ssnMaps.put("Approved", "10");
-		ssnMaps.put("Declined", "2101");
-		ssnMaps.put("NASDecline", "2101");
-		ssnMaps.put("RiskCodeDecline", "2121");
-		ssnMaps.put("NASWithKBA", "420");
-		ssnMaps.put("Negative Match", "610111111");
-		ssnMaps.put("Prison Address", "451");
-		ssnMaps.put("Deceased", "550");
-		ssnMaps.put("OFAC Approved", "401");
-		ssnMaps.put("OFAC NAS", "440");
-		ssnMaps.put("OFAC Failed", "421");				
+//		ssnMaps.put("Approved", "10");
+//		ssnMaps.put("Declined", "2101");
+//		ssnMaps.put("NASDecline", "2101");
+//		ssnMaps.put("RiskCodeDecline", "2121");
+//		ssnMaps.put("NASWithKBA", "420");
+//		ssnMaps.put("Negative Match", "610111111");
+//		ssnMaps.put("Prison Address", "451");
+//		ssnMaps.put("Deceased", "550");
+//		ssnMaps.put("OFAC Approved", "401");
+//		ssnMaps.put("OFAC NAS", "440");
+//		ssnMaps.put("OFAC Failed", "421");				
 				
 	
 	}
@@ -95,18 +105,10 @@ public class Customer {
 	
 	public void getSSN(String customerType)
 	{
-		try {
-			setting.load(new BufferedReader(new FileReader(new File(Property.DefaultPath , "/conf/setting.conf"))));
-			Email = setting.getProperty("email", "");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
 		SSN = ssnMaps.get(customerType) + Utils.getRandomNumeric(9 - ssnMaps.get(customerType).length());
-		Email = !Email.equals("") ? Email : "PREP_" + Utils.getRandomNumeric(18) + "@greendotcorp.com";
+		
+		Email = setting.getProperty("email", "");		
+		Email = !Email.equals("") ? Email : "GDAA_" + Utils.getRandomNumeric(18) + "@greendotcorp.com";
 		
 	}
 	
@@ -146,7 +148,135 @@ public class Customer {
 		else
 			sAddress = null;
 			//throw new Exception("not implemented address");
-		return sAddress;
+		return sAdddressType = sAddress;
 	}
 	
+	
+	public static HashMap<String, String[]> loadAddresses()
+	{
+		File customertypeFile= new File("C:/QA/AutoTool/conf/AddressType");
+		
+		HashMap<String, String[]> addressMap = new HashMap<String, String[]>();
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader(customertypeFile);
+			br = new BufferedReader(fr);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String line = null;
+		try {
+			while((line=br.readLine()) != null)
+			{
+				if(!line.equals(""))
+				{
+					String[] addressType = line.split(",");
+					addressMap.put(addressType[0], addressType);
+				}				
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally
+		{
+			
+			try {
+				fr.close();
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
+		return addressMap;		
+		
+	}
+	
+	
+	public static HashMap<String, String> loadRegisterCustomerTypes()
+	{
+		File customertypeFile= new File("C:/QA/AutoTool/conf/RegisterCustomertype");
+		
+		HashMap<String, String> custTypeMap = new LinkedHashMap<String, String>();
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader(customertypeFile);
+			br = new BufferedReader(fr);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String line = null;
+		try {
+			while((line=br.readLine()) != null)
+			{
+				if(!line.equals(""))
+				{
+					String[] custType = line.split(":");
+					custTypeMap.put(custType[0], custType[1]);
+				}				
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally
+		{
+			
+			try {
+				fr.close();
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
+		return custTypeMap;		
+		
+	}
+	
+	public static String getGeneratedSSN(String registerType)
+	{
+		return ssnMaps.get(registerType) + Utils.getRandomNumeric(9 - ssnMaps.get(registerType).length());		
+	}
+	
+	public static ArrayList<String> loadProjects()
+	{
+		File customertypeFile= new File("C:/QA/AutoTool/conf/Project.ini");
+		
+		ArrayList<String> projectlist = new ArrayList<String>();
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader(customertypeFile);
+			br = new BufferedReader(fr);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String line = null;
+		try {
+			while((line=br.readLine()) != null)
+			{
+				projectlist.add(line.trim());		
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally
+		{
+			
+			try {
+				fr.close();
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
+		return projectlist;		
+		
+	}
 }

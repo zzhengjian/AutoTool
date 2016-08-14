@@ -15,7 +15,7 @@ public class Property {
 	
 	public static String DefaultPath = "";
 	public static String fxprofilepath = "";
-
+	private static int Default_Wait_Time = 120;
 	private static Properties setting = new Properties();
 	
 	public static void SetUp()
@@ -29,7 +29,7 @@ public class Property {
 			{
 				DefaultPath = "C:/QA/AutoTool";
 			}
-			File fxprofile = new File(DefaultPath, "/conf/fxprofile");
+			File fxprofile = new File(DefaultPath, "/conf/fxprofile");			
 			fxprofilepath = fxprofile.getAbsolutePath();
 			System.setProperty("webdriver.firefox.driver", new File(DefaultPath, "/bin/webdriver.xpi").getAbsolutePath());
 			System.setProperty("webdriver.chrome.driver", new File(DefaultPath, "/bin/chromedriver.exe").getAbsolutePath());
@@ -49,6 +49,14 @@ public class Property {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}	
+	}
+
+	public static int getDefault_Wait_Time() {
+		return Default_Wait_Time;
+	}
+
+	public static void setDefault_Wait_Time(int default_Wait_Time) {
+		Default_Wait_Time = default_Wait_Time;
 	}
 
 }

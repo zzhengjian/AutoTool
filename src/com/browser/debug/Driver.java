@@ -20,7 +20,7 @@ public class Driver {
 	
 	//static String Path = "C:/QA/AutoTool/";
 	public static boolean Reload = false;
-	public WebDriver oWebDriver = null;
+	public static WebDriver oWebDriver = null;
 	
 	public Driver(){
 		
@@ -68,7 +68,7 @@ public class Driver {
 					return oWebDriver;
 					
 				case "FIREFOX":
-					FirefoxProfile profile = new FirefoxProfile(new File(Property.DefaultPath + "/conf/fxprofile"));
+					FirefoxProfile profile = new FirefoxProfile(new File(Property.DefaultPath + "/conf/fxprofile"));					
 					profile.setPreference("xpinstall.signatures.required", false);
 					oWebDriver =  new FirefoxDriver(profile);					
 					return oWebDriver;

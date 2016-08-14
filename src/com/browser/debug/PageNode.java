@@ -12,6 +12,11 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.junit.Test;
+
+import com.browser.page.ElementBean;
+import com.browser.page.PageBean;
+
 public class PageNode {
 	
 	public File pageFile;	
@@ -19,12 +24,6 @@ public class PageNode {
 	public String url;
 	public HashMap<String,String> elementsMap = new LinkedHashMap<String,String>();
 	
-	public PageNode(File file)
-	{
-		init(file);
-	}
-	
-
 	
 	public void init(File file)
 	{
@@ -113,7 +112,97 @@ public class PageNode {
         
 	}
 
+
+	public static PageBean getPageBean(String pagePath){
+		
+		PageBean page = null;
+		FileReader fr = null;
+		try {
+			File file = new File(pagePath);
+			fr = new FileReader(file);
+			//fw = new FileWriter("C:/out/tempPage.txt");  
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} 
+        
+        BufferedReader bufr = new BufferedReader(fr);   
+        
+        
+        String sElementName = null;
+        String sElementTag = null;
+       
+        String sline = null;
+		try {
+			
+		sline = bufr.readLine();
+        String[] line = null;
+
+        
+        while(sline!=null)
+        {
+        	if(sline.trim().startsWith("#"))
+        	{
+        		sline = bufr.readLine();
+        		continue;
+        	}
+        	
+			if(sline.contains("https:")&&!sline.trim().startsWith("#"))
+			{
+				line = sline.split("=");
+				page = new PageBean(line[1].split("\"")[1].trim(),line[0].trim());
+			}
+        	
+        	if(sline.contains("addElement")&&!sline.trim().startsWith("#"))
+        	{
+        		
+        		ElementBean element = null;
+        		//get Element Name
+				line = sline.split("\"");
+				sElementName = line[1];
+				element = new ElementBean(sElementName);
+	            
+				sline = bufr.readLine();
+				while(sline != null &&  !sline.contains("addElement"))
+				{
+					if(sline.contains("=>") && sline.contains(":desktop"))
+					{									
+											
+						sElementTag = sline.split("=>")[1].trim();						
+						element.setSelector(sElementTag.substring(1, sElementTag.lastIndexOf('"')));
+
+					}
+		            else if(sline.contains("=>") && !sline.contains(":rwd"))
+		            {
+		            	String[] meta = sline.split("=>");
+		            	String metavalue = meta[1].trim();
+		            	element.addDefaultValue(meta[0].trim().replace(":", ""), metavalue.substring(1, metavalue.lastIndexOf('"')));
+		            }
+					
+					sline = bufr.readLine();
+				}            
+	            
+	            page.addElement(element);
+        	}
+        	sline = bufr.readLine();
+        	
+        }        
+
+		bufr.close();
+        fr.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return page;        
+        
+	}
 	
+	@Test
+	public void testPage()
+	{
+		String workspace = "C:/azheng-QA-Workspace/QA";
+		String path = "/Cucumber/Projects/GreenDot/features/pages/Web/GreenDot/CashLoad.rb";
+		getPageBean(workspace+path);
+	}
 	
 	class MyTreeModelListener implements TreeModelListener {
 	    public void treeNodesChanged(TreeModelEvent e) {

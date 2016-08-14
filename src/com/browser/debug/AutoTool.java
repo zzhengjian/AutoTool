@@ -48,6 +48,7 @@ import com.browser.page.ElementBean;
 import com.browser.page.PageBean;
 import com.browser.page.PageElements;
 import com.browser.page.PageTree;
+import com.gd.loginhelper.TestFrame;
 
 public class AutoTool {
 
@@ -95,6 +96,7 @@ public class AutoTool {
     protected DefaultTreeModel treeModel;	
     
     public static String PageName = "";
+    private JButton btnLogin;
     
 	/**
 	 * Launch the application.
@@ -141,7 +143,7 @@ public class AutoTool {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					Thread t = null;
+
 					if(btnStart.getText().equals("Start"))
 					{
 						sBrowserType = browserType.getSelectedItem().toString();
@@ -150,7 +152,7 @@ public class AutoTool {
 						oWebDriver.manage().timeouts().pageLoadTimeout(5000, TimeUnit.MILLISECONDS);
 						btnStart.setText("Stop");
 						//Set a page reload frequency
-						 t = new Thread(){
+						Thread t = new Thread(){
 							
 							 @Override
 							 public void run()
@@ -202,7 +204,7 @@ public class AutoTool {
 				}
 			}
 		});
-		btnStart.setBounds(118, 61, 71, 23);
+		btnStart.setBounds(118, 61, 59, 23);
 		frame.getContentPane().add(btnStart);
 		
 		elementTag = new JTextField();
@@ -692,7 +694,7 @@ public class AutoTool {
 					DefaultMutableTreeNode node = null;
 					file = pageNodeMap.get(selectionNode.getParent().toString()).pageFile;
 					
-					PageNode pageNode = new PageNode(file);						 
+					PageNode pageNode = new PageNode();						 
 					pageNodeMap.put(pageNode.pageName, pageNode);	
 
 					node = new DefaultMutableTreeNode(pageNode.pageName);
@@ -719,7 +721,7 @@ public class AutoTool {
 					DefaultMutableTreeNode node = null;
 					file = pageNodeMap.get(selectionNode.toString()).pageFile;
 					
-					PageNode pageNode = new PageNode(file);						 
+					PageNode pageNode = new PageNode();						 
 					pageNodeMap.put(pageNode.pageName, pageNode);	
 
 					node = new DefaultMutableTreeNode(pageNode.pageName);
@@ -897,6 +899,15 @@ public class AutoTool {
 		});
 		chckbxReload.setBounds(325, 61, 97, 23);
 		frame.getContentPane().add(chckbxReload);
+		
+		btnLogin = new JButton("login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				TestFrame.startLoginPanel();
+			}
+		});
+		btnLogin.setBounds(206, 27, 91, 23);
+		frame.getContentPane().add(btnLogin);
 		
 
 	}

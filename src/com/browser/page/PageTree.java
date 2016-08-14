@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import com.browser.debug.PageNode;
 import com.google.gson.Gson;
 
 public class PageTree {
@@ -22,7 +23,8 @@ public class PageTree {
 	
 	private void init()
 	{		
-		PageBean page = readPageFile(new File(PagePath));
+		//PageBean page = readPageFile(new File(PagePath));
+		PageBean page = PageNode.getPageBean(PagePath);
 		pageNode = new AuMutableTreeNode();
 		pageNode.setUserObject(page);
 		
