@@ -140,7 +140,7 @@ public class PageNode {
         
         while(sline!=null)
         {
-        	if(sline.trim().startsWith("#"))
+        	if(sline.trim().startsWith("#")||sline.trim().equals(""))
         	{
         		sline = bufr.readLine();
         		continue;
@@ -150,6 +150,8 @@ public class PageNode {
 			{
 				line = sline.split("=");
 				page = new PageBean(line[1].split("\"")[1].trim(),line[0].trim());
+				sline = bufr.readLine();
+				continue;
 			}
         	
         	if(sline.contains("addElement")&&!sline.trim().startsWith("#"))
@@ -182,9 +184,7 @@ public class PageNode {
 				}            
 	            
 	            page.addElement(element);
-        	}
-        	sline = bufr.readLine();
-        	
+        	}       	
         }        
 
 		bufr.close();

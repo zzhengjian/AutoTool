@@ -7,7 +7,10 @@ import com.browser.debug.Customer;
 
 public class GD_Login {
 
-	public final static String url = "https://www.greendot.com/greendot/login";
+	public final static String url = "https://www.greendot.com/greendot/login";	
+	
+	@FindBy(css = ".messages>p")
+	WebElement oErroMsg_Text;
 
 	@FindBy(css = "#TxtAccountNoOrUserId")
 	WebElement oTxtAccountNoOrUserId_Input;
@@ -32,7 +35,7 @@ public class GD_Login {
 	{		
 		oTxtAccountNoOrUserId_Input.sendKeys(Customer.UserId);
 		oTxtPassword_Input.sendKeys(Customer.Password);
-		oBtnlogin_Input.click();
+		oBtnlogin_Input.click();		
 	}
 	
 	public void Login(String userid, String Password)

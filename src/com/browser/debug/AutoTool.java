@@ -51,6 +51,8 @@ import com.gd.loginhelper.TestFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.ImageIcon;
+import java.awt.Toolkit;
 
 public class AutoTool {
 
@@ -98,7 +100,6 @@ public class AutoTool {
     protected DefaultTreeModel treeModel;	
     
     public static String PageName = "";
-    private JButton btnLogin;
     private JMenuBar menuBar;
     
 	/**
@@ -132,6 +133,7 @@ public class AutoTool {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initialize() {
 		frame = new JFrame();
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(AutoTool.class.getResource("/com/gd/resources/greendot.png")));
 		frame.setBounds(100, 100, 779, 733);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -207,7 +209,7 @@ public class AutoTool {
 				}
 			}
 		});
-		btnStart.setBounds(118, 61, 59, 23);
+		btnStart.setBounds(118, 61, 71, 23);
 		frame.getContentPane().add(btnStart);
 		
 		elementTag = new JTextField();
@@ -806,7 +808,9 @@ public class AutoTool {
 		pageNameField.setBounds(15, 491, 113, 22);
 		frame.getContentPane().add(pageNameField);
 		
-		JButton btnInspect = new JButton("Inspect");
+		JButton btnInspect = new JButton("");
+		btnInspect.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
+		btnInspect.setDisabledIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
 		btnInspect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
@@ -856,15 +860,6 @@ public class AutoTool {
 		chckbxReload.setBounds(325, 61, 97, 23);
 		frame.getContentPane().add(chckbxReload);
 		
-		btnLogin = new JButton("login");
-		btnLogin.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent paramActionEvent) {
-				TestFrame.startLoginPanel();
-			}
-		});
-		btnLogin.setBounds(206, 27, 91, 23);
-		frame.getContentPane().add(btnLogin);
-		
 		menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 756, 21);
 		frame.getContentPane().add(menuBar);
@@ -873,9 +868,21 @@ public class AutoTool {
 		menuBar.add(mnPlugins);
 		
 		JMenuItem mntmLoginHelper = new JMenuItem("Login Helper");
+		mntmLoginHelper.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent paramMouseEvent) {
+				TestFrame.startLoginPanel();
+			}
+		});
 		mnPlugins.add(mntmLoginHelper);
 		
 		JMenuItem mntmAutoFill = new JMenuItem("Auto Fill");
+		mntmAutoFill.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent paramMouseEvent) {
+				TestFrame.startAutoFillPanel();
+			}
+		});
 		mnPlugins.add(mntmAutoFill);
 		
 

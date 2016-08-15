@@ -51,11 +51,11 @@ public class CucumberHelper {
 	            System.out.println(line);
 	            if(line.contains("UserID:"))
         		{
-	            	Customer.UserId = line.split(":")[1].trim();        	
+	            	Customer.UserId = line.split("UserID:")[1].trim();        	
         		}
 	            else if(line.contains("Password:"))
 	            {
-	            	Customer.Password = line.split(":")[1].trim();
+	            	Customer.Password = line.split("Password:")[1].trim();
 	            }
 	        }
 	        

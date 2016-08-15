@@ -9,6 +9,9 @@ public class Nascar_Login {
 
 	public final static String url = "https://www.greendot.com/racing/login";
 
+	@FindBy(css = ".messages>p")
+	WebElement oErroMsg_Text;
+	
 	@FindBy(css = "#TxtAccountNoOrUserId")
 	WebElement oTxtAccountNoOrUserId_Input;
 

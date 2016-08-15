@@ -9,6 +9,9 @@ public class WMC_Login {
 
 	public final static String url = "https://www.walmartmoneycard.com/login";
 
+	@FindBy(css = "#div-form-error-message")
+	WebElement oFormErrorMsg_Text;
+	
 	@FindBy(css = "#TxtAccountNoOrUserId")
 	WebElement oTxtAccountNoOrUserId_Input;
 

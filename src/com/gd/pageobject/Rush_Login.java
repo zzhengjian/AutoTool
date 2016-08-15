@@ -9,6 +9,9 @@ public class Rush_Login {
 
 	public final static String url = "https://www.rushcardlive.com/prepaid/login";
 
+	@FindBy(css = ".messages>p")
+	WebElement oErroMsg_Text;
+	
 	@FindBy(css = "#TxtAccountNoOrUserId")
 	WebElement oTxtAccountNoOrUserId_Input;
 

@@ -23,7 +23,7 @@ public class TestFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TestFrame frame = new TestFrame();
+					TestFrame frame = new TestFrame("LoginPanel");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -37,7 +37,20 @@ public class TestFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TestFrame frame = new TestFrame();
+					TestFrame frame = new TestFrame("LoginPanel");
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public static void startAutoFillPanel() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					TestFrame frame = new TestFrame("AutoFillPanel");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -48,11 +61,13 @@ public class TestFrame extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public TestFrame() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public TestFrame(String panel) {
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 545, 528);
-		contentPane = new LoginPanel();
-		//contentPane = new AutoFillPanel();
+		if(panel.equals("LoginPanel"))
+			contentPane = new LoginPanel();
+		else			
+			contentPane = new AutoFillPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
