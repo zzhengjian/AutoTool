@@ -18,15 +18,15 @@ public class LoginSkins {
 	
 		
 	
-	public static void login(WebDriver driver, String Project)
+	public static boolean login(WebDriver driver, String Project)
 	{
-		
 		if(Project.equalsIgnoreCase("GreenDot"))
 		{
 			driver.get(GD_Login.url);	
 			GD_Login loginPage = PageFactory.initElements(driver, GD_Login.class);		
 			loginPage.Login(Customer.UserId, Customer.Password);
-			
+			if(loginPage.loginError())
+				return false;
 			GD_Challengelogin chanllengePage = PageFactory.initElements(driver, GD_Challengelogin.class);
 			chanllengePage.submitChallengeAnswer();
 			
@@ -37,7 +37,8 @@ public class LoginSkins {
 			driver.get(Nascar_Login.url);	
 			Nascar_Login loginPage = PageFactory.initElements(driver, Nascar_Login.class);		
 			loginPage.Login(Customer.UserId, Customer.Password);
-			
+			if(loginPage.loginError())
+				return false;
 			Nascar_Challengelogin chanllengePage = PageFactory.initElements(driver, Nascar_Challengelogin.class);
 			chanllengePage.submitChallengeAnswer();
 		}
@@ -47,7 +48,8 @@ public class LoginSkins {
 			driver.get(Rush_Login.url);	
 			Rush_Login loginPage = PageFactory.initElements(driver, Rush_Login.class);		
 			loginPage.Login(Customer.UserId, Customer.Password);
-			
+			if(loginPage.loginError())
+				return false;
 			Rush_Challengelogin chanllengePage = PageFactory.initElements(driver, Rush_Challengelogin.class);
 			chanllengePage.submitChallengeAnswer();
 		}
@@ -57,9 +59,12 @@ public class LoginSkins {
 			driver.get(WMC_Login.url);	
 			WMC_Login loginPage = PageFactory.initElements(driver, WMC_Login.class);		
 			loginPage.Login(Customer.UserId, Customer.Password);
-			
+			if(loginPage.loginError())
+				return false;
 			WMC_Challengelogin chanllengePage = PageFactory.initElements(driver, WMC_Challengelogin.class);
 			chanllengePage.submitChallengeAnswer();
 		}
+		
+		return true;
 	}
 }
