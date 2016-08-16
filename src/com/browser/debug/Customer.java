@@ -5,13 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 public class Customer {
@@ -25,7 +21,7 @@ public class Customer {
 	public static String CellPhone = "6267753701";
 	public static String DOB = "01011975";
 	public static String SSN = "";
-	public static String Email = "";
+	public static String Email = getEmail();
 	public static String Pin = "3663";
 	
 	public static String[] sCustomerType ;//= {"Approved","Declined","NASDecline","RiskCodeDecline","NASWithKBA","Negative Match","Prison Address","Deceased","OFAC Approved","OFAC NAS"};
@@ -33,6 +29,7 @@ public class Customer {
 	public static HashMap<String, String> ssnMaps = loadRegisterCustomerTypes();	
 	public static HashMap<String, String[]> addressMap = loadAddresses();
 	public static ArrayList<String> projectList = loadProjects();
+	public static HashMap<String, String> projectPath = loadProjectPathMap();
 	
 	public static String[] sAdddressType;
 	//QAS Addresses
@@ -58,14 +55,7 @@ public class Customer {
 	{		
 		init();
 	}
-	
-	public Customer(String customerType)
-	{
 		
-		getSSN(customerType);
-
-	}
-	
 	private void init()
 	
 	{
@@ -75,40 +65,15 @@ public class Customer {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-
-//		ssnMaps.put("Approved", "10");
-//		ssnMaps.put("Declined", "2101");
-//		ssnMaps.put("NASDecline", "2101");
-//		ssnMaps.put("RiskCodeDecline", "2121");
-//		ssnMaps.put("NASWithKBA", "420");
-//		ssnMaps.put("Negative Match", "610111111");
-//		ssnMaps.put("Prison Address", "451");
-//		ssnMaps.put("Deceased", "550");
-//		ssnMaps.put("OFAC Approved", "401");
-//		ssnMaps.put("OFAC NAS", "440");
-//		ssnMaps.put("OFAC Failed", "421");				
-				
+		}			
 	
 	}
 	
-	public void getCustomerType()
-	{
-		Iterator<Entry<String, String>> key = ssnMaps.entrySet().iterator();
-		for(int i=0;i<ssnMaps.size();i++)
-		{
-			java.util.Map.Entry entry = (java.util.Map.Entry)key.next();
-			sCustomerType[i] = (String) entry.getKey();
-			
-		}
-	}
 	
-	public void getSSN(String customerType)
+	public static String getEmail()
 	{
-		SSN = ssnMaps.get(customerType) + Utils.getRandomNumeric(9 - ssnMaps.get(customerType).length());
-		
-		Email = setting.getProperty("email", "");		
-		Email = !Email.equals("") ? Email : "GDAA_" + Utils.getRandomNumeric(18) + "@greendotcorp.com";
+		String email = "";		
+		return email = !email.equals("") ? email : "GDAA_" + Utils.getRandomNumeric(18) + "@greendotcorp.com";
 		
 	}
 	
@@ -258,7 +223,7 @@ public class Customer {
 		try {
 			while((line=br.readLine()) != null)
 			{
-				projectlist.add(line.trim());		
+				projectlist.add(line.split(":")[0].trim());		
 			}
 			
 		} catch (IOException e) {
@@ -274,6 +239,45 @@ public class Customer {
 			}
 		}		
 		return projectlist;		
+		
+	}
+	
+	public static HashMap<String, String> loadProjectPathMap()
+	{
+		File customertypeFile= new File(Property.DefaultPath,"/conf/Project.ini");
+		
+		HashMap<String, String> projectPathMap = new LinkedHashMap<String, String>();
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader(customertypeFile);
+			br = new BufferedReader(fr);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		String line = null;
+		try {
+			while((line=br.readLine()) != null)
+			{
+				String[] path = line.split(":");
+
+				projectPathMap.put(path[0], path[1]);	
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally
+		{
+			
+			try {
+				fr.close();
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
+		return projectPathMap;		
 		
 	}
 }

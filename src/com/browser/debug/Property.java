@@ -13,12 +13,11 @@ import java.util.Properties;
 public class Property {
 	
 	
-	public static String DefaultPath = loadDefaultPath();;
-
+	public static String DefaultPath = loadDefaultPath();
+	public static Properties setting = loadSettings();
 
 	public static String fxprofilepath = "";
 	private static int Default_Wait_Time = 120;
-	private static Properties setting = new Properties();
 	
 	public static void SetUp()
 	{
@@ -40,17 +39,21 @@ public class Property {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+
+	private static Properties loadSettings() {
 		//load properties
+		Properties setting = new Properties();
 		try {
-			setting.load(new BufferedReader(new FileReader(new File(DefaultPath, "/conf/setting.conf"))));
-			
-			AutoTool.CucumberDirectoryPath = setting.getProperty("workspace", "");	
+			setting.load(new BufferedReader(new FileReader(new File(DefaultPath, "/conf/setting.conf"))));			
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+		}
+		return setting;					
 	}
 
 	public static int getDefault_Wait_Time() {

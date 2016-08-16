@@ -2,13 +2,16 @@ package com.browser.debug;
 
 import java.awt.Component;
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,12 +21,16 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -48,16 +55,11 @@ import com.browser.page.ElementBean;
 import com.browser.page.PageBean;
 import com.browser.page.PageTree;
 import com.gd.loginhelper.TestFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.ImageIcon;
-import java.awt.Toolkit;
 
 public class AutoTool {
 
 	static AutoTool window;
-	private JFrame frame;
+	private JFrame frmAutotool;
 	private JTextField elementTag;
 	private JTextField url;
 	private JTextField sParam;
@@ -74,7 +76,8 @@ public class AutoTool {
 
 	private HashMap<String, PageNode> pageNodeMap  = new LinkedHashMap<String, PageNode>();
 	private File file = null;	
-	static String CucumberDirectoryPath = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\Projects\\Web - GreenDot & Affinity\\features\\pages";
+	public static String CucumberDirectoryPath = Property.setting.getProperty("CucumberDirectoryPath", "");
+	private static String tempPath = Paths.get(CucumberDirectoryPath, Customer.projectPath.get("GreenDot")).toString() ;
 	public JScrollPane elementsScrollPane;
 	private final ButtonGroup actionButtonGroup = new ButtonGroup();
 	
@@ -110,7 +113,7 @@ public class AutoTool {
 			public void run() {
 				try {
 					window = new AutoTool();
-					window.frame.setVisible(true);
+					window.frmAutotool.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -132,16 +135,17 @@ public class AutoTool {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initialize() {
-		frame = new JFrame();
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(AutoTool.class.getResource("/com/gd/resources/greendot.png")));
-		frame.setBounds(100, 100, 779, 733);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmAutotool = new JFrame();
+		frmAutotool.setTitle("AutoHelper");
+		frmAutotool.setIconImage(Toolkit.getDefaultToolkit().getImage(AutoTool.class.getResource("/org/openqa/grid/images/selenium.png")));
+		frmAutotool.setBounds(100, 100, 779, 733);
+		frmAutotool.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmAutotool.getContentPane().setLayout(null);
 		
 		browserType = new JComboBox();
 		browserType.setModel(new DefaultComboBoxModel(new String[] { "Chrome","Firefox", "IE"}));
-		browserType.setBounds(18, 61, 71, 22);
-		frame.getContentPane().add(browserType);
+		browserType.setBounds(5, 61, 71, 22);
+		frmAutotool.getContentPane().add(browserType);
 		
 		final JButton btnStart = new JButton("Start");
 		btnStart.addMouseListener(new MouseAdapter() {
@@ -154,7 +158,7 @@ public class AutoTool {
 						sBrowserType = browserType.getSelectedItem().toString();
 						System.out.println(sBrowserType);
 						oWebDriver = new Driver().StartWebDriver(sBrowserType);		
-						oWebDriver.manage().timeouts().pageLoadTimeout(5000, TimeUnit.MILLISECONDS);
+						oWebDriver.manage().timeouts().pageLoadTimeout(50000, TimeUnit.MILLISECONDS);
 						btnStart.setText("Stop");
 						//Set a page reload frequency
 						Thread t = new Thread(){
@@ -209,12 +213,12 @@ public class AutoTool {
 				}
 			}
 		});
-		btnStart.setBounds(118, 61, 71, 23);
-		frame.getContentPane().add(btnStart);
+		btnStart.setBounds(94, 61, 71, 23);
+		frmAutotool.getContentPane().add(btnStart);
 		
 		elementTag = new JTextField();
-		elementTag.setBounds(10, 164, 316, 21);
-		frame.getContentPane().add(elementTag);
+		elementTag.setBounds(5, 164, 316, 21);
+		frmAutotool.getContentPane().add(elementTag);
 		elementTag.setColumns(10);
 		
 		JButton btnSend = new JButton("Send");
@@ -246,12 +250,19 @@ public class AutoTool {
 			}
 		});
 		btnSend.setBounds(336, 196, 86, 23);
-		frame.getContentPane().add(btnSend);
+		frmAutotool.getContentPane().add(btnSend);
 		
 		commandName = new JComboBox();
-		commandName.setModel(new DefaultComboBoxModel(new String[] {"click", "clear", "getCurrentUrl","getTitle", "sendKeys", "mouseover","isDisplayed", "isEnabled", "isSelected", "getText", "getTagName","getElementSelector", "getAlertText", "acceptAlert", "dismissAlert", "execute", "getCssValue", "getAttribute", "getWindowHandle", "getWindowHandles","switchToWindow", "getElementInfo","addNewElement","updateElement"}));
+		DefaultComboBoxModel commandsModel = new DefaultComboBoxModel();
+		Field[] fields = Commands.class.getFields();
+		for(Field field : fields)
+		{
+			commandsModel.addElement(field.getName());			
+		}
+		commandName.setModel(commandsModel);
+		//commandName.setModel(new DefaultComboBoxModel(new String[] {"click", "clear", "getCurrentUrl","getTitle", "sendKeys", "mouseover","isDisplayed", "isEnabled", "isSelected", "getText", "getTagName","getElementSelector", "getAlertText", "acceptAlert", "dismissAlert", "execute", "getCssValue", "getAttribute", "getWindowHandle", "getWindowHandles","switchToWindow", "getElementInfo","addNewElement","updateElement"}));
 		commandName.setBounds(66, 196, 87, 22);
-		frame.getContentPane().add(commandName);
+		frmAutotool.getContentPane().add(commandName);
 		
 		JButton btnHighlight = new JButton("Highlight");
 		btnHighlight.addMouseListener(new MouseAdapter() {
@@ -260,7 +271,7 @@ public class AutoTool {
 				if(oWebDriver!=null)
 				{
 					try {
-						window.frame.setVisible(false);
+						window.frmAutotool.setVisible(false);
 						DebugWebElement debugelement = new DebugWebElement(elementTag.getText(),oWebDriver);						
 						if(!debugelement.oWebElement.isDisplayed())
 							logTextPane.setText(logTextPane.getText() + "Element is hidden" + "\n");
@@ -273,30 +284,30 @@ public class AutoTool {
 						logTextPane.setText(logTextPane.getText() + "Unknow error" + "\n");
 						e1.printStackTrace();						
 					} finally{
-						window.frame.setVisible(true);
+						window.frmAutotool.setVisible(true);
 					}
 				}
 			}
 		});
 		btnHighlight.setBounds(336, 163, 86, 23);
-		frame.getContentPane().add(btnHighlight);
+		frmAutotool.getContentPane().add(btnHighlight);
 		
 		JLabel lblElementTag = new JLabel("Element Tag");
-		lblElementTag.setBounds(11, 149, 91, 14);
-		frame.getContentPane().add(lblElementTag);
+		lblElementTag.setBounds(5, 147, 91, 14);
+		frmAutotool.getContentPane().add(lblElementTag);
 		
 		JLabel lblCommand = new JLabel("Command");
 		lblCommand.setBounds(10, 196, 59, 22);
-		frame.getContentPane().add(lblCommand);
+		frmAutotool.getContentPane().add(lblCommand);
 		
 		sParam = new JTextField();
 		sParam.setBounds(161, 196, 164, 21);
-		frame.getContentPane().add(sParam);
+		frmAutotool.getContentPane().add(sParam);
 		sParam.setColumns(10);
 		
 		url = new JTextField();
-		url.setBounds(10, 106, 316, 20);
-		frame.getContentPane().add(url);
+		url.setBounds(5, 106, 316, 20);
+		frmAutotool.getContentPane().add(url);
 		url.setColumns(10);
 		
 		//nav to desired url
@@ -319,7 +330,7 @@ public class AutoTool {
 			}
 		});
 		btnGoto.setBounds(336, 105, 86, 23);
-		frame.getContentPane().add(btnGoto);
+		frmAutotool.getContentPane().add(btnGoto);
 		
 		final JTree tree = new JTree();
 
@@ -362,19 +373,19 @@ public class AutoTool {
 		
 		elementsScrollPane = new JScrollPane(tree);
 		elementsScrollPane.setBounds(453, 69, 250, 369);
-		frame.getContentPane().add(elementsScrollPane);
+		frmAutotool.getContentPane().add(elementsScrollPane);
 		
 		logTextPane = new JTextPane();
 		logTextPane.setBounds(66, 386, 6, 20);
 		
 		JScrollPane logScrollPane = new JScrollPane(logTextPane);
 		logScrollPane.setBounds(5, 230, 430, 180);
-		frame.getContentPane().add(logScrollPane);
+		frmAutotool.getContentPane().add(logScrollPane);
 		
 		JLabel lblNewLabel = new JLabel("Action");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setBounds(30, 421, 59, 23);
-		frame.getContentPane().add(lblNewLabel);
+		frmAutotool.getContentPane().add(lblNewLabel);
 
 		commandBox = new JComboBox();
 		commandBox.addActionListener(new ActionListener() {
@@ -431,32 +442,32 @@ public class AutoTool {
 
 		commandBox.setModel(new DefaultComboBoxModel(StatementMaps.sNavigation));
 		commandBox.setBounds(15, 446, 113, 22);
-		frame.getContentPane().add(commandBox);
+		frmAutotool.getContentPane().add(commandBox);
 		
 		lblElementName = new JLabel("ElementName");
 		lblElementName.setHorizontalAlignment(SwingConstants.CENTER);
 		lblElementName.setBounds(129, 421, 105, 23);
-		frame.getContentPane().add(lblElementName);
+		frmAutotool.getContentPane().add(lblElementName);
 		
 		elementField = new JTextField();
 		elementField.setBounds(136, 446, 123, 20);
-		frame.getContentPane().add(elementField);
+		frmAutotool.getContentPane().add(elementField);
 		elementField.setColumns(10);
 		
 		lblExpectedtext = new JLabel("Expected Text");
 		lblExpectedtext.setHorizontalAlignment(SwingConstants.CENTER);
 		lblExpectedtext.setBounds(264, 421, 86, 23);
-		frame.getContentPane().add(lblExpectedtext);
+		frmAutotool.getContentPane().add(lblExpectedtext);
 		
 		verificationField = new JTextField();
 		verificationField.setBounds(270, 446, 90, 20);
-		frame.getContentPane().add(verificationField);
+		frmAutotool.getContentPane().add(verificationField);
 		verificationField.setColumns(10);
 		verificationField.setEditable(false);
 		
 		JScrollPane cucumberScrollPane = new JScrollPane((Component) null);
 		cucumberScrollPane.setBounds(15, 524, 389, 155);
-		frame.getContentPane().add(cucumberScrollPane);
+		frmAutotool.getContentPane().add(cucumberScrollPane);
 		
 		final JTextPane cucumberTextPane = new JTextPane();
 		cucumberScrollPane.setViewportView(cucumberTextPane);
@@ -499,7 +510,7 @@ public class AutoTool {
 			}
 		});
 		btnGenerate.setBounds(372, 446, 115, 23);
-		frame.getContentPane().add(btnGenerate);
+		frmAutotool.getContentPane().add(btnGenerate);
 		
 		rdbtnNavigation = new JRadioButton("Navigation");
 		rdbtnNavigation.addChangeListener(new ChangeListener() {
@@ -527,7 +538,7 @@ public class AutoTool {
 		rdbtnNavigation.setSelected(true);
 		actionButtonGroup.add(rdbtnNavigation);
 		rdbtnNavigation.setBounds(429, 514, 109, 23);
-		frame.getContentPane().add(rdbtnNavigation);
+		frmAutotool.getContentPane().add(rdbtnNavigation);
 		
 		rdbtnElementOperation = new JRadioButton("Element Operation");
 		rdbtnElementOperation.addChangeListener(new ChangeListener() {
@@ -562,7 +573,7 @@ public class AutoTool {
 
 		actionButtonGroup.add(rdbtnElementOperation);
 		rdbtnElementOperation.setBounds(429, 540, 145, 23);
-		frame.getContentPane().add(rdbtnElementOperation);
+		frmAutotool.getContentPane().add(rdbtnElementOperation);
 
 		rdbtnElementVerification = new JRadioButton("Element Verification");
 		rdbtnElementVerification.addChangeListener(new ChangeListener() {
@@ -587,7 +598,7 @@ public class AutoTool {
 
 		actionButtonGroup.add(rdbtnElementVerification);
 		rdbtnElementVerification.setBounds(429, 566, 151, 23);
-		frame.getContentPane().add(rdbtnElementVerification);
+		frmAutotool.getContentPane().add(rdbtnElementVerification);
 		
 		rdbtnPageVerification = new JRadioButton("Page Verification");
 		rdbtnPageVerification.addChangeListener(new ChangeListener() {
@@ -613,12 +624,12 @@ public class AutoTool {
 		});
 		actionButtonGroup.add(rdbtnPageVerification);
 		rdbtnPageVerification.setBounds(429, 592, 130, 23);
-		frame.getContentPane().add(rdbtnPageVerification);
+		frmAutotool.getContentPane().add(rdbtnPageVerification);
 		
 		rdbtnBrowserActions = new JRadioButton("Browser Actions");
 		actionButtonGroup.add(rdbtnBrowserActions);
 		rdbtnBrowserActions.setBounds(429, 618, 130, 23);
-		frame.getContentPane().add(rdbtnBrowserActions);
+		frmAutotool.getContentPane().add(rdbtnBrowserActions);
 		rdbtnBrowserActions.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if(rdbtnBrowserActions.isSelected())
@@ -705,7 +716,7 @@ public class AutoTool {
 			}
 		});
 		btnRefreshButton.setBounds(670, 41, 86, 23);
-		frame.getContentPane().add(btnRefreshButton);
+		frmAutotool.getContentPane().add(btnRefreshButton);
 		
 		JButton btnAddButton = new JButton("Add");
 		btnAddButton.addMouseListener(new MouseAdapter() {
@@ -714,14 +725,14 @@ public class AutoTool {
 
 				JFileChooser fc;
 				
-				fc = new JFileChooser(CucumberDirectoryPath);
+				fc = new JFileChooser(tempPath);
 
 				fc.setVisible(true);				
-				int returnVal = fc.showOpenDialog(frame);
+				int returnVal = fc.showOpenDialog(frmAutotool);
 				if (returnVal == JFileChooser.APPROVE_OPTION) 	
 				{
 					file = fc.getSelectedFile();
-					CucumberDirectoryPath = file.getAbsolutePath();
+					tempPath = file.getAbsolutePath();
 				}
 				
 				if(file!=null&&returnVal == JFileChooser.APPROVE_OPTION)
@@ -747,7 +758,7 @@ public class AutoTool {
 
 		
 		btnAddButton.setBounds(453, 41, 91, 23);
-		frame.getContentPane().add(btnAddButton);
+		frmAutotool.getContentPane().add(btnAddButton);
 		
 		JButton btnRemove = new JButton("Remove");
 		btnRemove.addMouseListener(new MouseAdapter() {
@@ -774,42 +785,41 @@ public class AutoTool {
 			}
 		});
 		btnRemove.setBounds(560, 41, 91, 23);
-		frame.getContentPane().add(btnRemove);		
+		frmAutotool.getContentPane().add(btnRemove);		
 
 		
 		lblAttributecssvalue = new JLabel("Attribute/CssValue");
 		lblAttributecssvalue.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAttributecssvalue.setBounds(138, 468, 105, 23);
-		frame.getContentPane().add(lblAttributecssvalue);
+		frmAutotool.getContentPane().add(lblAttributecssvalue);
 
 		Attribute_CssValue_Field = new JTextField();
 		Attribute_CssValue_Field.setBounds(136, 491, 123, 22);
 		Attribute_CssValue_Field.setEditable(false);
-		frame.getContentPane().add(Attribute_CssValue_Field);
+		frmAutotool.getContentPane().add(Attribute_CssValue_Field);
 		Attribute_CssValue_Field.setColumns(10);
 		
 		lblAsserttype = new JLabel("AssertType");
 		lblAsserttype.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAsserttype.setBounds(268, 468, 105, 23);
-		frame.getContentPane().add(lblAsserttype);
+		frmAutotool.getContentPane().add(lblAsserttype);
 		
 		assertComboBox = new JComboBox();
 		assertComboBox.setModel(new DefaultComboBoxModel(new String[] {"equals", "contains", "matches", "doesnotequal", "doesnotcontain", "doesnotmatch"}));
 		assertComboBox.setBounds(270, 491, 113, 22);
-		frame.getContentPane().add(assertComboBox);
+		frmAutotool.getContentPane().add(assertComboBox);
 		
 		lblPagename = new JLabel("PageName");
 		lblPagename.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPagename.setBounds(18, 468, 105, 23);
-		frame.getContentPane().add(lblPagename);
+		frmAutotool.getContentPane().add(lblPagename);
 		
 		pageNameField = new JTextField();
 		pageNameField.setColumns(10);
 		pageNameField.setBounds(15, 491, 113, 22);
-		frame.getContentPane().add(pageNameField);
+		frmAutotool.getContentPane().add(pageNameField);
 		
-		JButton btnInspect = new JButton("");
-		btnInspect.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
+		JButton btnInspect = new JButton("inspect");
 		btnInspect.setDisabledIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
 		btnInspect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -840,8 +850,8 @@ public class AutoTool {
 				elementTag.setText(selector);
 			}
 		});
-		btnInspect.setBounds(226, 61, 71, 23);
-		frame.getContentPane().add(btnInspect);
+		btnInspect.setBounds(220, 61, 77, 23);
+		frmAutotool.getContentPane().add(btnInspect);
 		
 		final JCheckBox chckbxReload = new JCheckBox("Reload");
 		chckbxReload.addMouseListener(new MouseAdapter() {
@@ -858,11 +868,11 @@ public class AutoTool {
 			}
 		});
 		chckbxReload.setBounds(325, 61, 97, 23);
-		frame.getContentPane().add(chckbxReload);
+		frmAutotool.getContentPane().add(chckbxReload);
 		
 		menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 756, 21);
-		frame.getContentPane().add(menuBar);
+		frmAutotool.getContentPane().add(menuBar);
 		
 		JMenu mnPlugins = new JMenu("Plug-ins");
 		menuBar.add(mnPlugins);

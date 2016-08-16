@@ -1,19 +1,19 @@
 package com.gd.loginhelper;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 
 import com.gd.autofill.AutoFillPanel;
 
 public class TestFrame extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6152760563187565895L;
 	private JPanel contentPane;
 
 	/**

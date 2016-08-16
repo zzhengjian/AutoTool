@@ -146,7 +146,7 @@ public class PageNode {
         		continue;
         	}
         	
-			if(sline.contains("https:")&&!sline.trim().startsWith("#"))
+        	else if(sline.contains("https:")&&!sline.trim().startsWith("#"))
 			{
 				line = sline.split("=");
 				page = new PageBean(line[1].split("\"")[1].trim(),line[0].trim());
@@ -154,7 +154,7 @@ public class PageNode {
 				continue;
 			}
         	
-        	if(sline.contains("addElement")&&!sline.trim().startsWith("#"))
+        	else if(sline.contains("addElement")&&!sline.trim().startsWith("#"))
         	{
         		
         		ElementBean element = null;
@@ -184,7 +184,13 @@ public class PageNode {
 				}            
 	            
 	            page.addElement(element);
-        	}       	
+        	}   
+        	else
+        	{
+        		sline = bufr.readLine();
+        		continue;
+        	}
+        		
         }        
 
 		bufr.close();

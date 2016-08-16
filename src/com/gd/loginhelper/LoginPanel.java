@@ -117,10 +117,10 @@ public class LoginPanel extends JPanel {
 							.addGap(31)
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnAdd, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
+									.addComponent(btnAdd, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.UNRELATED)
 									.addComponent(btnRemove, GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
-									.addGap(14)
+									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnClear))
 								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
 								.addComponent(lblCustomerType)
@@ -230,8 +230,7 @@ public class LoginPanel extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent paramMouseEvent) {
 				
-				List<String> custlists = ltCustomerType2.getSelectedValuesList();
-				int size = ltCustomerType2.getModel().getSize(); // 4
+				int size = ltCustomerType2.getModel().getSize();
 				
 				String custTypes = "";
 			    // Get all item objects

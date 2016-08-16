@@ -1,14 +1,10 @@
 package com.browser.debug;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Map;
 
-import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -17,7 +13,6 @@ import org.openqa.selenium.remote.Command;
 import org.openqa.selenium.remote.DriverCommand;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.remote.Response;
-
 
 import com.google.common.collect.ImmutableMap;
 
@@ -28,16 +23,11 @@ public class DebugWebElement extends RemoteWebElement {
 	private WebDriver oWebDriver;
 	private JavascriptExecutor oJavascriptExecutor;
 	public WebElement oWebElement;
-	private String sCommand;
 	private String sElementTag;
 	private By oBy;
 	private String outline = "";
 	private String background = "";
 	private Actions oAction;
-	
-	public static String[] ElementKeyword = {"click","clear","sendKeys","getText", "getTagName", "getElementSelector","isDisplayed","isEnabled","isSelected","getCssValue","getAttribute","executeOnElement","getElementInfo","addNewElement", "updateElement"};
-	
-	//public static ArrayList lElementKeyword = new ArrayList{"click","clear","sendKeys","getText","isDisplayed","isEnabled","isSelected","getCssValue","getAttribute","executeOnElement"};
 	
 	public DebugWebElement(String sTag, WebDriver oDriver)
 	{
@@ -111,9 +101,9 @@ public class DebugWebElement extends RemoteWebElement {
 	{
 		String sText = null;
 		ElementHelper elementHelper;
-		switch(sCommand.trim())
+		switch(Enum.valueOf(Commands.class, sCommand))
 		{
-		case "click":
+		case click:
 			if(param.length>0&&!"".equals(param[0]))
 			{
 				
@@ -127,54 +117,54 @@ public class DebugWebElement extends RemoteWebElement {
 				break;		
 			}
 			
-		case "clear":
+		case clear:
 			oWebElement.clear();
 			break;
 			
-		case "sendKeys":
+		case sendKeys:
 			oWebElement.sendKeys(param[0]);
 			break;
 			
-		case "getText":
+		case getText:
 			sText = oWebElement.getText();			 
 			break;
 
-		case "getTagName":
+		case getTagName:
 			sText = oWebElement.getTagName();			 
 			break;
 			
-		case "mouseover":
+		case mouseover:
 			oAction.moveToElement(oWebElement).perform();			 
 			break;
 			
-		case "isDisplayed":
+		case isDisplayed:
 			sText = String.valueOf(oWebElement.isDisplayed());			
 			sText = "Element isdisplayed: " + sText;
 			break;
 			
-		case "isEnabled":
+		case isEnabled:
 			sText = String.valueOf(oWebElement.isEnabled());
 			sText = "Element isEnabled: " + sText;
 			break;
 			
-		case "isSelected":
+		case isSelected:
 			sText = String.valueOf(oWebElement.isSelected());
 			sText = "Element isSelected: " + sText;
 			break;
 			
-		case "getCssValue":
+		case getCssValue:
 			sText = oWebElement.getCssValue(param[0]);
 			break;
 			
-		case "getAttribute":
+		case getAttribute:
 			sText = oWebElement.getAttribute(param[0]);
 			break;
 			
-		case "executeOnElement":
+		case executeOnElement:
 			sText = (String) oJavascriptExecutor.executeScript(param[0], oWebElement);
 			break;
 			
-		case "getElementInfo":
+		case getElementInfo:
 			StringBuilder elementinfo = new StringBuilder();
 			elementinfo = elementinfo.append("font-size: ").append(oWebElement.getCssValue("font-size")).append("\n");
 			elementinfo = elementinfo.append("font-family: ").append(oWebElement.getCssValue("font-family")).append("\n");
@@ -186,11 +176,11 @@ public class DebugWebElement extends RemoteWebElement {
 			sText = elementinfo.toString();
 			break;
 			
-		case "addNewElement":
+		case addNewElement:
 			elementHelper = new ElementHelper(oWebElement);
 			StringBuilder gdelement = new StringBuilder();
 			
-			gdelement.append("Page");
+			gdelement.append(AutoTool.PageName);
 			gdelement.append(".addElement(\"").append(elementHelper.evaluateElementName()).append(elementHelper.elementNameExt()).append("\",").append("\n");
 			gdelement.append("	GdElement.new(").append("\n");
 			if(sElementTag.startsWith("/")||sElementTag.startsWith("./"))
@@ -204,7 +194,7 @@ public class DebugWebElement extends RemoteWebElement {
 			//sText = gdelement.toString();
 			
 			break;		
-		case "updateElement":
+		case updateElement:
 			
 			Response response = null;
 			Command command = new Command(((FirefoxDriver)oWebDriver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)oWebElement).getId(),"other", ((RemoteWebElement)oWebElement).getId()));

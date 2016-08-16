@@ -6,12 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import com.browser.debug.AutoTool;
 import com.browser.debug.Customer;
 
 
@@ -19,11 +21,8 @@ import com.browser.debug.Customer;
 public class CucumberHelper {
 	
 	public static StringBuilder tcase;
-	public static String workspace = "C:\\azheng-QA-Workspace";
-	public static String path = "\\QA\\Cucumber\\Projects\\GreenDot\\";
 	
-	private static HashMap<String, String> custTypeArgs = new HashMap<String, String>();
-	
+	private static HashMap<String, String> custTypeArgs = new HashMap<String, String>();	
 	
 	public static HashMap<String, String> getCustTypeArgs() {
 		return custTypeArgs;
@@ -43,7 +42,7 @@ public class CucumberHelper {
 		
 		int exitVal = 0;
 		try {
-			pr = rt.exec("cmd /c cucumber auto.feature", null, new File(workspace + path));
+			pr = rt.exec("cmd /c cucumber auto.feature", null, new File(AutoTool.CucumberDirectoryPath,"Projects\\GreenDot"));
 			BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 			String line=null;
 			 
@@ -80,7 +79,7 @@ public class CucumberHelper {
 		tcase.append("Given I get userid and password from specific customer and store to userid \"UserID\" and password \"Password\"");
 	
 		
-		File file = new File(workspace + path, "auto.feature");
+		File file = new File(Paths.get(AutoTool.CucumberDirectoryPath,"Projects\\GreenDot").toString(), "auto.feature");
 	
 		try {
 			FileUtils.writeStringToFile(file, tcase.toString(), "utf-8");
@@ -101,7 +100,7 @@ public class CucumberHelper {
 	public static List<String> loadCustomerTypes()
 	{
 		
-		File customertypeFile= new File("C:/azheng-QA-Workspace/QA/Cucumber/General/step_definitions/GetSpecificCustomerSteps.rb");
+		File customertypeFile= new File(AutoTool.CucumberDirectoryPath, "/General/step_definitions/GetSpecificCustomerSteps.rb");
 		
 		List<String> custList = new ArrayList<String>();
 		FileReader fr = null;
