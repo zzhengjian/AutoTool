@@ -47,8 +47,6 @@ public class Driver {
 	{		
 		DesiredCapabilities dc;
 		
-		boolean bMaximizeBrowser = true;
-		
 		try
 		{
 			switch (sBrowserType.toUpperCase())
@@ -149,9 +147,6 @@ public class Driver {
 			
 			
 			oRemoteWebDriver =  new RemoteWebDriver(remoteAddress, dc);
-			Capabilities oTargetCapability = oRemoteWebDriver.getCapabilities();
-			//logger.debug("Target driver capabilities:  {}", oTargetCapability.toString());
-			
 			return oRemoteWebDriver;
 		}
 		catch (Exception e)

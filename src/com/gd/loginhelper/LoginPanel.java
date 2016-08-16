@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -252,7 +253,11 @@ public class LoginPanel extends JPanel {
 				CucumberHelper.getCustTypeArgs().put("Email", "");
 				
 				CucumberHelper.getUserId();
-				LoginSkins.login(Driver.oWebDriver, (String) cbxProject.getSelectedItem());
+				boolean isLogin = LoginSkins.login(Driver.oWebDriver, (String) cbxProject.getSelectedItem());
+				if(!isLogin)
+				{
+					JOptionPane.showMessageDialog(null, "UserId/Password is incorrect, Please make sure you inputs in correct");
+				}
 			}
 		});
 		

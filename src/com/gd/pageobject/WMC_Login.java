@@ -42,4 +42,9 @@ public class WMC_Login {
 		oLogIn_Button.click();
 	}
 	
+	public boolean loginError()
+	{
+		return oFormErrorMsg_Text.isDisplayed();		
+	}
+	
 }

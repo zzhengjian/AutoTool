@@ -45,4 +45,9 @@ public class GD_Login {
 		oTxtPassword_Input.sendKeys(Password);
 		oBtnlogin_Input.click();
 	}
+	
+	public boolean loginError()
+	{
+		return oErroMsg_Text.isDisplayed();		
+	}
 }

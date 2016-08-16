@@ -38,5 +38,10 @@ public class Rush_Login {
 		oTxtPassword_Input.sendKeys(Password);
 		oSignIn_Button.click();
 	}
+	
+	public boolean loginError()
+	{
+		return oErroMsg_Text.isDisplayed();		
+	}
 
 }
