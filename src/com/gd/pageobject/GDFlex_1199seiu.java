@@ -95,7 +95,6 @@ public class GDFlex_1199seiu {
 		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
 		oZip_Input.sendKeys(Customer.addressMap.get(addressType)[5]);		
 		
-		submit();
 	}
 	
 	public void submit()

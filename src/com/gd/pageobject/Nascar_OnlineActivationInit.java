@@ -103,7 +103,6 @@ public class Nascar_OnlineActivationInit {
 		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
 		oZipCode_Input.sendKeys(Customer.addressMap.get(addressType)[5]);		
 		
-		submit();
 	}
 	
 	public void submit()

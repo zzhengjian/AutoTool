@@ -83,7 +83,6 @@ public class GD_AddSecondCard {
 		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
 		oResidentialZipCode_Input.sendKeys(Customer.addressMap.get(addressType)[5]);		
 		
-		submit();
 	}
 	
 	public void submit()
