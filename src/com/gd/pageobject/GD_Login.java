@@ -1,7 +1,11 @@
 package com.gd.pageobject;
 
+import java.util.List;
+
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.FluentWait;
 
 import com.browser.debug.Customer;
 
@@ -10,7 +14,7 @@ public class GD_Login {
 	public final static String url = "https://www.greendot.com/greendot/login";	
 	
 	@FindBy(css = ".messages>p")
-	WebElement oErroMsg_Text;
+	List<WebElement> oErroMsg_Text;
 
 	@FindBy(css = "#TxtAccountNoOrUserId")
 	WebElement oTxtAccountNoOrUserId_Input;
@@ -29,7 +33,6 @@ public class GD_Login {
 
 	@FindBy(css = "#btnLogin")
 	WebElement oBtnlogin_Input;
-
 	
 	public void Login()
 	{		
@@ -47,7 +50,8 @@ public class GD_Login {
 	}
 	
 	public boolean loginError()
-	{
-		return oErroMsg_Text.isDisplayed();		
+	{		
+		return oErroMsg_Text.size() > 0;
+			
 	}
 }

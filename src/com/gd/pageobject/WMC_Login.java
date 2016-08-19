@@ -1,5 +1,7 @@
 package com.gd.pageobject;
 
+import java.util.List;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -10,7 +12,7 @@ public class WMC_Login {
 	public final static String url = "https://www.walmartmoneycard.com/login";
 
 	@FindBy(css = "#div-form-error-message")
-	WebElement oFormErrorMsg_Text;
+	List<WebElement> oFormErrorMsg_Text;
 	
 	@FindBy(css = "#TxtAccountNoOrUserId")
 	WebElement oTxtAccountNoOrUserId_Input;
@@ -44,7 +46,7 @@ public class WMC_Login {
 	
 	public boolean loginError()
 	{
-		return oFormErrorMsg_Text.isDisplayed();		
+		return oFormErrorMsg_Text.size() > 0;		
 	}
 	
 }

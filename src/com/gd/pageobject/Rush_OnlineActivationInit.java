@@ -6,7 +6,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.browser.debug.Customer;
 
-public class Rush_OnlineActivationInit {
+public class Rush_OnlineActivationInit extends PageObjectBase {
 
 	public final static String url = "https://www.rushcardlive.com/prepaid/activation/online-activation-init";
 
@@ -31,7 +31,7 @@ public class Rush_OnlineActivationInit {
 	@FindBy(css = "#ApartmentNumber")
 	WebElement oApartmentNumber_Input;
 	
-	@FindBy(css = "#State")
+	@FindBy(css = "#StateList")
 	WebElement oState_DropDown;
 
 	@FindBy(css = "#City")
@@ -82,24 +82,25 @@ public class Rush_OnlineActivationInit {
 	
 	public void submitCustomerInfo(String registerCustomerType, String addressType)
 	{
-		oFirstName_Input.sendKeys(Customer.FirstName);
-		oLastName_Input.sendKeys(Customer.LastName);
-		oMobilePhone_Input.sendKeys(Customer.CellPhone);
-		oEmailAddress_Input.sendKeys(Customer.Email);
-		oDateOfBirth_Input.sendKeys(Customer.DOB);
-		oATMPin_Input.sendKeys(Customer.Pin);
+		selectAll(oFirstName_Input).sendKeys(Customer.FirstName);
+		selectAll(oLastName_Input).sendKeys(Customer.LastName);
+		selectAll(oMobilePhone_Input).sendKeys(Customer.CellPhone);
+		selectAll(oHomePhone_Input).sendKeys(Customer.HomePhone);
+		selectAll(oEmailAddress_Input).sendKeys(Customer.Email);
+		selectAll(oDateOfBirth_Input).sendKeys(Customer.DOB);
+		selectAll(oATMPin_Input).sendKeys(Customer.Pin);
 		
 
 		//Customer Type
-		oSsn_Input.sendKeys(Customer.getGeneratedSSN(registerCustomerType));
+		selectAll(oSsn_Input).sendKeys(Customer.getGeneratedSSN(registerCustomerType));
 		
 		//Address Type
 		Select stateSelect = new Select(oState_DropDown);
-		oStreetAddress_Input.sendKeys(Customer.addressMap.get(addressType)[1]);
-		oApartmentNumber_Input.sendKeys(Customer.addressMap.get(addressType)[2]);
-		oCity_Input.sendKeys(Customer.addressMap.get(addressType)[3]);		
+		selectAll(oStreetAddress_Input).sendKeys(Customer.addressMap.get(addressType)[1]);
+		selectAll(oApartmentNumber_Input).sendKeys(Customer.addressMap.get(addressType)[2]);
+		selectAll(oCity_Input).sendKeys(Customer.addressMap.get(addressType)[3]);		
 		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
-		oZipCode_Input.sendKeys(Customer.addressMap.get(addressType)[5]);		
+		selectAll(oZipCode_Input).sendKeys(Customer.addressMap.get(addressType)[5]);		
 
 	}
 	

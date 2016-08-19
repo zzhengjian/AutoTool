@@ -33,6 +33,7 @@ public enum Commands {
 	getWindowHandles,
 	switchToWindow,
 	switchToDefaultContent,
-	switchToFrame, 	
+	switchToFrame,
+	HighLightCurrentWindow
 	
 }

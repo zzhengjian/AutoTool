@@ -190,7 +190,7 @@ public class DebugWebElement extends RemoteWebElement {
 			gdelement.append("		)").append("\n");
 			gdelement.append("	)").append("\n");
 			
-			sText = elementHelper.addNewGDElement("Page", sElementTag);
+			sText = elementHelper.addNewGDElement(AutoTool.PageName, sElementTag);
 			//sText = gdelement.toString();
 			
 			break;		

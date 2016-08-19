@@ -100,6 +100,12 @@ public class DebugRemoteDriver extends RemoteWebDriver {
 				sText = commandName;
 				break;
 				
+			case HighLightCurrentWindow:
+				String handle = oWebDirver.getWindowHandle();
+				oWebDirver.switchTo().window(handle);
+				sText = commandName;
+				break;				
+				
 			default: 
 				break;					
 		

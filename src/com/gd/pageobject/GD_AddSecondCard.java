@@ -6,7 +6,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.browser.debug.Customer;
 
-public class GD_AddSecondCard {
+public class GD_AddSecondCard extends PageObjectBase {
 
 	public final static String url = "https://www.greendot.com/greendot/account/add-second-card";
 
@@ -66,22 +66,22 @@ public class GD_AddSecondCard {
 
 	public void submitCustomerInfo(String registerCustomerType, String addressType)
 	{
-		oFirstName_Input.sendKeys(Customer.FirstName);
-		oLastName_Input.sendKeys(Customer.LastName);
-		oContactNumber_Input.sendKeys(Customer.CellPhone);
-		oEmail_Input.sendKeys(Customer.Email);
-		oBirthday_Input.sendKeys(Customer.DOB);		
+		selectAll(oFirstName_Input).sendKeys(Customer.FirstName);
+		selectAll(oLastName_Input).sendKeys(Customer.LastName);
+		selectAll(oContactNumber_Input).sendKeys(Customer.CellPhone);
+		selectAll(oEmail_Input).sendKeys(Customer.Email);
+		selectAll(oBirthday_Input).sendKeys(Customer.DOB);		
 
 		//Customer Type
-		oSsn_Input.sendKeys(Customer.getGeneratedSSN(registerCustomerType));
+		selectAll(oSsn_Input).sendKeys(Customer.getGeneratedSSN(registerCustomerType));
 		
 		//Address Type
 		Select stateSelect = new Select(oResidentialState_DropDown);
-		oResidentialAddressPart1_Input.sendKeys(Customer.addressMap.get(addressType)[1]);
-		oResidentialAddressPart2_Input.sendKeys(Customer.addressMap.get(addressType)[2]);
-		oResidentialCity_Input.sendKeys(Customer.addressMap.get(addressType)[3]);		
+		selectAll(oResidentialAddressPart1_Input).sendKeys(Customer.addressMap.get(addressType)[1]);
+		selectAll(oResidentialAddressPart2_Input).sendKeys(Customer.addressMap.get(addressType)[2]);
+		selectAll(oResidentialCity_Input).sendKeys(Customer.addressMap.get(addressType)[3]);		
 		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
-		oResidentialZipCode_Input.sendKeys(Customer.addressMap.get(addressType)[5]);		
+		selectAll(oResidentialZipCode_Input).sendKeys(Customer.addressMap.get(addressType)[5]);		
 		
 	}
 	
@@ -89,5 +89,5 @@ public class GD_AddSecondCard {
 	{
 		oBtnsubmit_Input.click();		
 	}
-	
+
 }

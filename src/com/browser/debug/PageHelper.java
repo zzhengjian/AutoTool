@@ -2,17 +2,11 @@ package com.browser.debug;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriverException;
 
 public class PageHelper {
-	
-	public String WorkspacePath = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\Projects";
-	private HashMap<String, String> elements = new HashMap<String, String>();
-
-	
 	
 	public static String getPagePrefix(Projects project)
 	{

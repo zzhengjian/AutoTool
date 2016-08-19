@@ -1,5 +1,7 @@
 package com.gd.pageobject;
 
+import java.util.List;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -10,7 +12,7 @@ public class Nascar_Login {
 	public final static String url = "https://www.greendot.com/racing/login";
 
 	@FindBy(css = ".messages>p")
-	WebElement oErroMsg_Text;
+	List<WebElement> oErroMsg_Text;
 	
 	@FindBy(css = "#TxtAccountNoOrUserId")
 	WebElement oTxtAccountNoOrUserId_Input;
@@ -47,7 +49,7 @@ public class Nascar_Login {
 	
 	public boolean loginError()
 	{
-		return oErroMsg_Text.isDisplayed();		
+		return oErroMsg_Text.size() > 0;		
 	}
 
 }

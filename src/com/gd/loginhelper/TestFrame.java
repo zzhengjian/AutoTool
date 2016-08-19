@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.gd.autofill.AutoFillPanel;
+import java.awt.Toolkit;
 
 public class TestFrame extends JFrame {
 
@@ -62,6 +63,7 @@ public class TestFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public TestFrame(String panel) {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(TestFrame.class.getResource("/com/gd/resources/login.jpg")));
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		setBounds(100, 100, 545, 528);
 		if(panel.equals("LoginPanel"))

@@ -56,6 +56,7 @@ import com.browser.page.PageBean;
 import com.browser.page.PageTree;
 import com.gd.loginhelper.TestFrame;
 
+
 public class AutoTool {
 
 	static AutoTool window;
@@ -347,7 +348,7 @@ public class AutoTool {
 					if(selectionNode.getUserObject() instanceof PageBean)
 					{
 						pageurl = ((PageBean)selectionNode.getUserObject()).getUrl();
-						pageNameField.setText(selectionNode.toString());
+						pageNameField.setText(selectionNode.toString());						
 						elementField.setText("");
 						elementTag.setText("");
 						
@@ -361,7 +362,7 @@ public class AutoTool {
 						elementTag.setText(((ElementBean)selectionNode.getUserObject()).getSelector());
 					}
 					url.setText(pageurl);
-					
+					PageName = pageNameField.getText();
 				}
 
 			}
@@ -718,7 +719,8 @@ public class AutoTool {
 		btnRefreshButton.setBounds(670, 41, 86, 23);
 		frmAutotool.getContentPane().add(btnRefreshButton);
 		
-		JButton btnAddButton = new JButton("Add");
+		JButton btnAddButton = new JButton("");
+		btnAddButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/addDisabled.png")));
 		btnAddButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -757,10 +759,11 @@ public class AutoTool {
 		});
 
 		
-		btnAddButton.setBounds(453, 41, 91, 23);
+		btnAddButton.setBounds(453, 41, 16, 16);
 		frmAutotool.getContentPane().add(btnAddButton);
 		
-		JButton btnRemove = new JButton("Remove");
+		JButton btnRemove = new JButton("");
+		btnRemove.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/cancel.png")));
 		btnRemove.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -784,7 +787,7 @@ public class AutoTool {
 
 			}
 		});
-		btnRemove.setBounds(560, 41, 91, 23);
+		btnRemove.setBounds(543, 41, 16, 16);
 		frmAutotool.getContentPane().add(btnRemove);		
 
 		
@@ -815,11 +818,15 @@ public class AutoTool {
 		frmAutotool.getContentPane().add(lblPagename);
 		
 		pageNameField = new JTextField();
+		//pageNameField.getDocument().addDocumentListener(new MyDocumentListener(pageNameField.getText()));
+		
 		pageNameField.setColumns(10);
 		pageNameField.setBounds(15, 491, 113, 22);
 		frmAutotool.getContentPane().add(pageNameField);
 		
 		JButton btnInspect = new JButton("inspect");
+
+		
 		btnInspect.setDisabledIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
 		btnInspect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

@@ -6,7 +6,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.browser.debug.Customer;
 
-public class GDFlex_1199seiu {
+public class GDFlex_1199seiu extends PageObjectBase {
 
 	public final static String url = "https://www.greendot.com/1199seiu";
 
@@ -76,24 +76,24 @@ public class GDFlex_1199seiu {
 	
 	public void submitCustomerInfo(String registerCustomerType, String addressType)
 	{
-		oFirstName_Input.sendKeys(Customer.FirstName);
-		oLastName_Input.sendKeys(Customer.LastName);
-		oPhone_Input.sendKeys(Customer.CellPhone);
-		oEmail_Input.sendKeys(Customer.Email);
-		oDateOfBirth_Input.sendKeys(Customer.DOB);
-		oATMPin_Input.sendKeys(Customer.Pin);
+		selectAll(oFirstName_Input).sendKeys(Customer.FirstName);
+		selectAll(oLastName_Input).sendKeys(Customer.LastName);
+		selectAll(oPhone_Input).sendKeys(Customer.CellPhone);
+		selectAll(oEmail_Input).sendKeys(Customer.Email);
+		selectAll(oDateOfBirth_Input).sendKeys(Customer.DOB);
+		selectAll(oATMPin_Input).sendKeys(Customer.Pin);
 		
 
 		//Customer Type
-		oSsn_Input.sendKeys(Customer.getGeneratedSSN(registerCustomerType));
+		selectAll(oSsn_Input).sendKeys(Customer.getGeneratedSSN(registerCustomerType));
 		
 		//Address Type
 		Select stateSelect = new Select(oState_DropDown);
-		oStreet_Input.sendKeys(Customer.addressMap.get(addressType)[1]);
-		oApartment_Input.sendKeys(Customer.addressMap.get(addressType)[2]);
-		oCity_Input.sendKeys(Customer.addressMap.get(addressType)[3]);		
+		selectAll(oStreet_Input).sendKeys(Customer.addressMap.get(addressType)[1]);
+		selectAll(oApartment_Input).sendKeys(Customer.addressMap.get(addressType)[2]);
+		selectAll(oCity_Input).sendKeys(Customer.addressMap.get(addressType)[3]);		
 		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
-		oZip_Input.sendKeys(Customer.addressMap.get(addressType)[5]);		
+		selectAll(oZip_Input).sendKeys(Customer.addressMap.get(addressType)[5]);		
 		
 	}
 	

@@ -6,7 +6,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.browser.debug.Customer;
 
-public class WMC_OnlineActivationInit {
+public class WMC_OnlineActivationInit extends PageObjectBase{
 
 	public final static String url = "https://www.walmartmoneycard.com/activation/online-activation-init";
 
@@ -66,25 +66,24 @@ public class WMC_OnlineActivationInit {
 
 	public void submitCustomerInfo(String registerCustomerType, String addressType)
 	{
-		oFirstName_Input.sendKeys(Customer.FirstName);
-		oLastName_Input.sendKeys(Customer.LastName);
-		oPhoneMobile_Input.sendKeys(Customer.CellPhone);
-		oPhoneHome_Input.sendKeys(Customer.HomePhone);
-		oEmail_Input.sendKeys(Customer.Email);
-		oBirthDate_Input.sendKeys(Customer.DOB);
-		oCardPIN_Input.sendKeys(Customer.Pin);
+		selectAll(oFirstName_Input).sendKeys(Customer.FirstName);
+		selectAll(oLastName_Input).sendKeys(Customer.LastName);
+		selectAll(oPhoneMobile_Input).sendKeys(Customer.CellPhone);
+		selectAll(oPhoneHome_Input).sendKeys(Customer.HomePhone);
+		selectAll(oEmail_Input).sendKeys(Customer.Email);
+		selectAll(oBirthDate_Input).sendKeys(Customer.DOB);
+		selectAll(oCardPIN_Input).sendKeys(Customer.Pin);
 		
-
 		//Customer Type
-		oSocialSecurityNumber_Input.sendKeys(Customer.getGeneratedSSN(registerCustomerType));
+		selectAll(oSocialSecurityNumber_Input).sendKeys(Customer.getGeneratedSSN(registerCustomerType));
 		
 		//Address Type
 		Select stateSelect = new Select(oState_DropDown);
-		oAddress1_Input.sendKeys(Customer.addressMap.get(addressType)[1]);
-		oAddress2_Input.sendKeys(Customer.addressMap.get(addressType)[2]);
-		oCity_Input.sendKeys(Customer.addressMap.get(addressType)[3]);		
+		selectAll(oAddress1_Input).sendKeys(Customer.addressMap.get(addressType)[1]);
+		selectAll(oAddress2_Input).sendKeys(Customer.addressMap.get(addressType)[2]);
+		selectAll(oCity_Input).sendKeys(Customer.addressMap.get(addressType)[3]);		
 		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
-		oZip_Input.sendKeys(Customer.addressMap.get(addressType)[5]);		
+		selectAll(oZip_Input).sendKeys(Customer.addressMap.get(addressType)[5]);		
 
 	}
 	
