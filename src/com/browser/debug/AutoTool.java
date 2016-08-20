@@ -55,6 +55,7 @@ import com.browser.page.ElementBean;
 import com.browser.page.PageBean;
 import com.browser.page.PageTree;
 import com.gd.loginhelper.TestFrame;
+import com.gd.pogen.POGen;
 
 
 public class AutoTool {
@@ -105,6 +106,10 @@ public class AutoTool {
     
     public static String PageName = "";
     private JMenuBar menuBar;
+    private JMenuItem mntmPoGen;
+    private JMenuItem mntmLoginHelper;
+    private JMenuItem mntmAutoFill;
+    private JMenu mnPlugins;
     
 	/**
 	 * Launch the application.
@@ -881,10 +886,10 @@ public class AutoTool {
 		menuBar.setBounds(0, 0, 756, 21);
 		frmAutotool.getContentPane().add(menuBar);
 		
-		JMenu mnPlugins = new JMenu("Plug-ins");
+		mnPlugins = new JMenu("Plug-ins");
 		menuBar.add(mnPlugins);
 		
-		JMenuItem mntmLoginHelper = new JMenuItem("Login Helper");
+		mntmLoginHelper = new JMenuItem("Login Helper");
 		mntmLoginHelper.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent paramMouseEvent) {
@@ -893,7 +898,7 @@ public class AutoTool {
 		});
 		mnPlugins.add(mntmLoginHelper);
 		
-		JMenuItem mntmAutoFill = new JMenuItem("Auto Fill");
+		mntmAutoFill = new JMenuItem("Auto Fill");
 		mntmAutoFill.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent paramMouseEvent) {
@@ -901,6 +906,15 @@ public class AutoTool {
 			}
 		});
 		mnPlugins.add(mntmAutoFill);
+		
+		mntmPoGen = new JMenuItem("POGen");
+		mntmPoGen.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				POGen.startPOGen();
+			}
+		});
+		mnPlugins.add(mntmPoGen);
 		
 
 	}

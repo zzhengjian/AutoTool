@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
+import com.gd.pogen.PageObjectType;
+
 
 
 public class Property {
@@ -16,6 +18,12 @@ public class Property {
 	public static String DefaultPath = loadDefaultPath();
 	public static Properties setting = loadSettings();
 
+	public static String url = "";
+	public static String parentNodeLocator = "//body";
+	public static String SaveToPath = "";
+	public static String pageFileName = "";
+	public static int PageObject_Type;
+	
 	public static String fxprofilepath = "";
 	private static int Default_Wait_Time = 120;
 	
@@ -23,22 +31,12 @@ public class Property {
 	{
 		
 		//get current jar file path
-		try {
-			DefaultPath = Property.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-			DefaultPath = new File(".").getAbsolutePath();
-			if(!Property.class.getProtectionDomain().getCodeSource().getLocation().getFile().toString().contains(".jar"))
-			{
-				DefaultPath = "C:/QA/AutoTool";
-			}
-			File fxprofile = new File(DefaultPath, "/conf/fxprofile");			
-			fxprofilepath = fxprofile.getAbsolutePath();
-			System.setProperty("webdriver.firefox.driver", new File(DefaultPath, "/bin/webdriver.xpi").getAbsolutePath());
-			System.setProperty("webdriver.chrome.driver", new File(DefaultPath, "/bin/chromedriver.exe").getAbsolutePath());
-			System.setProperty("webdriver.ie.driver", new File(DefaultPath, "/bin/IEDriverServer.exe").getAbsolutePath());			
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		File fxprofile = new File(DefaultPath, "/conf/fxprofile");			
+		fxprofilepath = fxprofile.getAbsolutePath();
+		System.setProperty("webdriver.firefox.driver", new File(DefaultPath, "/bin/webdriver.xpi").getAbsolutePath());
+		System.setProperty("webdriver.chrome.driver", new File(DefaultPath, "/bin/chromedriver.exe").getAbsolutePath());
+		System.setProperty("webdriver.ie.driver", new File(DefaultPath, "/bin/IEDriverServer.exe").getAbsolutePath());			
+
 		
 	}
 
@@ -48,6 +46,9 @@ public class Property {
 		try {
 			setting.load(new BufferedReader(new FileReader(new File(DefaultPath, "/conf/setting.conf"))));			
 
+			parentNodeLocator = setting.getProperty("parentNodeLocator", "");
+			PageObject_Type = Integer.parseInt(setting.getProperty("PageObjectType", String.valueOf(PageObjectType.PAGEOBJECT_IN_CUCUMBER)));
+			SaveToPath = DefaultPath;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -71,7 +72,7 @@ public class Property {
 			path = new File(".").getAbsolutePath();
 			if(!Property.class.getProtectionDomain().getCodeSource().getLocation().getFile().toString().contains(".jar"))
 			{
-				path = "C:/QA/AutoTool";
+				path = "D:/QA/AutoTool";
 			}
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
@@ -92,7 +93,7 @@ public class Property {
 			path = new File(".").getAbsolutePath();
 			if(!Property.class.getProtectionDomain().getCodeSource().getLocation().getFile().toString().contains(".jar"))
 			{
-				path = "C:/QA/AutoTool";
+				path = "D:/QA/AutoTool";
 			}
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block

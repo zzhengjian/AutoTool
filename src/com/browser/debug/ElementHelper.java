@@ -14,6 +14,7 @@ public class ElementHelper {
 	private String text;
 	private String tagName;
 	private boolean usingId = true;
+	private boolean usingName = true;
 	private boolean usingClassName = true;
 	private boolean usingDataContent = false;
 	
@@ -34,11 +35,14 @@ public class ElementHelper {
 	public static void setElementName(String elementName) {
 		ElementName = elementName;
 	}
-	
+
+	public String getText() {
+		return text;
+	}
+
 	public boolean isUsingId() {
 		return usingId;
 	}
-
 
 
 	public void setUsingId(boolean usingId) {
@@ -46,6 +50,15 @@ public class ElementHelper {
 	}
 
 
+	public boolean isUsingName() {
+		return usingName;
+	}
+
+
+	public void setUsingName(boolean usingName) {
+		this.usingName = usingName;
+	}
+	
 
 	public boolean isUsingClassName() {
 		return usingClassName;
@@ -66,7 +79,7 @@ public class ElementHelper {
 		String id = oWebElement.getAttribute("id") == null ? "" : oWebElement.getAttribute("id").trim();
 		String name = oWebElement.getAttribute("name") == null ? "" : oWebElement.getAttribute("name").trim();
 		String src = oWebElement.getAttribute("src") == null ? "" : oWebElement.getAttribute("src").trim();		
-		String className = oWebElement.getAttribute("class") == null ? "" : oWebElement.getAttribute("class").replace(" firepath-matching-node", "").trim();
+		String className = oWebElement.getAttribute("class") == null ? "" : oWebElement.getAttribute("class").trim();
 		String datacontent = oWebElement.getAttribute("data-content") == null ? "" : oWebElement.getAttribute("data-content").trim();
 		
 		if(!datacontent.equals("") && text.equals(""))
@@ -75,27 +88,31 @@ public class ElementHelper {
 			usingDataContent = true;
 		}
 		
-		if(tagName.matches("a|p|label|span|button|li|strong|h[1-9]") && text != null && !text.trim().equals(""))
+		if(tagName.matches("a|p|label|span|button|li|strong|h[1-9]|em|b") && text != null && !text.trim().equals(""))
 		{
-			Pattern pattern = Pattern.compile("[a-zA-Z0-9]+",Pattern.DOTALL);
+			Pattern pattern = Pattern.compile("[a-zA-Z0-9\u4e00-\u9fa5]+",Pattern.DOTALL);
 			Matcher matcher = pattern.matcher(text);
 			if(matcher.find())
 			{
-				setUsingId(false);				
+				setUsingId(false);	
+				setUsingName(false);
 			}
 			
 			if(id.toLowerCase().contains("error"))
 			{				
 				setUsingId(true);
 			}
+			
 		}	
+		
+
 				
 		//String tag = oWebElement.getTagName().toLowerCase();
 		if(id !=null && !id.equals("") && isUsingId())
 		{
 			elementName.append(Utils.evalName(id));
 		}			
-		else if(name != null && !name.equals(""))
+		else if(name != null && !name.equals("") && isUsingName())
 		{
 			elementName.append(Utils.evalName(name));
 		}						
@@ -117,7 +134,7 @@ public class ElementHelper {
 			elementName.append("Element");
 		}
 
-		return elementName.toString();
+		return elementName.toString() + elementNameExt();
 	}
 	
 
@@ -200,7 +217,7 @@ public class ElementHelper {
 	{
 		ArrayList<String> xpathArr = new ArrayList<String>();
 		
-		xpathArr.add(".//*[not(ancestor::table)][normalize-space(translate(text(),' ',' '))][not(ancestor::select)]|.//input[not(ancestor::table)][@type!='hidden']|(.//img|.//select|.//i|.//a|.//h1|.//h2|.//h3|.//h4)[not(ancestor::table)]");		
+		xpathArr.add(".//*[not(ancestor::table)][normalize-space(translate(text(),' ',' '))][not(ancestor::select)][not(self::sup)][not(self::iframe)][not(self::frame)][not(self::script)]|.//input[not(ancestor::table)][@type!='hidden']|(.//img|.//select|.//i|.//a|.//h1|.//h2|.//h3|.//h4)[not(ancestor::table)]");		
 		return xpathArr;
 	}
 	
@@ -208,7 +225,7 @@ public class ElementHelper {
 	
 	public String addNewGDElement(String pageName, String selector)
 	{
-		String elementName = evaluateElementName() + elementNameExt();
+		String elementName = evaluateElementName();
 
 		return updateGDElement(pageName, elementName, selector);
 	}
@@ -224,7 +241,7 @@ public class ElementHelper {
 		else
 			gdelement.append("		:desktopcss => \"").append(selector).append("\"");
 		
-		if(tagName.matches("a|h[1-9]|li|span|strong|div|p|label") && !text.trim().equals("") && !usingDataContent)
+		if(tagName.matches("a|h[1-9]|li|span|strong|div|p|label|em|b") && !text.trim().equals("") && !usingDataContent)
 			gdelement.append(",\n").append("		:text => \"").append(Utils.EscapeQuate(text)).append("\"");
 		gdelement.append("\n").append("		)").append("\n");
 		gdelement.append("	)").append("\n\n");
@@ -243,7 +260,8 @@ public class ElementHelper {
 		//if element has more than 2 child elements, we can skip to add it's text
 		return oWebElement.findElements(By.xpath(".//*")).size() > 2;
 	}
-	
+
+
 
 	
 	

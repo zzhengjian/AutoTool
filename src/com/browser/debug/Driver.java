@@ -2,8 +2,8 @@ package com.browser.debug;
 
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -17,20 +17,21 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 
 public class Driver {
-	
-	//static String Path = "C:/QA/AutoTool/";
+
 	public static boolean Reload = false;
 	public static WebDriver oWebDriver = null;
 	
+	private HashMap<Enum<Browser>, WebDriver> driverMap = new HashMap<Enum<Browser>, WebDriver>(); 
+	
 	public Driver(){
-		
-//		System.setProperty("webdriver.chrome.driver", Path + "bin/chromedriver.exe");
-//		System.setProperty("webdriver.ie.driver", Path + "bin/IEDriverServer.exe");
-//		System.setProperty("webdriver.firefox.driver", Path + "bin/webdriver.xpi");
-
-		
+	
 	}
 	
+	
+	public WebDriver getDriver(String browser)
+	{
+		return driverMap.get(Enum.valueOf(Browser.class, browser));		
+	}
 	
 	/**
 	 * Instantiate browser specific WebDriver based on browser type.
