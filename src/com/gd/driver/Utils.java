@@ -1,4 +1,4 @@
-package com.browser.debug;
+package com.gd.driver;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;

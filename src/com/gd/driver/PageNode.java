@@ -1,4 +1,4 @@
-package com.browser.debug;
+package com.gd.driver;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,8 +14,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.junit.Test;
 
-import com.browser.page.ElementBean;
-import com.browser.page.PageBean;
+import com.gd.pagetree.ElementBean;
+import com.gd.pagetree.PageBean;
 
 public class PageNode {
 	

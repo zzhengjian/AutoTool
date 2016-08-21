@@ -5,7 +5,7 @@ import java.util.List;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import com.browser.debug.Customer;
+import com.gd.driver.Customer;
 
 public class Nascar_Login {
 

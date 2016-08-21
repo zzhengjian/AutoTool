@@ -1,4 +1,4 @@
-package com.browser.debug;
+package com.gd.driver;
 
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -51,10 +51,10 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.browser.page.ElementBean;
-import com.browser.page.PageBean;
-import com.browser.page.PageTree;
 import com.gd.loginhelper.TestFrame;
+import com.gd.pagetree.ElementBean;
+import com.gd.pagetree.PageBean;
+import com.gd.pagetree.PageTree;
 import com.gd.pogen.POGen;
 
 
@@ -657,7 +657,8 @@ public class AutoTool {
 			}
 		});
 		
-		JButton btnRefreshButton = new JButton("refresh");
+		JButton btnRefreshButton = new JButton("");
+		btnRefreshButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/refresh.png")));
 		btnRefreshButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -721,10 +722,11 @@ public class AutoTool {
 
 			}
 		});
-		btnRefreshButton.setBounds(670, 41, 86, 23);
+		btnRefreshButton.setBounds(491, 41, 16, 16);
 		frmAutotool.getContentPane().add(btnRefreshButton);
 		
 		JButton btnAddButton = new JButton("");
+		btnAddButton.setToolTipText("Open Page");
 		btnAddButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/addDisabled.png")));
 		btnAddButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -768,6 +770,7 @@ public class AutoTool {
 		frmAutotool.getContentPane().add(btnAddButton);
 		
 		JButton btnRemove = new JButton("");
+		btnRemove.setToolTipText("Remove a Page");
 		btnRemove.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/cancel.png")));
 		btnRemove.addMouseListener(new MouseAdapter() {
 			@Override
@@ -792,7 +795,7 @@ public class AutoTool {
 
 			}
 		});
-		btnRemove.setBounds(543, 41, 16, 16);
+		btnRemove.setBounds(471, 41, 16, 16);
 		frmAutotool.getContentPane().add(btnRemove);		
 
 		

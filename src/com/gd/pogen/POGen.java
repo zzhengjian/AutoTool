@@ -13,8 +13,8 @@ import javax.swing.JTextField;
 
 import org.openqa.selenium.WebDriver;
 
-import com.browser.debug.Driver;
-import com.browser.debug.Property;
+import com.gd.driver.Driver;
+import com.gd.driver.Property;
 
 public class POGen {
 
@@ -61,7 +61,6 @@ public class POGen {
 	 */
 	public POGen() {
 		initialize();
-		Property.SetUp();
 	}
 
 	/**

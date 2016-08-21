@@ -2,9 +2,9 @@ package com.gd.pogen;
 
 import java.io.File;
 
-import com.browser.debug.Utils;
-import com.browser.page.ElementBean;
-import com.browser.page.PageBean;
+import com.gd.driver.Utils;
+import com.gd.pagetree.ElementBean;
+import com.gd.pagetree.PageBean;
 import com.google.gson.Gson;
 
 public class Save {

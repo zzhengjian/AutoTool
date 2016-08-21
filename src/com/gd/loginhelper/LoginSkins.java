@@ -3,7 +3,7 @@ package com.gd.loginhelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
-import com.browser.debug.Customer;
+import com.gd.driver.Customer;
 import com.gd.pageobject.GD_Challengelogin;
 import com.gd.pageobject.GD_Login;
 import com.gd.pageobject.Nascar_Challengelogin;

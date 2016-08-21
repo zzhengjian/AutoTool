@@ -9,8 +9,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
-import com.browser.debug.Property;
-import com.browser.debug.Utils;
+import com.gd.driver.Property;
+import com.gd.driver.Utils;
 
 public class PageHelper {
 	

@@ -7,13 +7,14 @@ import java.util.Map.Entry;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+
+import com.gd.driver.Customer;
+import com.gd.driver.Driver;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import com.browser.debug.Customer;
-import com.browser.debug.Driver;
 
 public class AutoFillPanel extends JPanel {
 

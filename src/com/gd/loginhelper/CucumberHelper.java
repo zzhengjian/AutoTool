@@ -13,8 +13,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import com.browser.debug.AutoTool;
-import com.browser.debug.Customer;
+import com.gd.driver.AutoTool;
+import com.gd.driver.Customer;
 
 
 

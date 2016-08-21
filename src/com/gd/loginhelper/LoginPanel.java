@@ -19,8 +19,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import com.browser.debug.Customer;
-import com.browser.debug.Driver;
+import com.gd.driver.Customer;
+import com.gd.driver.Driver;
 
 public class LoginPanel extends JPanel {
 	/**

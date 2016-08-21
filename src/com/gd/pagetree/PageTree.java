@@ -1,4 +1,4 @@
-package com.browser.page;
+package com.gd.pagetree;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.browser.debug.PageNode;
+import com.gd.driver.PageNode;
 import com.google.gson.Gson;
 
 public class PageTree {

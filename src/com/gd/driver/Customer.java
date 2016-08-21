@@ -1,4 +1,4 @@
-package com.browser.debug;
+package com.gd.driver;
 
 import java.io.BufferedReader;
 import java.io.File;

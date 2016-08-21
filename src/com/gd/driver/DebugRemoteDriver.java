@@ -1,4 +1,4 @@
-package com.browser.debug;
+package com.gd.driver;
 
 import java.net.URL;
 import java.util.Set;

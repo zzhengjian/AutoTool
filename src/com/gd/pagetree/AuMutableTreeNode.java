@@ -1,4 +1,4 @@
-package com.browser.page;
+package com.gd.pagetree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
