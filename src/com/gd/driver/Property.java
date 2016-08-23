@@ -64,23 +64,6 @@ public class Property {
 	public static void setDefault_Wait_Time(int default_Wait_Time) {
 		Default_Wait_Time = default_Wait_Time;
 	}
-	
-	public static String getDefaultPath() {
-		String path = "";
-		try {
-			path = Property.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-			path = new File(".").getAbsolutePath();
-			if(!Property.class.getProtectionDomain().getCodeSource().getLocation().getFile().toString().contains(".jar"))
-			{
-				path = "D:/QA/AutoTool";
-			}
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return path;
-	}
 
 	public static void setDefaultPath(String defaultPath) {
 		DefaultPath = defaultPath;
@@ -93,7 +76,7 @@ public class Property {
 			path = new File(".").getAbsolutePath();
 			if(!Property.class.getProtectionDomain().getCodeSource().getLocation().getFile().toString().contains(".jar"))
 			{
-				path = "D:/QA/AutoTool";
+				path = "C:/QA/AutoTool";
 			}
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block

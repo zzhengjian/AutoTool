@@ -55,6 +55,11 @@ public class CucumberHelper {
 	            else if(line.contains("Password:"))
 	            {
 	            	Customer.Password = line.split("Password:")[1].trim();
+	            }	            
+	            else if(line.contains(Customer.Customer_Not_Exist))
+	            {
+	            	Customer.UserId = Customer.Customer_Not_Exist;
+	            	break;
 	            }
 	        }
 	        

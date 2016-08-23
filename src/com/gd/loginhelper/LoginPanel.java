@@ -253,11 +253,20 @@ public class LoginPanel extends JPanel {
 				CucumberHelper.getCustTypeArgs().put("Email", "");
 				
 				CucumberHelper.getUserId();
-				boolean isLogin = LoginSkins.login(Driver.oWebDriver, (String) cbxProject.getSelectedItem());
-				if(!isLogin)
+				if(Customer.UserId.equals(Customer.Customer_Not_Exist))
 				{
-					JOptionPane.showMessageDialog(null, "UserId/Password is incorrect, Please make sure you inputs in correct");
+					JOptionPane.showMessageDialog(null, "Customer not found");
 				}
+				else
+				{
+					boolean isLogin = LoginSkins.login(Driver.oWebDriver, (String) cbxProject.getSelectedItem());
+					if(!isLogin)
+					{
+						JOptionPane.showMessageDialog(null, "UserId/Password is incorrect, Please make sure you inputs in correct");
+					}
+				}
+				
+
 			}
 		});
 		

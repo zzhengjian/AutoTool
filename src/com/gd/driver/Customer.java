@@ -12,6 +12,7 @@ import java.util.Properties;
 
 public class Customer {
 	
+	public final static String Customer_Not_Exist = "customerkey not exist!"; 
 	public static String UserId = "";
 	public static String Password = "NECTESTAU0";
 	

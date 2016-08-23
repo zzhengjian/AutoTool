@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+	
+	<persistence-unit name="QA4" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.gd.framework.entity.Consumer</class>
+		<class>com.gd.framework.entity.ConsumerProfile</class>
+		<class>com.gd.framework.entity.Phone</class>
+		<class>com.gd.framework.entity.Email</class>
+		<class>com.gd.framework.entity.Card</class>
+		<class>com.gd.framework.entity.Plastic</class>
+		<class>com.gd.framework.entity.WebUser</class>
+		<class>com.gd.framework.entity.Address</class>
+		<class>com.gd.framework.entity.Customer</class>
+		<class>com.gd.framework.entity.Account</class>
+		<class>com.gd.framework.entity.Budget</class>
+		<class>com.gd.framework.entity.Identification</class>
+		<class>com.gd.framework.entity.PhoneVerification</class>
+		<class>com.gd.framework.entity.EmailVerification</class>
+		<class>com.gd.framework.entity.AccountCardDesignRequest</class>
+		<class>com.gd.framework.entity.CardDesignImage</class>
+		<class>com.gd.framework.entity.WebUserAuth</class>
+		<class>com.gd.framework.entity.TSysQueue</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://GDCQA4-SQL01;databaseName=QA4;" />
+			<property name="eclipselink.jdbc.user" value="qa_automation"/>
+			<property name="eclipselink.jdbc.password" value="Gr33nDot!"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.session" value="true" />
+			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/qa4.txt"/>
+			<property name="eclipselink.logging.level" value="FINE" />
+		</properties>
+	</persistence-unit>
+	
+	<persistence-unit name="QA5" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.gd.framework.entity.Consumer</class>
+		<class>com.gd.framework.entity.ConsumerProfile</class>
+		<class>com.gd.framework.entity.Phone</class>
+		<class>com.gd.framework.entity.Email</class>
+		<class>com.gd.framework.entity.Card</class>
+		<class>com.gd.framework.entity.Plastic</class>
+		<class>com.gd.framework.entity.WebUser</class>
+		<class>com.gd.framework.entity.Address</class>
+		<class>com.gd.framework.entity.Customer</class>
+		<class>com.gd.framework.entity.Account</class>
+		<class>com.gd.framework.entity.Budget</class>
+		<class>com.gd.framework.entity.Identification</class>
+		<class>com.gd.framework.entity.PhoneVerification</class>
+		<class>com.gd.framework.entity.EmailVerification</class>
+		<class>com.gd.framework.entity.AccountCardDesignRequest</class>
+		<class>com.gd.framework.entity.CardDesignImage</class>
+		<class>com.gd.framework.entity.WebUserAuth</class>
+		<class>com.gd.framework.entity.TSysQueue</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://GDCQA5VSQL01;databaseName=QA5;" />
+			<property name="eclipselink.jdbc.user" value="qa_automation"/>
+			<property name="eclipselink.jdbc.password" value="Gr33nDot!"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.session" value="true" />
+			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/qa5.txt"/>
+			<property name="eclipselink.logging.level" value="FINE" />
+		</properties>
+	</persistence-unit>
+	
+	<persistence-unit name="DEVINT" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.gd.framework.entity.AutomationCustomer</class>
+		<class>com.gd.framework.entity.Consumer</class>
+		<class>com.gd.framework.entity.ConsumerProfile</class>
+		<class>com.gd.framework.entity.Phone</class>
+		<class>com.gd.framework.entity.Email</class>
+		<class>com.gd.framework.entity.Card</class>
+		<class>com.gd.framework.entity.Plastic</class>
+		<class>com.gd.framework.entity.WebUser</class>
+		<class>com.gd.framework.entity.Address</class>
+		<class>com.gd.framework.entity.Customer</class>
+		<class>com.gd.framework.entity.Account</class>
+		<class>com.gd.framework.entity.Budget</class>
+		<class>com.gd.framework.entity.Identification</class>
+		<class>com.gd.framework.entity.PhoneVerification</class>
+		<class>com.gd.framework.entity.EmailVerification</class>
+		<class>com.gd.framework.entity.AccountCardDesignRequest</class>
+		<class>com.gd.framework.entity.CardDesignImage</class>
+		<class>com.gd.framework.entity.WebUserAuth</class>
+		<class>com.gd.framework.entity.TSysQueue</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://GDCDEV3-SQL1;databaseName=INTEGRATION;" />
+			<property name="eclipselink.jdbc.user" value="qa_automation"/>
+			<property name="eclipselink.jdbc.password" value="Gr33nDot!"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.session" value="true" />
+			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/devint.txt"/>
+			<property name="eclipselink.logging.level" value="FINE" />
+		</properties>
+	</persistence-unit>
+	
+	<persistence-unit name="QA2" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.gd.framework.entity.AutomationCustomer</class>
+		<class>com.gd.framework.entity.Consumer</class>
+		<class>com.gd.framework.entity.ConsumerProfile</class>
+		<class>com.gd.framework.entity.Phone</class>
+		<class>com.gd.framework.entity.Email</class>
+		<class>com.gd.framework.entity.Card</class>
+		<class>com.gd.framework.entity.Plastic</class>
+		<class>com.gd.framework.entity.WebUser</class>
+		<class>com.gd.framework.entity.Address</class>
+		<class>com.gd.framework.entity.Customer</class>
+		<class>com.gd.framework.entity.Account</class>
+		<class>com.gd.framework.entity.Budget</class>
+		<class>com.gd.framework.entity.Identification</class>
+		<class>com.gd.framework.entity.PhoneVerification</class>
+		<class>com.gd.framework.entity.EmailVerification</class>
+		<class>com.gd.framework.entity.AccountCardDesignRequest</class>
+		<class>com.gd.framework.entity.CardDesignImage</class>
+		<class>com.gd.framework.entity.WebUserAuth</class>
+		<class>com.gd.framework.entity.TSysQueue</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://GDCQAENV2-SQL2;databaseName=QA_TPP;" />
+			<property name="eclipselink.jdbc.user" value="qa_automation"/>
+			<property name="eclipselink.jdbc.password" value="Gr33nDot!"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.session" value="true" />
+			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/qa2.txt"/>
+			<property name="eclipselink.logging.level" value="FINE" />
+		</properties>
+	</persistence-unit>
+	
+	<persistence-unit name="QA3" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.gd.framework.entity.AutomationCustomer</class>
+		<class>com.gd.framework.entity.Consumer</class>
+		<class>com.gd.framework.entity.ConsumerProfile</class>
+		<class>com.gd.framework.entity.Phone</class>
+		<class>com.gd.framework.entity.Email</class>
+		<class>com.gd.framework.entity.Card</class>
+		<class>com.gd.framework.entity.Plastic</class>
+		<class>com.gd.framework.entity.WebUser</class>
+		<class>com.gd.framework.entity.Address</class>
+		<class>com.gd.framework.entity.Customer</class>
+		<class>com.gd.framework.entity.Account</class>
+		<class>com.gd.framework.entity.Budget</class>
+		<class>com.gd.framework.entity.Identification</class>
+		<class>com.gd.framework.entity.PhoneVerification</class>
+		<class>com.gd.framework.entity.EmailVerification</class>
+		<class>com.gd.framework.entity.AccountCardDesignRequest</class>
+		<class>com.gd.framework.entity.CardDesignImage</class>
+		<class>com.gd.framework.entity.WebUserAuth</class>
+		<class>com.gd.framework.entity.TSysQueue</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://GDCQA3SQL01;databaseName=QA3;" />
+			<property name="eclipselink.jdbc.user" value="qa_automation"/>
+			<property name="eclipselink.jdbc.password" value="Gr33nDot!"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.session" value="true" />
+			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/qa3.txt"/>
+			<property name="eclipselink.logging.level" value="FINE" />
+		</properties>
+	</persistence-unit>
+	
+	<persistence-unit name="AUTOMATION" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.gd.framework.entity.AutomationCustomer</class>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://GDCQA3-SQL1;databaseName=AUTOMATION;" />
+			<property name="eclipselink.jdbc.user" value="qa_automation"/>
+			<property name="eclipselink.jdbc.password" value="Gr33nDot!"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.session" value="true" />
+			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/automation.txt"/>
+			<property name="eclipselink.logging.level" value="FINE" />
+		</properties>
+	</persistence-unit>
+	
+	<persistence-unit name="NRT" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://GDCQA4-NRT01;databaseName=QA4NRT1;" />
+			<property name="eclipselink.jdbc.user" value="qa_automation"/>
+			<property name="eclipselink.jdbc.password" value="Gr33nDot!"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.session" value="true" />
+			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/automation.txt"/>
+			<property name="eclipselink.logging.level" value="FINE" />
+		</properties>
+	</persistence-unit>
+	
+</persistence>
