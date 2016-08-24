@@ -3,6 +3,7 @@ package com.gd.driver;
 import java.net.URL;
 import java.util.Set;
 
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.HttpCommandExecutor;
@@ -104,8 +105,14 @@ public class DebugRemoteDriver extends RemoteWebDriver {
 				String handle = oWebDirver.getWindowHandle();
 				oWebDirver.switchTo().window(handle);
 				sText = commandName;
-				break;				
-				
+				break;		
+			case getScreenShot:
+				sText = ((RemoteWebDriver) oWebDirver).getScreenshotAs(OutputType.BASE64);
+				break;
+			case MaximizeWindow:
+				oWebDirver.manage().window().maximize();
+			case FullScreen:
+				oWebDirver.manage().window().maximize();
 			default: 
 				break;					
 		

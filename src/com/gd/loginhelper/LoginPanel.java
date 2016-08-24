@@ -1,8 +1,12 @@
 package com.gd.loginhelper;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -19,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import com.gd.driver.AutoTool;
 import com.gd.driver.Customer;
 import com.gd.driver.Driver;
 
@@ -40,11 +45,15 @@ public class LoginPanel extends JPanel {
 	private JButton btnClear;
 	private JScrollPane scrpCustType;
 	private JComboBox<String>  cbxProject;
-	private JLabel lblProject;
+	private JLabel lblProject;	
 	private JList<String> ltCustomerType2;
 
+	List<String> defaultCustlists;
+	private DefaultListModel<String> defaultCustomerModel;
 	private DefaultListModel<String> ltCustomerType2Model;
+	
 	private JButton btnRemove;
+	private JTextField tfSearchBox;
 	
 	/**
 	 * Create the panel.
@@ -87,6 +96,7 @@ public class LoginPanel extends JPanel {
 		scrpCustType = new JScrollPane();
 		
 		cbxProject = new JComboBox<String>();
+
 		int size = Customer.projectList.size();
 		String[] projects = new String[size];
 		DefaultComboBoxModel<String> projectModel = new DefaultComboBoxModel<String>(Customer.projectList.toArray(projects));
@@ -95,6 +105,9 @@ public class LoginPanel extends JPanel {
 		lblProject = new JLabel("Project");
 		
 		btnRemove = new JButton("Remove");
+		
+		tfSearchBox = new JTextField();
+		tfSearchBox.setColumns(10);
 				
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
@@ -109,73 +122,84 @@ public class LoginPanel extends JPanel {
 								.addComponent(lblProductcode)
 								.addComponent(lblProject, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE))
 							.addGap(18)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-									.addComponent(tfAccountAge, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE)
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+								.addComponent(tfProductCode, 109, 109, 109)
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 									.addComponent(tfAccountBalance, GroupLayout.PREFERRED_SIZE, 64, GroupLayout.PREFERRED_SIZE)
-									.addComponent(tfProductCode, 109, 109, 109))
+									.addComponent(tfAccountAge, GroupLayout.PREFERRED_SIZE, 65, GroupLayout.PREFERRED_SIZE))
 								.addComponent(cbxProject, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE))
-							.addGap(31)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+							.addGap(45)
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
 								.addGroup(groupLayout.createSequentialGroup()
 									.addComponent(btnAdd, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnRemove, GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnClear))
-								.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-								.addComponent(lblCustomerType)
-								.addComponent(scrpCustType, GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE))
+									.addComponent(btnClear)
+									.addGap(4))
+								.addComponent(lblCustomerType, Alignment.LEADING)
+								.addComponent(tfSearchBox, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 137, GroupLayout.PREFERRED_SIZE)
+								.addComponent(scrpCustType, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE))
 							.addGap(52))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(btnLogin)
-							.addGap(27))))
+							.addGap(26))))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addContainerGap()
+					.addComponent(lblCustomerType)
+					.addGap(2)
+					.addComponent(tfSearchBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(tfProductCode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(tfAccountAge, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addGap(8)
-							.addComponent(tfAccountBalance, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
+									.addGap(13))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addGap(32)
+									.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblProject)
+										.addComponent(cbxProject, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+									.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblProductcode)
+										.addComponent(tfProductCode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+									.addPreferredGap(ComponentPlacement.UNRELATED)
+									.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblAccountage)
+										.addComponent(tfAccountAge, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+									.addGap(14)
+									.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+										.addComponent(lblAmount)
+										.addComponent(tfAccountBalance, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+							.addGap(29)
+							.addComponent(scrpCustType, GroupLayout.PREFERRED_SIZE, 208, GroupLayout.PREFERRED_SIZE))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblProductcode)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(lblAccountage)
-							.addGap(14)
-							.addComponent(lblAmount))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblCustomerType)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-								.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
-								.addComponent(lblProject)
-								.addComponent(cbxProject, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGap(157)
 							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 								.addComponent(btnAdd)
-								.addComponent(btnClear)
-								.addComponent(btnRemove))))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrpCustType, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE)
-					.addGap(18)
+								.addComponent(btnRemove)
+								.addComponent(btnClear))
+							.addGap(230)))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnLogin)
-					.addGap(51))
+					.addGap(49))
 		);
 			
 		ltCustomerType = new JList<String>();
 		
-		DefaultListModel<String> model = new DefaultListModel<String>();
-		List<String> custlists = CucumberHelper.loadCustomerTypes();
-		for(String cust : custlists)
+		defaultCustomerModel = new DefaultListModel<String>();
+		defaultCustlists = CucumberHelper.loadCustomerTypes();
+		for(String cust : defaultCustlists)
 		{
-			model.addElement(cust);
+			defaultCustomerModel.addElement(cust);
 		}
-		ltCustomerType.setModel(model);
+		ltCustomerType.setModel(defaultCustomerModel);
 
 		scrollPane.setViewportView(ltCustomerType);
 		
@@ -230,7 +254,7 @@ public class LoginPanel extends JPanel {
 		btnLogin.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent paramMouseEvent) {
-				
+							
 				int size = ltCustomerType2.getModel().getSize();
 				
 				String custTypes = "";
@@ -270,6 +294,48 @@ public class LoginPanel extends JPanel {
 			}
 		});
 		
+		tfSearchBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//Filter search results
+				List<String> tempCustList = new ArrayList<String>();
+				String type = tfSearchBox.getText();
+				if(!type.equals(""))
+				{
+					for(String temptype : defaultCustlists)
+					{
+						if(temptype.toLowerCase().contains(type.toLowerCase()))
+						{
+							tempCustList.add(temptype);
+						}
+					}
+					DefaultListModel<String> tempCustomerModel = new DefaultListModel<String>();
+					for(String cust : tempCustList)
+					{
+						tempCustomerModel.addElement(cust);
+					}
+					
+					ltCustomerType.setModel(tempCustomerModel);
+				}
+				else
+				{
+					ltCustomerType.setModel(defaultCustomerModel);
+				}
+
+			}
+		});
 		
+		cbxProject.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(cbxProject.getSelectedItem().equals("Walmart"))
+				{
+					CucumberHelper.runPath = Paths.get(AutoTool.CucumberDirectoryPath, "Projects/Walmart");
+				}
+				else
+				{
+					CucumberHelper.runPath = Paths.get(AutoTool.CucumberDirectoryPath, "Projects/GreenDot");
+				}
+			}
+		});
+
 	}
 }

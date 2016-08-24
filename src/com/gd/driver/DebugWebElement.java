@@ -208,6 +208,13 @@ public class DebugWebElement extends RemoteWebElement {
 
 			sText = elementHelper.updateGDElement(AutoTool.PageName, ElementHelper.getElementName(), (String)response.getValue());		
 			break;
+			
+		case showElement:
+			oJavascriptExecutor.executeScript("return $(arguments[0]).show();", oWebElement);	
+			break;
+		case hideElement:
+			oJavascriptExecutor.executeScript("return $(arguments[0]).hide();", oWebElement);
+			break;
 		default:
 			return null;	
 			

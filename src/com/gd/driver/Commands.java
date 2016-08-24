@@ -18,6 +18,8 @@ public enum Commands {
 	getElementInfo,
 	addNewElement, 
 	updateElement,
+	showElement,
+	hideElement,
 	goTo,
 	back,
 	forward,
@@ -34,6 +36,9 @@ public enum Commands {
 	switchToWindow,
 	switchToDefaultContent,
 	switchToFrame,
-	HighLightCurrentWindow
+	HighLightCurrentWindow,
+	MaximizeWindow,
+	FullScreen,
+	getScreenShot
 	
 }

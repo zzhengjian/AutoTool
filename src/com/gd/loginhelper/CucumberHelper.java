@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import com.gd.driver.Customer;
 public class CucumberHelper {
 	
 	public static StringBuilder tcase;
-	
+	public static Path runPath = Paths.get(AutoTool.CucumberDirectoryPath,"Projects\\GreenDot");
 	private static HashMap<String, String> custTypeArgs = new HashMap<String, String>();	
 	
 	public static HashMap<String, String> getCustTypeArgs() {
@@ -42,7 +43,7 @@ public class CucumberHelper {
 		
 		int exitVal = 0;
 		try {
-			pr = rt.exec("cmd /c cucumber auto.feature", null, new File(AutoTool.CucumberDirectoryPath,"Projects\\GreenDot"));
+			pr = rt.exec("cmd /c cucumber auto.feature", null, new File(runPath.toUri()));
 			BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
 			String line=null;
 			 
@@ -84,7 +85,7 @@ public class CucumberHelper {
 		tcase.append("Given I get userid and password from specific customer and store to userid \"UserID\" and password \"Password\"");
 	
 		
-		File file = new File(Paths.get(AutoTool.CucumberDirectoryPath,"Projects\\GreenDot").toString(), "auto.feature");
+		File file = new File(runPath.toString(), "auto.feature");
 	
 		try {
 			FileUtils.writeStringToFile(file, tcase.toString(), "utf-8");
