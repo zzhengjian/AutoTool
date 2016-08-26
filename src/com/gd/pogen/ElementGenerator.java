@@ -9,14 +9,15 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.Command;
 import org.openqa.selenium.remote.DriverCommand;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.gd.driver.Driver;
 import com.gd.driver.ElementHelper;
 import com.gd.driver.Property;
 import com.gd.driver.Utils;
@@ -27,7 +28,6 @@ import com.google.common.collect.ImmutableMap;
 public class ElementGenerator {
 	
 	private String url;
-
 	
 	public void GeneratePageObject(WebDriver oWebDriver) {
 		// TODO Auto-generated method stub
@@ -38,29 +38,19 @@ public class ElementGenerator {
 		wait.until(ExpectedConditions.presenceOfElementLocated(Utils.getBy(Property.parentNodeLocator)));
 		for(String xpath : ElementHelper.xpaths())
 		{
-			allElements.addAll(oWebDriver.findElement(Utils.getBy(Property.parentNodeLocator)).findElements(By.xpath(xpath)));
+			WebElement parent = oWebDriver.findElement(Utils.getBy(Property.parentNodeLocator));
+			allElements.addAll(parent.findElements(By.xpath(xpath)));
 		}
 
 		String pageName = Property.pageFileName.equals("") ? PageHelper.generatePageNameWithUrl(url) : Property.pageFileName;
+		String fileName = pageName.contains("_") ? pageName.split("_")[1] : pageName;
 		PageBean page = new PageBean(url,pageName);
 		for(WebElement e : allElements)
 		{
 			
 			if(e.isDisplayed())
-			{
-
-				Response response = null;
-				String selector = "";
-				Command command = new Command(((FirefoxDriver)oWebDriver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)e).getId(),"other", ((RemoteWebElement)e).getId()));
-				try {
-					response = ((FirefoxDriver)oWebDriver).getCommandExecutor().execute(command);
-					selector = (String)response.getValue();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (ClassCastException e2)
-				{
-					e2.printStackTrace();
-				}				
+			{				
+				String selector = getSelectFromElement(e);				
 				
 				if("".equals(selector))
 				{
@@ -79,9 +69,7 @@ public class ElementGenerator {
 				page.addElement(ele);
 			}			
 				
-		}
-	
-			
+		}			
 
 		//store page to a file
 		try {
@@ -102,7 +90,8 @@ public class ElementGenerator {
 			}
 			
 			Save save = new Save(page);
-			File pagefile = save.toPageObjectFile(SavePath, Property.PageObject_Type);	
+
+			File pagefile = save.toPageObjectFile(SavePath,fileName, Property.PageObject_Type);	
 			//delete file if already exists
 			//File pagefile = new File(SavePath, "" + pageName + ".rb");
 			if(pagefile.exists())
@@ -117,5 +106,26 @@ public class ElementGenerator {
 		}
 	}
 
+	private String getSelectFromElement(WebElement e) {
+		
+		WebDriver driver = Driver.oWebDriver;
+		Response response = null;
+		String selector = "";
+		Command command = new Command(((RemoteWebDriver)driver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)e).getId(),"other", ((RemoteWebElement)e).getId()));
+		try {
+			response = ((RemoteWebDriver)driver).getCommandExecutor().execute(command);
+			selector = (String)response.getValue();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} catch (ClassCastException e2)
+		{
+			e2.printStackTrace();
+		}	
+		
+		return selector;
+	}
+
+	
+	
 
 }

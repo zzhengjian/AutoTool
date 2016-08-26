@@ -110,6 +110,7 @@ public class AutoTool {
     private JMenuItem mntmLoginHelper;
     private JMenuItem mntmAutoFill;
     private JMenu mnPlugins;
+    private JLabel lblUrl;
     
 	/**
 	 * Launch the application.
@@ -312,12 +313,29 @@ public class AutoTool {
 		sParam.setColumns(10);
 		
 		url = new JTextField();
-		url.setBounds(5, 106, 316, 20);
+		url.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					URL sUrl = new URL(url.getText());
+					System.out.println(sUrl);
+					oWebDriver.manage().timeouts().pageLoadTimeout(90, TimeUnit.SECONDS);
+					oWebDriver.get(sUrl.toString());
+				} catch (MalformedURLException e) {	
+					logTextPane.setText(logTextPane.getText() + "Wrong url form" + "\n");
+					e.printStackTrace();
+				} catch (Exception e) {	
+					e.printStackTrace();
+				}						
+				
+			}
+		});
+		url.setBounds(5, 116, 387, 20);
 		frmAutotool.getContentPane().add(url);
 		url.setColumns(10);
 		
 		//nav to desired url
-		JButton btnGoto = new JButton("goTo");
+		JButton btnGoto = new JButton("");
+		btnGoto.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/rightArrow.png")));
 		btnGoto.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -335,7 +353,7 @@ public class AutoTool {
 				
 			}
 		});
-		btnGoto.setBounds(336, 105, 86, 23);
+		btnGoto.setBounds(402, 116, 20, 20);
 		frmAutotool.getContentPane().add(btnGoto);
 		
 		final JTree tree = new JTree();
@@ -722,12 +740,12 @@ public class AutoTool {
 
 			}
 		});
-		btnRefreshButton.setBounds(491, 41, 16, 16);
+		btnRefreshButton.setBounds(504, 41, 20, 20);
 		frmAutotool.getContentPane().add(btnRefreshButton);
 		
 		JButton btnAddButton = new JButton("");
-		btnAddButton.setToolTipText("Open Page");
-		btnAddButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/addDisabled.png")));
+		btnAddButton.setToolTipText("Add A Page to Tree Node");
+		btnAddButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/plus.png")));
 		btnAddButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -766,7 +784,7 @@ public class AutoTool {
 		});
 
 		
-		btnAddButton.setBounds(453, 41, 16, 16);
+		btnAddButton.setBounds(453, 41, 20, 20);
 		frmAutotool.getContentPane().add(btnAddButton);
 		
 		JButton btnRemove = new JButton("");
@@ -795,7 +813,7 @@ public class AutoTool {
 
 			}
 		});
-		btnRemove.setBounds(471, 41, 16, 16);
+		btnRemove.setBounds(478, 41, 20, 20);
 		frmAutotool.getContentPane().add(btnRemove);		
 
 		
@@ -918,6 +936,10 @@ public class AutoTool {
 			}
 		});
 		mnPlugins.add(mntmPoGen);
+		
+		lblUrl = new JLabel("URL");
+		lblUrl.setBounds(5, 94, 46, 14);
+		frmAutotool.getContentPane().add(lblUrl);
 		
 
 	}

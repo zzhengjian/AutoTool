@@ -24,28 +24,54 @@ public class Save {
 	
 	public File toPageObjectFile(String path, int type)
 	{
+//		File file = null;
+//		switch(type)
+//		{
+//			case PageObjectType.PAGEOBJECT_IN_CUCUMBER:
+//				toCucumber();
+//				file = new File(path, page.getPageName() + ".rb");
+//				break;
+//			case PageObjectType.PAGEOBJECT_IN_JAVA:
+//				toPOM();
+//				file = new File(path, page.getPageName() + ".java");
+//				break;
+//			case PageObjectType.PAGEOBJECT_IN_JSON:
+//				toJsonFile();
+//				file = new File(path, page.getPageName() + ".json");
+//				break;
+//			default:
+//				toCucumber();
+//				file = new File(path, page.getPageName() + ".rb");
+//				break;
+//		}
+//		return file;			
+		return toPageObjectFile(path,page.getPageName(), type);
+		
+	}
+	
+	public File toPageObjectFile(String path, String fileName, int type)
+	{
 		File file = null;
 		switch(type)
 		{
 			case PageObjectType.PAGEOBJECT_IN_CUCUMBER:
 				toCucumber();
-				file = new File(path, page.getPageName() + ".rb");
+				file = new File(path, fileName + ".rb");
 				break;
 			case PageObjectType.PAGEOBJECT_IN_JAVA:
 				toPOM();
-				file = new File(path, page.getPageName() + ".java");
+				file = new File(path, fileName + ".java");
 				break;
 			case PageObjectType.PAGEOBJECT_IN_JSON:
 				toJsonFile();
-				file = new File(path, page.getPageName() + ".json");
+				file = new File(path, fileName + ".json");
 				break;
 			default:
 				toCucumber();
-				file = new File(path, page.getPageName() + ".rb");
+				file = new File(path, fileName + ".rb");
 				break;
 		}
-		return file;
-		
+		return file;		
 		
 	}
 	
