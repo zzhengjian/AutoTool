@@ -23,10 +23,6 @@ public class Driver {
 	
 	private HashMap<Enum<Browser>, WebDriver> driverMap = new HashMap<Enum<Browser>, WebDriver>(); 
 	
-	public Driver(){
-	
-	}
-	
 	
 	public WebDriver getDriver(String browser)
 	{
