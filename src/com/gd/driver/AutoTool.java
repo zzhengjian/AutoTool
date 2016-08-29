@@ -111,6 +111,7 @@ public class AutoTool {
     private JMenuItem mntmAutoFill;
     private JMenu mnPlugins;
     private JLabel lblUrl;
+    private JButton btnInspect;
     
 	/**
 	 * Launch the application.
@@ -167,31 +168,6 @@ public class AutoTool {
 						oWebDriver = new Driver().StartWebDriver(sBrowserType);		
 						oWebDriver.manage().timeouts().pageLoadTimeout(50000, TimeUnit.MILLISECONDS);
 						btnStart.setText("Stop");
-						//Set a page reload frequency
-						Thread t = new Thread(){
-							
-							 @Override
-							 public void run()
-							 {
-								 while(!Thread.interrupted())
-								 {									 
-									 try {
-										if(oWebDriver==null || !Driver.Reload)
-										{
-											break;
-										}										
-										Thread.sleep(15*60*1000);
-										oWebDriver.navigate().refresh();
-										System.out.println("reload page");
-									} catch (InterruptedException e) {
-										e.printStackTrace();
-									} 
-								 }
-
-							 }
-	
-						};
-						t.start();
 					}
 					
 					else if(btnStart.getText().equals("Stop"))
@@ -267,7 +243,6 @@ public class AutoTool {
 			commandsModel.addElement(field.getName());			
 		}
 		commandName.setModel(commandsModel);
-		//commandName.setModel(new DefaultComboBoxModel(new String[] {"click", "clear", "getCurrentUrl","getTitle", "sendKeys", "mouseover","isDisplayed", "isEnabled", "isSelected", "getText", "getTagName","getElementSelector", "getAlertText", "acceptAlert", "dismissAlert", "execute", "getCssValue", "getAttribute", "getWindowHandle", "getWindowHandles","switchToWindow", "getElementInfo","addNewElement","updateElement"}));
 		commandName.setBounds(66, 196, 87, 22);
 		frmAutotool.getContentPane().add(commandName);
 		
@@ -844,14 +819,12 @@ public class AutoTool {
 		frmAutotool.getContentPane().add(lblPagename);
 		
 		pageNameField = new JTextField();
-		//pageNameField.getDocument().addDocumentListener(new MyDocumentListener(pageNameField.getText()));
 		
 		pageNameField.setColumns(10);
 		pageNameField.setBounds(15, 491, 113, 22);
 		frmAutotool.getContentPane().add(pageNameField);
 		
-		JButton btnInspect = new JButton("inspect");
-
+		btnInspect = new JButton("inspect");
 		
 		btnInspect.setDisabledIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
 		btnInspect.addActionListener(new ActionListener() {
@@ -869,12 +842,7 @@ public class AutoTool {
 
 				String selector = null;
 				try {
-					//this line to trigger firepath inspect mode					
-					oWebDriver.manage().ime().deactivate();
-					Utils.sleepFor(1);
-					//this line to get selector once element is inspected
-					selector = oWebDriver.manage().ime().getActiveEngine();
-					
+					selector = inspectOnElement(oWebDriver);					
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();
 					if(e.toString().contains("Please make sure firepath is open"))		
@@ -882,26 +850,17 @@ public class AutoTool {
 				}
 				elementTag.setText(selector);
 			}
+
+			private String inspectOnElement(WebDriver driver) {
+				//this line to trigger firepath inspect mode					
+				oWebDriver.manage().ime().deactivate();
+				Utils.sleepFor(1);
+				//this line to get selector once element is inspected
+				return oWebDriver.manage().ime().getActiveEngine();
+			}
 		});
 		btnInspect.setBounds(220, 61, 77, 23);
 		frmAutotool.getContentPane().add(btnInspect);
-		
-		final JCheckBox chckbxReload = new JCheckBox("Reload");
-		chckbxReload.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if(chckbxReload.isSelected())
-				{
-					Driver.Reload = true;					
-				}
-				else
-				{
-					Driver.Reload = false;						
-				}
-			}
-		});
-		chckbxReload.setBounds(325, 61, 97, 23);
-		frmAutotool.getContentPane().add(chckbxReload);
 		
 		menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 756, 21);
