@@ -30,9 +30,12 @@ public class ElementGenerator {
 	private String url;
 	
 	public void GeneratePageObject(WebDriver oWebDriver) {
+		// TODO Auto-generated method stub
 		url = Property.url;
-		waitForPageReady();
+		WebDriverWait wait = new WebDriverWait(oWebDriver, 5000);
+		wait.until(PageHelper.pageLoaded(oWebDriver));
 		List<WebElement> allElements = new ArrayList<WebElement>();
+		wait.until(ExpectedConditions.presenceOfElementLocated(Utils.getBy(Property.parentNodeLocator)));
 		for(String xpath : ElementHelper.xpaths())
 		{
 			WebElement parent = oWebDriver.findElement(Utils.getBy(Property.parentNodeLocator));
@@ -122,14 +125,7 @@ public class ElementGenerator {
 		return selector;
 	}
 
-	private void waitForPageReady()
-	{
-		WebDriver driver = Driver.oWebDriver;
-		WebDriverWait wait = new WebDriverWait(driver, 5000);
-		wait.until(PageHelper.pageLoaded(driver));
-		wait.until(ExpectedConditions.presenceOfElementLocated(Utils.getBy(Property.parentNodeLocator)));
-		
-	}
+	
 	
 
 }
