@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -79,7 +80,7 @@ public class AutoTool {
 	private HashMap<String, PageNode> pageNodeMap  = new LinkedHashMap<String, PageNode>();
 	private File file = null;	
 	public static String CucumberDirectoryPath = Property.setting.getProperty("CucumberDirectoryPath", "");
-	private static String tempPath = Paths.get(CucumberDirectoryPath, Customer.projectPath.get("GreenDot")).toString() ;
+	public static String tempPath = Paths.get(CucumberDirectoryPath, Customer.projectPath.get("GreenDot")).toString() ;
 	public JScrollPane elementsScrollPane;
 	private final ButtonGroup actionButtonGroup = new ButtonGroup();
 	
@@ -112,6 +113,7 @@ public class AutoTool {
     private JMenu mnPlugins;
     private JLabel lblUrl;
     private JButton btnInspect;
+    private JMenuItem mntmPageConverter;
     
 	/**
 	 * Launch the application.
@@ -133,9 +135,16 @@ public class AutoTool {
 	 * Create the application.
 	 */
 	public AutoTool() {
-		
-		Property.SetUp();		
+		loadCucumberWorkspace();
+		Property.SetUp();
 		initialize();
+	}
+
+	private void loadCucumberWorkspace() {
+		// TODO Auto-generated method stub
+		String message =  JOptionPane.showInputDialog("your cucumber location",CucumberDirectoryPath);
+		CucumberDirectoryPath = message;
+		
 	}
 
 	/**
@@ -895,6 +904,15 @@ public class AutoTool {
 			}
 		});
 		mnPlugins.add(mntmPoGen);
+		
+		mntmPageConverter = new JMenuItem("PageConverter");
+		mntmPageConverter.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				TestFrame.startConverterPanel();
+			}
+		});
+		mnPlugins.add(mntmPageConverter);
 		
 		lblUrl = new JLabel("URL");
 		lblUrl.setBounds(5, 94, 46, 14);

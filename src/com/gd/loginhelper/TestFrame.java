@@ -1,13 +1,14 @@
 package com.gd.loginhelper;
 
 import java.awt.EventQueue;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.gd.autofill.AutoFillPanel;
-import java.awt.Toolkit;
+import com.gd.converter.POConverter;
 
 public class TestFrame extends JFrame {
 
@@ -59,6 +60,20 @@ public class TestFrame extends JFrame {
 			}
 		});
 	}
+	
+	public static void startConverterPanel() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					TestFrame frame = new TestFrame("POConverter");
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -68,8 +83,10 @@ public class TestFrame extends JFrame {
 		setBounds(100, 100, 545, 528);
 		if(panel.equals("LoginPanel"))
 			contentPane = new LoginPanel();
-		else			
+		else if(panel.equals("AutoFillPanel"))		
 			contentPane = new AutoFillPanel();
+		else if(panel.equals("POConverter"))	
+			contentPane = new POConverter();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 
