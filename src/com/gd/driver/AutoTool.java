@@ -81,7 +81,7 @@ public class AutoTool {
 
 	private HashMap<String, PageNode> pageNodeMap  = new LinkedHashMap<String, PageNode>();
 	private File file = null;	
-	public static String CucumberDirectoryPath = Property.setting.getProperty("CucumberDirectoryPath", "");
+	public static String CucumberDirectoryPath = loadCucumberWorkspace();
 	public static String tempPath = Paths.get(CucumberDirectoryPath, Customer.projectPath.get("GreenDot")).toString() ;
 	public JScrollPane elementsScrollPane;
 	private final ButtonGroup actionButtonGroup = new ButtonGroup();
@@ -137,15 +137,15 @@ public class AutoTool {
 	 * Create the application.
 	 */
 	public AutoTool() {
-		loadCucumberWorkspace();
+		
 		Property.SetUp();
 		initialize();
 	}
 
-	private void loadCucumberWorkspace() {
-		// TODO Auto-generated method stub
-		String message =  JOptionPane.showInputDialog("your cucumber location",CucumberDirectoryPath);
-		CucumberDirectoryPath = message;
+	private static String loadCucumberWorkspace() {
+
+		String message =  JOptionPane.showInputDialog("your cucumber location",Property.setting.getProperty("CucumberDirectoryPath", ""));
+		return message;
 		
 	}
 
