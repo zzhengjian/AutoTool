@@ -6,7 +6,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.gd.driver.Property;
+import com.gd.common.Property;
 
 public class Nascar_Challengelogin {
 

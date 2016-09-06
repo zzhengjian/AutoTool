@@ -1,4 +1,4 @@
-package com.gd.driver;
+package com.gd.common;
 
 import java.io.BufferedReader;
 import java.io.File;

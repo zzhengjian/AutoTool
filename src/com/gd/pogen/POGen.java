@@ -13,9 +13,9 @@ import javax.swing.JTextField;
 
 import org.openqa.selenium.WebDriver;
 
+import com.gd.common.Property;
+import com.gd.common.Utils;
 import com.gd.driver.Driver;
-import com.gd.driver.Property;
-import com.gd.driver.Utils;
 
 import java.awt.Toolkit;
 

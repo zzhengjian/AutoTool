@@ -52,6 +52,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.gd.common.Property;
+import com.gd.common.Utils;
 import com.gd.loginhelper.TestFrame;
 import com.gd.pagetree.ElementBean;
 import com.gd.pagetree.PageBean;

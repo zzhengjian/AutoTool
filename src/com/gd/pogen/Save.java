@@ -2,7 +2,7 @@ package com.gd.pogen;
 
 import java.io.File;
 
-import com.gd.driver.Utils;
+import com.gd.common.Utils;
 import com.gd.pagetree.ElementBean;
 import com.gd.pagetree.PageBean;
 import com.google.gson.Gson;
