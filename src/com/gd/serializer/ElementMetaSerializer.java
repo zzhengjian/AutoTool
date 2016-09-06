@@ -8,5 +8,6 @@ public class ElementMetaSerializer {
     public String platform;
     public String browser;
     public String description;
+    public String screenShot;
 
 }

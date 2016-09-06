@@ -14,14 +14,8 @@ public class CardFinderResponseHandler implements ResponseHandler<String>
 	public String handleResponse(final HttpResponse response)
 			throws ClientProtocolException, IOException {
 			int status = response.getStatusLine().getStatusCode();
-			if (status >= 200 && status < 300) {
+			if ((status >= 200 && status < 300) || status == 404) {
 				HttpEntity entity = response.getEntity();
-				return entity != null ? EntityUtils.toString(entity): null;
-			}
-			else if(status == 404)
-			{
-				HttpEntity entity = response.getEntity();
-				
 				return entity != null ? EntityUtils.toString(entity): null;
 			}
 			else {

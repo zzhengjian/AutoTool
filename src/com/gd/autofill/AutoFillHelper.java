@@ -31,7 +31,7 @@ public class AutoFillHelper {
 			GDFlex_PersonalInfo oGDFlex_PersonalInfo = PageFactory.initElements(driver, GDFlex_PersonalInfo.class);		
 			oGDFlex_PersonalInfo.submitCustomerInfo(registerCustomerType, addressType);			
 		}		
-		else if(driver.getCurrentUrl().equals(GDFlex_SendMyCard.url))
+		else if(driver.getCurrentUrl().contains(GDFlex_SendMyCard.url))
 		{
 			GDFlex_SendMyCard oGDFlex_SendMyCard = PageFactory.initElements(driver, GDFlex_SendMyCard.class);		
 			oGDFlex_SendMyCard.submitCustomerInfo(registerCustomerType, addressType);			

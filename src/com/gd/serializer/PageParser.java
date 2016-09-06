@@ -1,13 +1,18 @@
 package com.gd.serializer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
 import com.google.gson.Gson;
@@ -43,14 +48,27 @@ public class PageParser {
 
 		System.out.println(json);
 		try {
-			whenPostRequestUsingHttpClient_thenCorrect(json);
+			whenPostStringRequestUsingHttpClient(json);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void whenPostRequestUsingHttpClient_thenCorrect(String json) 
+	public void whenPostStringRequestUsingHttpClient(String json) 
+			  throws ClientProtocolException, IOException {
+			    CloseableHttpClient client = HttpClients.createDefault();
+			    HttpPost httpPost = new HttpPost("http://127.0.0.1:8000/pm-cw/savepage/");
+			 			    
+			    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+				params.add(new BasicNameValuePair("myjsondata", json));
+				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+			    CloseableHttpResponse response = client.execute(httpPost);
+			    //System.out.println(response.getStatusLine().getStatusCode());
+			    client.close();
+			}
+	
+	public void whenPostJsonRequestUsingHttpClient(String json) 
 			  throws ClientProtocolException, IOException {
 			    CloseableHttpClient client = HttpClients.createDefault();
 			    HttpPost httpPost = new HttpPost("http://127.0.0.1:8000/pm-cw/savepage/");
@@ -61,11 +79,9 @@ public class PageParser {
 			    httpPost.setHeader("Content-type", "application/json");
 			    			 
 			    CloseableHttpResponse response = client.execute(httpPost);
-			    System.out.println(response.getStatusLine().getStatusCode());
+			    //System.out.println(response.getStatusLine().getStatusCode());
 			    client.close();
 			}
-	
-
 	
 	
 	public <T> T serializePage(Page page, Class<T> pageType)
@@ -125,6 +141,7 @@ public class PageParser {
 	                        metaserializer.platform = "";
 	                        metaserializer.description = "xxx";
 	                    }
+			    		metaserializer.screenShot = "";
 	                    metaserializer.element = e.getElementName().replace("\"", "").trim();
 	                    eserializer.elementMetas.add(metaserializer);
 	                    eserializer.description = "xxxx";

@@ -133,12 +133,12 @@ public class Page {
 			         action = "AddFamilyElement";
 			     }
 			     // Handle element metadata
-			     else if (line.contains(" => "))
+			     else if (line.contains("=>"))
 			     {
 			         action = "AddElementMeta";
 			     }
 			     
-			     processLine(action, line);
+			     processLine(action, line, br);
 			 }
 			
 			
@@ -150,7 +150,7 @@ public class Page {
      }
      
      
-     private void processLine(String actionType, String line)
+     private void processLine(String actionType, String line, BufferedReader br)
      {
     	 switch (actionType)
          {
@@ -254,6 +254,29 @@ public class Page {
                  String metaValue = elementMetaSplit.length < 2 ? "" : elementMetaSplit[1].trim();
                  if(!"".equals(metaValue))
                  {
+                	 metaValue = metaValue.replace("\\s+", " ");
+                	 metaValue = metaValue.replace("\" ,", "\",");
+                	 //deal with multiple lines of metavalue like text...
+                	 if(!metaValue.endsWith("\"") && !metaValue.endsWith("\","))
+                	 {
+                		 String nextline = "";
+                    	 boolean toReturn = true;
+                    	 while(toReturn)
+                    	 {
+                    		 try {
+    							nextline = br.readLine().trim().replace("\\s+", " ").replace("\" ,", "\",");
+    							metaValue = metaValue + " " + nextline;
+    						} catch (IOException e) {
+    							e.printStackTrace();
+    						}
+                    		if(nextline.endsWith("\"") ||nextline.endsWith("\","))
+                    		{
+                    			toReturn = false;
+                    		}                    		 
+                    	 }
+                	 }
+                	 
+                	 
                 	 metaValue = metaValue.substring(metaValue.indexOf('"') + 1, metaValue.lastIndexOf('"'));
                  }
                  

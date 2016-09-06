@@ -135,10 +135,21 @@ public class POConverter extends JPanel {
 		
 		btnConvert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> invalidFiles = new ArrayList<String>();
 				PageParser.Skin = tfSkin.getText();
 				for(File f : filelist)
 				{						
-					new PageParser().parse(f.getAbsolutePath());
+					try {
+						new PageParser().parse(f.getAbsolutePath());
+					} catch (Exception e) {
+						//System.err.println(f.getAbsolutePath());
+						invalidFiles.add(f.getAbsolutePath());
+						e.printStackTrace();
+					}
+				}
+				for(String file : invalidFiles)
+				{
+					System.out.println(file);
 				}
 			}
 		});
