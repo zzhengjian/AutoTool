@@ -39,6 +39,7 @@ public enum Commands {
 	HighLightCurrentWindow,
 	MaximizeWindow,
 	FullScreen,
-	getScreenShot
+	getScreenShot,
+	getElementScreenShot
 	
 }

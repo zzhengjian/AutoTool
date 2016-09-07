@@ -46,7 +46,7 @@ public class WMC_Login {
 	
 	public boolean loginError()
 	{
-		return oFormErrorMsg_Text.size() > 0;		
+		return oFormErrorMsg_Text.size() > 0 && oFormErrorMsg_Text.get(0).isDisplayed();		
 	}
 	
 }
