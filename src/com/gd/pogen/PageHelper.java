@@ -117,7 +117,7 @@ public class PageHelper {
 	public void writeToFile(String pageText)
 	{
 		try {
-			FileUtils.writeStringToFile(new File("C:/test.txt"), pageText, "utf-8");
+			FileUtils.writeStringToFile(new File(Property.DefaultPath, "/"), pageText, "utf-8");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -1,22 +1,17 @@
 package com.gd.misc.test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 
-import com.gd.rest.CardFinderResponseHandler;
+import com.gd.rest.DefaultResponseHandler;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 public class RestTest {
@@ -28,7 +23,7 @@ public class RestTest {
 			System.out.println("Triggering request " + httpget.getRequestLine());
 			 
 			// Custom Response Handler
-			ResponseHandler<String> responseHandler = new CardFinderResponseHandler();
+			ResponseHandler<String> responseHandler = new DefaultResponseHandler();
 			String responseBody = httpclient.execute(httpget, responseHandler);
 			System.out.println(responseBody);
 			JsonParser parser = new JsonParser();

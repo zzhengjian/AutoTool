@@ -1,10 +1,12 @@
 package com.gd.rest;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
@@ -51,30 +53,35 @@ public class RestService {
 		}
 	}
 	
-	public void makeRequest(String productCode, String env, String value) throws IOException
+	public JsonObject makeRequest(String productCode, String env, String value) throws IOException
 	{
 		CloseableHttpClient httpclient = HttpClients.createDefault();
+		JsonObject oJson = null;
 		try {
-			HttpGet httpget = new HttpGet("http://127.0.0.1:8000/pm-cw/get-skins");
-			 
+
+			URIBuilder uri = new URIBuilder("http://gdcloadperf05:7000/cardfinderservice/CardFinderService.svc/get").addParameter("product", productCode).addParameter("environment", env).addParameter("value", value);
+			HttpGet httpget = new HttpGet(uri.build());		
+			
 			System.out.println("Triggering request " + httpget.getRequestLine());
 			 
 			// Custom Response Handler
-			ResponseHandler<String> responseHandler = new CardFinderResponseHandler();
+			ResponseHandler<String> responseHandler = new DefaultResponseHandler();
 			String responseBody = httpclient.execute(httpget, responseHandler);
-			System.out.println(responseBody);
 			JsonParser parser = new JsonParser();
-			JsonObject o = parser.parse(responseBody).getAsJsonObject();
-			System.out.println("----------------------------------------");
-			System.out.println(responseBody);
-			if(o.has("errorReason"))
-				System.out.println(o.get("errorReason"));
+			oJson = parser.parse(responseBody).getAsJsonObject();
+
+//			System.out.println("----------------------------------------");
+//			System.out.println(responseBody);
+//			if(o.has("errorReason"))
+//				System.out.println(o.get("errorReason"));
 			
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
 		} finally {
 			//close the connection. Make Sure you do this.
 			httpclient.close();
 		}
-				
+		return oJson;		
 	}
 
 	public String getCardNumber() {
