@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -51,6 +52,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.gd.common.Property;
+import com.gd.common.Utils;
 import com.gd.loginhelper.TestFrame;
 import com.gd.pagetree.ElementBean;
 import com.gd.pagetree.PageBean;
@@ -78,8 +81,8 @@ public class AutoTool {
 
 	private HashMap<String, PageNode> pageNodeMap  = new LinkedHashMap<String, PageNode>();
 	private File file = null;	
-	public static String CucumberDirectoryPath = Property.setting.getProperty("CucumberDirectoryPath", "");
-	private static String tempPath = Paths.get(CucumberDirectoryPath, Customer.projectPath.get("GreenDot")).toString() ;
+	public static String CucumberDirectoryPath = loadCucumberWorkspace();
+	public static String tempPath = Paths.get(CucumberDirectoryPath, Customer.projectPath.get("GreenDot")).toString() ;
 	public JScrollPane elementsScrollPane;
 	private final ButtonGroup actionButtonGroup = new ButtonGroup();
 	
@@ -112,6 +115,7 @@ public class AutoTool {
     private JMenu mnPlugins;
     private JLabel lblUrl;
     private JButton btnInspect;
+    private JMenuItem mntmPageConverter;
     
 	/**
 	 * Launch the application.
@@ -134,8 +138,15 @@ public class AutoTool {
 	 */
 	public AutoTool() {
 		
-		Property.SetUp();		
+		Property.SetUp();
 		initialize();
+	}
+
+	private static String loadCucumberWorkspace() {
+
+		String message =  JOptionPane.showInputDialog("your cucumber location",Property.setting.getProperty("CucumberDirectoryPath", ""));
+		return message;
+		
 	}
 
 	/**
@@ -895,6 +906,15 @@ public class AutoTool {
 			}
 		});
 		mnPlugins.add(mntmPoGen);
+		
+		mntmPageConverter = new JMenuItem("PageConverter");
+		mntmPageConverter.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				TestFrame.startConverterPanel();
+			}
+		});
+		mnPlugins.add(mntmPageConverter);
 		
 		lblUrl = new JLabel("URL");
 		lblUrl.setBounds(5, 94, 46, 14);

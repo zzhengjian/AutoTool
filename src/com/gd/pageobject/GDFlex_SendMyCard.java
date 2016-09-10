@@ -2,7 +2,6 @@ package com.gd.pageobject;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.Select;
 
 import com.gd.driver.Customer;
 
@@ -40,14 +39,8 @@ public class GDFlex_SendMyCard extends PageObjectBase{
 	@FindBy(css = "#City")
 	WebElement oCity_Input;
 
-	@FindBy(css = ".input--state>div>label>span")
-	WebElement oState_Text;
-
 	@FindBy(css = "#State")
 	WebElement oState_DropDown;
-
-	@FindBy(css = "[for='Zip']>span")
-	WebElement oZipCode_Text;
 
 	@FindBy(css = "#Zip")
 	WebElement oZip_Input;
@@ -94,32 +87,8 @@ public class GDFlex_SendMyCard extends PageObjectBase{
 	@FindBy(css = "#IsAgreedToPromoEmails")
 	WebElement oIsAgreedToPromoEmails_CheckBox;
 
-	@FindBy(css = "[for='IsAgreedToPromoEmails']>span")
-	WebElement oIDLike_Text;
-
-	@FindBy(css = "h5")
-	WebElement oSendMeDaily_h5_Title;
-
-	@FindBy(css = "#IsAgreedToEmailAlerts")
-	WebElement oIsAgreedToEmailAlerts_CheckBox;
-
-	@FindBy(css = "[for='IsAgreedToEmailAlerts']>span")
-	WebElement oEmailMe_Text;
-
-	@FindBy(css = "#IsAgreedToTextAlerts")
-	WebElement oIsAgreedToTextAlerts_CheckBox;
-
-	@FindBy(css = "[for='IsAgreedToTextAlerts']>span")
-	WebElement oTextMe_Text;
-
 	@FindBy(css = "#IsAgreedToECA")
 	WebElement oIsAgreedToECA_CheckBox;
-
-	@FindBy(css = "[for='IsAgreedToECA']>span")
-	WebElement oIHaveRead_Text;
-
-	@FindBy(css = "[for='IsAgreedToECA']>a")
-	WebElement oElectronicCommunicationsAgreement_Link;
 
 	@FindBy(css = "#submit-button")
 	WebElement oContinue_Button;
@@ -129,21 +98,21 @@ public class GDFlex_SendMyCard extends PageObjectBase{
 	{
 		selectAll(oFirstName_Input).sendKeys(Customer.FirstName);
 		selectAll(oLastName_Input).sendKeys(Customer.LastName);
-		selectAll(oPhone_Input).sendKeys(Customer.CellPhone);
+		//selectAll(oPhone_Input).sendKeys(Customer.CellPhone);
 		selectAll(oEmail_Input).sendKeys(Customer.Email);
-		selectAll(oDateOfBirth_Input).sendKeys(Customer.DOB);
-		selectAll(oAtmPin_Input).sendKeys(Customer.Pin);
+		//selectAll(oDateOfBirth_Input).sendKeys(Customer.DOB);
+		//selectAll(oAtmPin_Input).sendKeys(Customer.Pin);
 		
 
 		//Customer Type
-		selectAll(oSsn_Input).sendKeys(Customer.getGeneratedSSN(registerCustomerType));
+		//selectAll(oSsn_Input).sendKeys(Customer.getGeneratedSSN(registerCustomerType));
 		
 		//Address Type
-		Select stateSelect = new Select(oState_DropDown);
+		//Select stateSelect = new Select(oState_DropDown);
 		selectAll(oStreet_Input).sendKeys(Customer.addressMap.get(addressType)[1]);
 		selectAll(oApartment_Input).sendKeys(Customer.addressMap.get(addressType)[2]);
-		selectAll(oCity_Input).sendKeys(Customer.addressMap.get(addressType)[3]);		
-		stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
+		//selectAll(oCity_Input).sendKeys(Customer.addressMap.get(addressType)[3]);		
+		//stateSelect.selectByValue(Customer.addressMap.get(addressType)[4]);
 		selectAll(oZip_Input).sendKeys(Customer.addressMap.get(addressType)[5]);			
 		
 	}

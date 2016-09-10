@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 
+import com.gd.common.Property;
+import com.gd.common.Utils;
+
+
 public class Customer {
 	
 	public final static String Customer_Not_Exist = "customerkey not exist!"; 

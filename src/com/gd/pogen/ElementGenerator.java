@@ -17,10 +17,9 @@ import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import com.gd.common.Property;
+import com.gd.common.Utils;
 import com.gd.driver.Driver;
-import com.gd.driver.ElementHelper;
-import com.gd.driver.Property;
-import com.gd.driver.Utils;
 import com.gd.pagetree.ElementBean;
 import com.gd.pagetree.PageBean;
 import com.google.common.collect.ImmutableMap;

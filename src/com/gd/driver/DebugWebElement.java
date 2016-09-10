@@ -1,10 +1,19 @@
 package com.gd.driver;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -14,6 +23,9 @@ import org.openqa.selenium.remote.DriverCommand;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.remote.Response;
 
+import com.gd.common.Property;
+import com.gd.common.Utils;
+import com.gd.pogen.ElementHelper;
 import com.google.common.collect.ImmutableMap;
 
 
@@ -215,6 +227,31 @@ public class DebugWebElement extends RemoteWebElement {
 		case hideElement:
 			oJavascriptExecutor.executeScript("return $(arguments[0]).hide();", oWebElement);
 			break;
+		case getElementScreenShot:
+
+			//Get entire page screenshot
+			File screenshot = ((TakesScreenshot)oWebDriver).getScreenshotAs(OutputType.FILE);
+			BufferedImage fullImg = null;
+			try {
+				fullImg = ImageIO.read(screenshot);
+				//Get the location of element on the page
+				Point point = oWebElement.getLocation();
+				//Get width and height of the element
+				int eleWidth = oWebElement.getSize().getWidth();
+				int eleHeight = oWebElement.getSize().getHeight();
+				//Crop the entire page screenshot to get only element screenshot
+				BufferedImage eleScreenshot= fullImg.getSubimage(point.getX(), point.getY(), eleWidth, eleHeight);
+				ImageIO.write(eleScreenshot, "png", screenshot);
+				//Copy the element screenshot to disk
+				File screenshotLocation = new File(Paths.get(Property.DefaultPath,"/screenshots/element_screenshot.png").toString());
+				FileUtils.copyFile(screenshot, screenshotLocation);
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+
+			break;
+		
 		default:
 			return null;	
 			

@@ -1,4 +1,4 @@
-package com.gd.driver;
+package com.gd.pogen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+
+import com.gd.common.Utils;
 
 public class ElementHelper {
 	

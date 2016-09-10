@@ -9,13 +9,12 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
-import com.gd.driver.Property;
-import com.gd.driver.Utils;
+import com.gd.common.Property;
+import com.gd.common.Utils;
 
 public class PageHelper {
 	
 	public static boolean isFlex = true;
-	public String WorkspacePath = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\Projects";
 	private String PageName;
 	private String Url;
 	
@@ -118,7 +117,7 @@ public class PageHelper {
 	public void writeToFile(String pageText)
 	{
 		try {
-			FileUtils.writeStringToFile(new File("C:/test.txt"), pageText, "utf-8");
+			FileUtils.writeStringToFile(new File(Property.DefaultPath, "/"), pageText, "utf-8");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -81,7 +81,10 @@ public class CucumberHelper {
 		tcase.append("Feature: sample").append("\n");
 		tcase.append("@sample").append("\n");
 		tcase.append("Scenario:  Get customer").append("\n");
-		tcase.append("Given I get customerkey use productkey as \"" + custTypeArgs.get("ProductCode") + "\" and customertype as \""+ custTypeArgs.get("CustomerType") +"\" and email like \"\"").append("\n");
+		tcase.append("Given I get customerkey use productkey as \"" + custTypeArgs.get("ProductCode") + ""
+				+ "\" and customertype as \""+ custTypeArgs.get("CustomerType") +""
+						+ "\" and email like \"" + custTypeArgs.get("Email") + "\"").append(" with accountbalance >= \"" + custTypeArgs.get("AccountBalance") + ""
+								+ "\" and account age less than \""+ custTypeArgs.get("AccountAge") +"\" days").append("\n");
 		tcase.append("Given I get userid and password from specific customer and store to userid \"UserID\" and password \"Password\"");
 	
 		

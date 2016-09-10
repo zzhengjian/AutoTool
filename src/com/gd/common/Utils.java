@@ -1,4 +1,7 @@
-package com.gd.driver;
+package com.gd.common;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriverException;
@@ -45,17 +48,18 @@ public class Utils {
 	 * */
 	public static String evalName(String text)
 	{
-		String[] textArr = text.split("_|-|\\s+");
-		StringBuilder _text = new StringBuilder("");
-		for(int i=0; i<textArr.length; i++)
-		{
-			//skip if the text is SpecialChar only
-			if(replaceAllSpecialChar(textArr[i]).equals(""))
-				continue;
-			_text.append(capitalizeWord(replaceAllSpecialChar(textArr[i])));
-			if(i==3) break;					
-		}
+		Pattern pattern = Pattern.compile("[a-zA-Z0-9\u4e00-\u9fa5]+",Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(text);
 		
+		StringBuilder _text = new StringBuilder("");
+		int i = 0;
+		while(matcher.find())
+		{			
+			_text.append(capitalizeWord(matcher.group()));
+			i++;
+			if(i==3) break;				
+		}
+				
 		return _text.toString();
 	}
 	
@@ -156,5 +160,10 @@ public class Utils {
 		java.util.Random oRandom = new java.util.Random();
 		String oStr = Long.toString(oRandom.nextLong(), 10);
 		return oStr.substring(1, 1+iLength);
+	}
+
+	public static Object encrypt(String sAcctNbr, String env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
