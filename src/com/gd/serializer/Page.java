@@ -175,17 +175,17 @@ public class Page {
                  if(line.contains(":pageFamily"))
                  {
                 	 String[] pageFamily = line.split("=>")[1].split("\"");
-                	 this.pageFamilies.add(pageFamily[1]);
+                	 this.pageFamilies.add(pageFamily[1].trim());
                  }
                  
                  break;
              case "PageFamily":
                  String[] familySplit = line.split("\"");
-                 pageFamilies.add(familySplit[1]);
+                 pageFamilies.add(familySplit[1].trim());
                  break;
              case "AddElement":
                  String[] elementSplit = line.split("\"");
-                 currentElement = new Element(elementSplit[1], line);
+                 currentElement = new Element(elementSplit[1].trim(), line);
                  elements.add(currentElement);
 //                 if (elementSplit.length > 3)
 //                 {
@@ -199,7 +199,7 @@ public class Page {
                  break;
              case "AddSharedElement":
                  String[] sharedElementSplit = line.split("");
-                 currentElement = new Element(sharedElementSplit[1], line);
+                 currentElement = new Element(sharedElementSplit[1].trim(), line);
                  Page SharedPage = new Page(SharedElements);
                  if(families==null)
                  {
@@ -220,8 +220,8 @@ public class Page {
                  break;
              case "AddFamilyElement":
                  String[] familyElementSplit = line.split("\"");
-                 Page familyPage = new Page(familyElementSplit[1]);
-                 currentElement = new Element(familyElementSplit[3], line);
+                 Page familyPage = new Page(familyElementSplit[1].trim());
+                 currentElement = new Element(familyElementSplit[3].trim(), line);
                  if(families==null)
                  {
                 	 families = new ArrayList<Page>();
