@@ -3,6 +3,7 @@ package com.gd.pogen;
 import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.file.Paths;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -20,6 +21,8 @@ import com.gd.driver.Driver;
 import java.awt.Toolkit;
 
 import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class POGen {
 
@@ -35,6 +38,8 @@ public class POGen {
 	private JLabel lblPageName;
 	private JTextField tfPageName;
 	private JButton btnGetPageName;
+	private JTextField parentField;
+	private JLabel lblParentnode;
 	/**
 	 * Launch the application.
 	 */
@@ -83,6 +88,7 @@ public class POGen {
 		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		
 		btnRun = new JButton("Run");
+		btnRun.setToolTipText("Hit me to generate Page file for whole webpage");
 		btnRun.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -95,6 +101,7 @@ public class POGen {
 		
 		filePathTextField = new JTextField();
 		filePathTextField.setColumns(10);
+		filePathTextField.setText(Paths.get(Property.DefaultPath, "/pages/").toString());
 		
 		JLabel lblSaveto = new JLabel("SaveTo");
 		
@@ -119,46 +126,63 @@ public class POGen {
 			}
 		});
 		btnGetPageName.setToolTipText("Generate Page Name from current URL");
+		
+		lblParentnode = new JLabel("ParentNode");
+		
+		parentField = new JTextField();
+		parentField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Property.parentNodeLocator = parentField.getText();
+			}
+		});
+		parentField.setColumns(10);
+		parentField.setText(Property.parentNodeLocator);
+		
 		GroupLayout groupLayout = new GroupLayout(frame.getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(10)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(btnRun, GroupLayout.PREFERRED_SIZE, 91, GroupLayout.PREFERRED_SIZE)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-										.addGroup(groupLayout.createSequentialGroup()
-											.addComponent(lblSaveto, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
-											.addGap(16))
-										.addGroup(groupLayout.createSequentialGroup()
-											.addComponent(lblFilename, GroupLayout.PREFERRED_SIZE, 56, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(ComponentPlacement.RELATED)))
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(filePathTextField, GroupLayout.PREFERRED_SIZE, 278, GroupLayout.PREFERRED_SIZE)
-										.addGroup(groupLayout.createSequentialGroup()
-											.addPreferredGap(ComponentPlacement.UNRELATED)
-											.addComponent(fileNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))))
+							.addContainerGap()
+							.addComponent(btnRun, GroupLayout.PREFERRED_SIZE, 91, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+							.addGroup(groupLayout.createSequentialGroup()
+								.addGap(10)
+								.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+									.addGroup(groupLayout.createSequentialGroup()
+										.addComponent(lblSaveto, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+										.addGap(16))
+									.addGroup(groupLayout.createSequentialGroup()
+										.addComponent(lblFilename, GroupLayout.PREFERRED_SIZE, 56, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)))
+								.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+									.addComponent(filePathTextField, GroupLayout.PREFERRED_SIZE, 188, GroupLayout.PREFERRED_SIZE)
+									.addComponent(fileNameTextField, GroupLayout.PREFERRED_SIZE, 103, GroupLayout.PREFERRED_SIZE)))
+							.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+								.addContainerGap()
+								.addComponent(lblPageName)
+								.addPreferredGap(ComponentPlacement.UNRELATED)
+								.addComponent(tfPageName, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
+								.addGap(18)
+								.addComponent(btnGetPageName)))
 						.addGroup(groupLayout.createSequentialGroup()
 							.addContainerGap()
-							.addComponent(lblPageName)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
-							.addComponent(tfPageName, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
-							.addGap(18)
-							.addComponent(btnGetPageName)))
-					.addContainerGap(92, Short.MAX_VALUE))
+							.addComponent(lblParentnode)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(parentField, GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)))
+					.addGap(368))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(39)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(7)
+							.addGap(46)
 							.addComponent(lblSaveto))
-						.addComponent(filePathTextField, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(39)
+							.addComponent(filePathTextField, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)))
 					.addGap(18)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblPageName)
@@ -168,8 +192,13 @@ public class POGen {
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblFilename)
 						.addComponent(fileNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(35)
-					.addComponent(btnRun))
+					.addGap(18)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(lblParentnode)
+						.addComponent(parentField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(45)
+					.addComponent(btnRun)
+					.addContainerGap())
 		);
 		frame.getContentPane().setLayout(groupLayout);
 	}
