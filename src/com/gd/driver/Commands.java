@@ -28,6 +28,7 @@ public enum Commands {
 	getTitle,
 	getAlert,
 	getAlertText,
+	sendKeysToAlert,
 	acceptAlert,
 	dismissAlert,
 	execute,

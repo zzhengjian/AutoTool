@@ -18,7 +18,8 @@ import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.gd.driver.AutoTool;
-import com.gd.serializer.PageParser;
+import com.gd.pages.serializer.PageParser;
+
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 

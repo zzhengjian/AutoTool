@@ -1,4 +1,4 @@
-package com.gd.serializer;
+package com.gd.pages.serializer;
 
 public class ElementMeta {
 	private String key;

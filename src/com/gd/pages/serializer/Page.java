@@ -1,4 +1,4 @@
-package com.gd.serializer;
+package com.gd.pages.serializer;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

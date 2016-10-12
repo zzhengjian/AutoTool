@@ -166,11 +166,12 @@
 	
 	<persistence-unit name="Cucumber" transaction-type="RESOURCE_LOCAL">
 		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.gd.cucumber.entity.Browser</class>
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://gdcqatestrail01;databaseName=cucumber_cms;" />
-			<property name="eclipselink.jdbc.user" value="azheng"/>
-			<property name="eclipselink.jdbc.password" value="Sepmonth1"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://gdcqatestrail01;databaseName=cucumber_cms;integratedSecurity=true;" />
+			<property name="eclipselink.jdbc.user" value=""/>
+			<property name="eclipselink.jdbc.password" value=""/>
 			<property name="eclipselink.logging.timestamp" value="true"/>
 			<property name="eclipselink.logging.session" value="true" />
 			<property name="eclipselink.logging.file" value="C:/QA/ATF/out/eclipselink/automation.txt"/>

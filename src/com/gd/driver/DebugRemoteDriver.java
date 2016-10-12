@@ -65,7 +65,11 @@ public class DebugRemoteDriver extends RemoteWebDriver {
 				
 			case getAlertText:
 				sText = oWebDirver.switchTo().alert().getText();
-				break;			
+				break;		
+			case sendKeysToAlert:
+				oWebDirver.switchTo().alert().sendKeys(sParam[0]);
+				break;	
+				
 			case acceptAlert:
 				oWebDirver.switchTo().alert().accept();
 				break;

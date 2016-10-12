@@ -1,4 +1,4 @@
-package com.gd.serializer;
+package com.gd.pages.serializer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -177,7 +177,7 @@ public class PageParser {
                         metaserializer.metaValue = meta.getValue();
                         metaserializer.browser = "";
                         metaserializer.platform = "2";
-                        metaserializer.description = "xxx";
+                        metaserializer.description = "";
 
 
                     }
@@ -189,17 +189,25 @@ public class PageParser {
                         metaserializer.platform = "1";
                         metaserializer.description = "xxx";
                     }
+                    else if (meta.getKey().contains("parentFrame"))
+                    {
+                        metaserializer.metaKey = "frame";
+                        metaserializer.metaValue = meta.getValue();
+                        metaserializer.browser = "";
+                        metaserializer.platform = "";
+                        metaserializer.description = "";
+                    }
                     else
                     {
                         metaserializer.metaKey = meta.getKey().replace(":", "");
                         metaserializer.metaValue = meta.getValue();
                         metaserializer.browser = "";
                         metaserializer.platform = "";
-                        metaserializer.description = "xxx";
+                        metaserializer.description = "";
                     }
                     metaserializer.element = e.getElementName().replace("\"", "").trim();
                     eserializer.elementMetas.add(metaserializer);
-                    eserializer.description = "xxxx";
+                    eserializer.description = "";
 		    	}
 		    	pserializer.elements.add(eserializer);
 		    }
