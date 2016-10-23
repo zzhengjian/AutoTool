@@ -116,6 +116,7 @@ public class AutoTool {
     private JLabel lblUrl;
     private JButton btnInspect;
     private JMenuItem mntmPageConverter;
+    private JButton btnStart;
     
 	/**
 	 * Launch the application.
@@ -166,7 +167,7 @@ public class AutoTool {
 		browserType.setBounds(5, 61, 71, 22);
 		frmAutotool.getContentPane().add(browserType);
 		
-		final JButton btnStart = new JButton("Start");
+		btnStart = new JButton("Start");
 		btnStart.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

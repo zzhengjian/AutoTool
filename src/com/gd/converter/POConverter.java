@@ -12,16 +12,20 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+
 
 import com.gd.driver.AutoTool;
 import com.gd.pages.serializer.PageParser;
-
-import javax.swing.JTextField;
-import javax.swing.JLabel;
+import com.gd.steps.serializer.StatementParser;
+import com.gd.pages.serializer.Page;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 
 public class POConverter extends JPanel {
 	private JButton btnOpen;
@@ -34,6 +38,11 @@ public class POConverter extends JPanel {
 	private JButton btnSelectFolder;
 	private JTextField tfSkin;
 	private JLabel lblSkin;
+	
+	private boolean isPageSelected = true;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JRadioButton rdbtnPages;
+	private JRadioButton rdbtnStatements;
 	/**
 	 * Create the panel.
 	 */
@@ -47,7 +56,7 @@ public class POConverter extends JPanel {
 	private void initComponents() {
 		fileScrollPane = new JScrollPane();
 		
-		btnOpen = new JButton("Open");
+		btnOpen = new JButton("Open Files");
 		
 		btnConvert = new JButton("Convert");				
 		fileList = new JList<String>();
@@ -55,53 +64,71 @@ public class POConverter extends JPanel {
 		fileList.setModel(fileListModel);
 		fileScrollPane.setViewportView(fileList);
 		
-		btnSelectFolder = new JButton("select folder");
+		btnSelectFolder = new JButton("Open Folder");
 		
 		tfSkin = new JTextField();
 		tfSkin.setText(PageParser.Skin);
 		tfSkin.setColumns(10);
 		
 		lblSkin = new JLabel("Skin");
+		
+		rdbtnPages = new JRadioButton("pages");
+		buttonGroup.add(rdbtnPages);
+		
+		rdbtnStatements = new JRadioButton("statements");
+
+		buttonGroup.add(rdbtnStatements);
 
 		
 		
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
+			groupLayout.createParallelGroup(Alignment.TRAILING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(24)
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addComponent(btnSelectFolder)
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-							.addGroup(groupLayout.createSequentialGroup()
-								.addGap(10)
-								.addComponent(lblSkin)
-								.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(tfSkin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addComponent(fileScrollPane, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE)))
-					.addPreferredGap(ComponentPlacement.RELATED, 59, Short.MAX_VALUE)
+					.addContainerGap()
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addGap(10)
+							.addComponent(lblSkin, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addGap(18)
+							.addComponent(tfSkin, GroupLayout.PREFERRED_SIZE, 80, GroupLayout.PREFERRED_SIZE))
+						.addComponent(fileScrollPane, GroupLayout.PREFERRED_SIZE, 142, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnOpen)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+								.addComponent(btnSelectFolder, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(btnOpen, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+							.addGap(18)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(rdbtnPages)
+								.addComponent(rdbtnStatements)))
 						.addComponent(btnConvert))
-					.addGap(162))
+					.addGap(25))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addGap(14)
-					.addComponent(btnSelectFolder)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(btnOpen)
-							.addGap(58)
+							.addGap(19)
+							.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+								.addComponent(btnSelectFolder)
+								.addComponent(rdbtnPages))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnOpen)
+								.addComponent(rdbtnStatements))
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addComponent(btnConvert))
-						.addComponent(fileScrollPane, GroupLayout.PREFERRED_SIZE, 204, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(fileScrollPane, GroupLayout.PREFERRED_SIZE, 262, GroupLayout.PREFERRED_SIZE)))
+					.addPreferredGap(ComponentPlacement.UNRELATED, 33, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(tfSkin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblSkin))
-					.addContainerGap(87, Short.MAX_VALUE))
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		setLayout(groupLayout);
 		
@@ -134,24 +161,77 @@ public class POConverter extends JPanel {
 			}
 		});
 		
-		btnConvert.addActionListener(new ActionListener() {
+		btnConvert.addActionListener(new ActionListener() {			
+
 			public void actionPerformed(ActionEvent arg0) {
 				ArrayList<String> invalidFiles = new ArrayList<String>();
 				PageParser.Skin = tfSkin.getText();
-				for(File f : filelist)
-				{						
-					try {
-						new PageParser().parse(f.getAbsolutePath());
-					} catch (Exception e) {
-						//System.err.println(f.getAbsolutePath());
-						invalidFiles.add(f.getAbsolutePath());
-						e.printStackTrace();
+				
+				if(isPageSelected)
+				{
+					for(File f : filelist)
+					{
+						if(f.getName().equals(Page.SharedElements))
+						{
+							try {
+								new PageParser().parse(f.getAbsolutePath());
+							} catch (Exception e) {
+								invalidFiles.add(f.getAbsolutePath());
+								e.printStackTrace();
+							}
+						}
+					}
+					for(File f : filelist)
+					{
+						if(f.getName().equals(Page.SharedElements))
+						{
+							continue;
+						}
+						try {
+							new PageParser().parse(f.getAbsolutePath());
+						} catch (Exception e) {
+							invalidFiles.add(f.getAbsolutePath());
+							e.printStackTrace();
+						}
 					}
 				}
+				else
+				{
+					for(File f : filelist)
+					{
+						try {
+							StatementParser parser = new StatementParser(f.getAbsolutePath());
+							StatementParser.project = tfSkin.getText();
+							parser.processSteps();
+							parser.convertCategory();
+						} catch (Exception e) {
+							invalidFiles.add(f.getAbsolutePath());
+							e.printStackTrace();
+						}
+
+					}
+				}
+				
+				
 				for(String file : invalidFiles)
 				{
 					System.out.println(file);
 				}
+			}
+
+		});
+		
+		rdbtnStatements.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				isPageSelected = false;
+				lblSkin.setText("Project");
+			}
+		});
+		
+		rdbtnPages.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent paramActionEvent) {
+				isPageSelected = true;
+				lblSkin.setText("Skin");
 			}
 		});
 		
@@ -179,7 +259,8 @@ public class POConverter extends JPanel {
 						fileListModel.addElement(f.getName());
 					}
 				}		
-			}
+			}		
+			
 
 			private void listFilesAndFilesSubDirectories(File fileOrDir) {
 		

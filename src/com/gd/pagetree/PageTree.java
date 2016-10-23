@@ -13,7 +13,7 @@ public class PageTree {
 	
 	
 	private String PagePath;
-	private AuMutableTreeNode pageNode;
+	private POMutableTreeNode pageNode;
 
 	public PageTree(String pagePath) {
 		this.PagePath = pagePath;
@@ -25,13 +25,13 @@ public class PageTree {
 	{		
 		//PageBean page = readPageFile(new File(PagePath));
 		PageBean page = PageNode.getPageBean(PagePath);
-		pageNode = new AuMutableTreeNode();
+		pageNode = new POMutableTreeNode();
 		pageNode.setUserObject(page);
 		
 		
 		for(ElementBean e : page.getElements())
 		{
-			AuMutableTreeNode elementNode = new AuMutableTreeNode();
+			POMutableTreeNode elementNode = new POMutableTreeNode();
 			elementNode.setUserObject(e);
 			this.pageNode.add(elementNode);
 		}		
@@ -45,11 +45,11 @@ public class PageTree {
 		PagePath = pagePath;
 	}
 	
-	public AuMutableTreeNode getPageNode() {
+	public POMutableTreeNode getPageNode() {
 		return pageNode;
 	}
 
-	public void setPageNode(AuMutableTreeNode pageNode) {
+	public void setPageNode(POMutableTreeNode pageNode) {
 		this.pageNode = pageNode;
 	}
 	

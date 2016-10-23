@@ -2,7 +2,7 @@ package com.gd.pagetree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-public class AuMutableTreeNode extends DefaultMutableTreeNode {
+public class POMutableTreeNode extends DefaultMutableTreeNode {
 
 	/**
 	 * Page Tree Node overrides
