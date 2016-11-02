@@ -27,6 +27,25 @@ public class PageParser {
 	{
 		parse("C:/azheng-QA-Workspace/QA/Cucumber/Projects/GreenDot/features/pages/Web/GreenDot/SharedElements.rb");
 	}
+	
+	
+	public void createSkin(String skinName)
+	{
+		String json = null;
+		
+		SkinSerializer sSerializer = new SkinSerializer();
+		sSerializer.project = "8";
+		sSerializer.skinName = skinName;		
+		
+		json = new Gson().toJson(sSerializer);
+		try {
+			whenPostJsonRequestUsingHttpClient(json, "http://127.0.0.1:8000/pm-cw/skin_create");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 	public void parse(String path)
 	{
@@ -78,10 +97,10 @@ public class PageParser {
 			    client.close();
 			}
 	
-	public void whenPostJsonRequestUsingHttpClient(String json) 
+	public void whenPostJsonRequestUsingHttpClient(String json, String endPoint) 
 			  throws ClientProtocolException, IOException {
 			    CloseableHttpClient client = HttpClients.createDefault();
-			    HttpPost httpPost = new HttpPost("http://127.0.0.1:8000/pm-cw/savepage/");
+			    HttpPost httpPost = new HttpPost(endPoint);
 			 
 			    StringEntity entity = new StringEntity(json);
 			    httpPost.setEntity(entity);

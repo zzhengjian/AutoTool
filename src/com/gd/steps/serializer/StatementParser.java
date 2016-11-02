@@ -6,20 +6,27 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.gd.common.Property;
 import com.gd.rest.DefaultResponseHandler;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -31,7 +38,7 @@ public class StatementParser {
 	private JsonObject doc;
 	public static String project = "1";
 	private List<String> invalidStatements = new ArrayList<String>();
-
+	
 	public StatementParser(String path) {
 		this.path = path;
 		statements = new ArrayList<Statement>();
@@ -41,6 +48,31 @@ public class StatementParser {
 	public List<Statement> getStatements() {
 		return statements;
 	}
+
+
+
+	public String getSaveCategoryEndpoint() {
+		String url = null;
+		try {
+			url = new URIBuilder(Property.EndPoint).setPath("/sm-cw/savecategory/").toString();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return url;
+	}
+
+	public String getSaveStatementEndpoint() {
+		String url = null;
+		try {
+			url = new URIBuilder(Property.EndPoint).setPath("/sm-cw/savestatement/").toString();
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return url;
+	}
+
 
 	public void processSteps()
 	{
@@ -68,7 +100,7 @@ public class StatementParser {
 					continue;
 				
 				line = line.trim();
-				if(line.startsWith("Given(") || line.startsWith("When(") || line.startsWith("Then(") || line.startsWith("And("))
+				if(isValidStatementLine(line))
 				{
 					statement = processStatement(line);
 					statement.setDescription(doc);
@@ -79,25 +111,39 @@ public class StatementParser {
 			
 			br.close();			
 			
-			File invalidFile = new File(path.replace(".rb", "-ErrorFormatted.rb"));
+			
 			StringBuilder in_Valid = new StringBuilder();
 			for(String text : this.invalidStatements)
 			{
-				in_Valid.append(text);
+				in_Valid.append(text).append("\n");
 			}
-		    try {
-			 
-		    	FileOutputStream out = new FileOutputStream(invalidFile);  //得到文件输出流
-		    	out.write(in_Valid.toString().getBytes()); //写出文件    
-		    } catch (Exception ex) {
-		    	ex.printStackTrace(); //输出出错信息
-		    }
+			
+			if(!in_Valid.toString().trim().equals(""))
+			{
+			    try {
+			    	File invalidFile = new File(Property.CucumberWorkspace ,Paths.get("framework", Paths.get(path).getFileName().toString().replace(".rb", "-ErrorFormatred.rb")).toString());
+			    	FileOutputStream out = new FileOutputStream(invalidFile);  //得到文件输出流
+			    	out.write(in_Valid.toString().getBytes()); //写出文件    
+			    } catch (Exception ex) {
+			    	ex.printStackTrace(); //输出出错信息
+			    }
+			}
+
         }
         catch(IOException e)
         {
         	e.printStackTrace();
         }
 		
+	}
+	
+	private boolean isValidStatementLine(String line)
+	{
+		boolean toReturn = false;
+		String templine = line.replaceAll("\\s+", "");
+		toReturn = templine.startsWith("Given(") || templine.startsWith("When(") || templine.startsWith("Then(") || templine.startsWith("And(");
+		
+		return toReturn;
 	}
 	
 	private String processCucumbeDoc(BufferedReader br, String line) throws IOException {
@@ -114,14 +160,15 @@ public class StatementParser {
 			line = line.trim();
 			if(line.equals(""))
 				continue;
-			else if(line.startsWith("#End_DOC")||line.startsWith("Given(") || line.startsWith("When(") || line.startsWith("Then(") || line.startsWith("And("))
-			{
-				doc.addProperty(key, desc.toString());
+			else if(line.startsWith("#End_DOC")||isValidStatementLine(line))
+			{				
+				doc.add(key, toJsonValue(desc));
 				Stop = true;;
 			}
 			else if(line.startsWith("#params::"))
 			{
-				doc.addProperty(key, desc.toString());
+				
+				doc.add(key, toJsonValue(desc));
 				line = proccessParams(br, value);
 				count = 0;
 				followcount = 0;
@@ -129,7 +176,10 @@ public class StatementParser {
 					
 			if(count > followcount && line.indexOf("::") > 0) 
 			{				
-				doc.addProperty(key, desc.toString());				 
+				//String jsonvalue = stringifyJsonValue(desc); //desc.size() > 1 ? desc.get(0).toString() : desc.toString();
+				JsonElement _value = toJsonValue(desc);
+				if(_value != null)
+					doc.add(key, toJsonValue(desc));				 
 				followcount++;
 			}	
 			
@@ -139,19 +189,35 @@ public class StatementParser {
 			{
 				count++;
 				desc = new ArrayList<String>();
-				key = line.substring(line.indexOf("#") + 1,line.indexOf("::")).trim();
-				value = line.split("::")[1].trim();						
-				desc.add("\"" + value + "\"");			
+				key = line.substring(line.indexOf("#") + 1,line.indexOf("::")).trim().toLowerCase();
+				value = line.split("::").length >=2 ? line.split("::")[1].trim() : "";						
+				desc.add("" + value + "");			
 			}
 			else
 			{
 				value = line.trim().substring(1);
-				desc.add("\"" + value + "\""); 
+				desc.add("" + value + ""); 
 			}	
 			
 		}
 		System.out.println(doc.toString());
 		return doc.toString();
+	}
+
+
+	private JsonElement toJsonValue(ArrayList<String> desc) {
+		JsonElement toReturn = null;
+		if(desc.size() > 1)
+		{
+			toReturn = new Gson().toJsonTree(desc);
+		}
+		else if(desc.size()==1 && !"".equals(desc.get(0)))
+		{
+
+			toReturn = new Gson().toJsonTree(desc.get(0));			
+		}
+
+		return toReturn;
 	}
 
 
@@ -169,12 +235,12 @@ public class StatementParser {
 			System.out.println(line);
 			if(line.trim().equals(""))
 				continue;
-			else if(line.indexOf("Returns::") > 0 || line.indexOf("Example::") > 0 || line.indexOf("#End_DOC::") > 0||line.startsWith("Given(") || line.startsWith("When(") || line.startsWith("Then(") || line.startsWith("And("))
+			else if(line.indexOf("Returns::") > 0 || line.indexOf("Example::") > 0 || line.indexOf("#End_DOC::") > 0||isValidStatementLine(line))
 				Stop = true;
 	
 			if(count > followcount && line.indexOf("::") > 0) 
 			{				
-				params.addProperty(key, desc.toString());				 
+				params.add(key, toJsonValue(desc));				 
 				followcount++;
 			}
 			
@@ -184,18 +250,19 @@ public class StatementParser {
 			{
 				count++;
 				desc = new ArrayList<String>();
-				key = line.substring(line.indexOf("#") + 1,line.indexOf("::")).trim();
-				value = line.split("::")[1].trim();						
-				desc.add("\"" + value + "\"");			
+				key = line.substring(line.indexOf("#") + 1,line.indexOf("::")).trim().toLowerCase();
+				value = line.split("::").length >=2 ? line.split("::")[1].trim() : "";						
+				desc.add("" + value + "");			
 			}
 			else
 			{
 				value = line.trim().substring(1);
-				desc.add("\"" + value + "\""); 
+				desc.add("" + value + ""); 
 			}				
 
 		}
-		doc.add("params", params);
+		if(!params.isJsonNull())
+			doc.add("params", params);
 		return line;
 	}
 
@@ -203,7 +270,7 @@ public class StatementParser {
 	private Statement processStatement(String line) {
 		Statement oStatement; 
 		int start = line.indexOf("/");
-		int end = line.lastIndexOf("/");
+		int end = getEndIndex(line);
 		String statement = line.substring(start+1, end).trim();
 		if(statement.startsWith("^"))
 		{
@@ -232,38 +299,67 @@ public class StatementParser {
 		
 		if(start > -1)
 		{
-			//System.out.println(line);
 			params = line.substring(start+1, end).split(",");
-			int argindex = 0;
-			for(String param : params)
-			{
-				if(!"".equals(param))
-				{	
-					param = param.trim();
-					if(param.equalsIgnoreCase("pageName"))
+			Pattern pattern = Pattern.compile("\\(([^(]+)\\)",Pattern.DOTALL);
+			Matcher arguments = pattern.matcher(statement);
+			
+			
+			int i = 0;
+			while(arguments.find())
+			{			
+				Matcher isAction = Pattern.compile("[.^$*!?\"+]",Pattern.DOTALL).matcher(arguments.group());
+				if(!isAction.find())
+				{
+					oStatement.add(new Argument(i, params[i], "Action"));
+				}
+				else
+				{
+					if(params[i].toLowerCase().contains("pagename"))
 					{
-						oStatement.add(new Argument(argindex, param, "Page"));
+						oStatement.add(new Argument(i, params[i], "Page"));
 					}
-					else if(param.equalsIgnoreCase("elementName"))
+					else if(params[i].toLowerCase().contains("elementname"))
 					{
-						oStatement.add(new Argument(argindex, param, "Element"));
+						oStatement.add(new Argument(i, params[i], "Element"));
+					}
+					else if(params[i].toLowerCase().startsWith("var_"))
+					{
+						oStatement.add(new Argument(i, params[i], "Variable"));
 					}
 					else
 					{
-						oStatement.add(new Argument(argindex, param));
-					}						
-					
-					argindex++;
+						oStatement.add(new Argument(i, params[i]));
+					}	
 				}
-				
+				i++;			
 			}
+			
 		}
 
 		return oStatement;		
 		
 	}
-
-
+	
+	private int getEndIndex(String line)
+	{
+		
+		int index = 0;
+		if(line.split("/").length == 3)
+		{
+			index = line.lastIndexOf("/");
+		}
+		else if(line.lastIndexOf("/)") > 0)
+		{
+			index = line.lastIndexOf("/)");
+		}
+		else
+		{
+			int doindex = line.lastIndexOf("do");			
+			index = line.lastIndexOf("/", doindex);			
+		}	
+		
+		return index;
+	}
 
 	private void collectInvalidStatements(String line, String path) {
 		
@@ -274,10 +370,13 @@ public class StatementParser {
 
 	public void convertCategory()
 	{
+		if(statements.isEmpty()) return;
+		
 		CategorySerializer oCategorySerializer = serializeCategory(category, project);
 		try {
+			
 			System.out.println(new Gson().toJson(oCategorySerializer));
-			String response = whenPostStringRequestUsingHttpClient(new Gson().toJson(oCategorySerializer), "http://127.0.0.1:8000/sm-cw/savecategory/");
+			String response = whenPostStringRequestUsingHttpClient(new Gson().toJson(oCategorySerializer), this.getSaveCategoryEndpoint());
 			System.out.println(response);
 			JsonParser parser = new JsonParser();
 			JsonObject responseBody = parser.parse(response).getAsJsonObject();
@@ -302,7 +401,7 @@ public class StatementParser {
 			StatementSerializer oStatementSerializer = serializeStatement(s, categoryid, project);
 			try {
 				System.out.println(new Gson().toJson(oStatementSerializer));
-				whenPostStringRequestUsingHttpClient(new Gson().toJson(oStatementSerializer), "http://127.0.0.1:8000/sm-cw/savestatement/");
+				whenPostStringRequestUsingHttpClient(new Gson().toJson(oStatementSerializer), this.getSaveStatementEndpoint());
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

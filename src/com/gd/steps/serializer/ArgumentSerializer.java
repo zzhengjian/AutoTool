@@ -7,6 +7,7 @@ public class ArgumentSerializer {
 	public String argtype;
 	//public String actions_text = "";
     public String description;
+    public String override = "true";
     
 	public ArgumentSerializer() {
 		

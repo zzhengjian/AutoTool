@@ -1,14 +1,9 @@
 package com.gd.misc.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 
-import com.gd.steps.doc.Helper;
-import com.gd.steps.serializer.Argument;
+import com.gd.pages.serializer.PageParser;
 import com.gd.steps.serializer.StatementParser;
-import com.google.gson.Gson;
 
 public class testArgument {
 
@@ -22,18 +17,28 @@ public class testArgument {
 //		System.out.println(template);
 //	}
 	
+//	@Test
+//	public void testParser()
+//	{
+//		String path = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\General\\step_definitions\\page object steps\\basic steps.rb";
+//		//String path = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\Projects\\Walmart\\features\\step_definitions\\Web\\Online Activation\\OA_OOW.rb";
+//		StatementParser parser = new StatementParser(path);
+//		parser.processSteps();		
+//		
+//		
+//		parser.convertCategory();
+//		
+//		
+//	}
+	
 	@Test
-	public void testParser()
+	public void testPageParser()
 	{
-		//String path = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\General\\step_definitions\\rest steps\\rest steps.rb";
-		String path = "C:\\azheng-QA-Workspace\\QA\\Cucumber\\General\\step_definitions\\Table Steps.rb";
-		StatementParser parser = new StatementParser(path);
-		parser.processSteps();
-		
-		
-		
-		//parser.convertCategory();
+
+		PageParser parser = new PageParser();
+		parser.createSkin("NewAdded");	
 		
 		
 	}
+	
 }

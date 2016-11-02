@@ -2,18 +2,20 @@ package com.gd.steps.serializer;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.InputStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -23,22 +25,32 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.DefaultStyledDocument;
 
+import com.gd.driver.AutoTool;
 import com.gd.steps.doc.Helper;
+import javax.swing.JScrollPane;
 
 //简单的文本编辑器
 
-public class EditorDemo extends JFrame {
+public class DocEditor extends JFrame {
  JTextPane textPane = new JTextPane(); //文本窗格，编辑窗口 
  JLabel statusBar = new JLabel(); //状态栏
  JFileChooser filechooser = new JFileChooser(); //文件选择器
  JComboBox<String> statementCbx = new JComboBox<String>();
+ private JPanel panel;
+ private JButton btnGenerateDoc;
+ private JScrollPane editorScrollPane;
+ 
+ private File tempFolder;
 
- public EditorDemo() { //构造函数
+ public DocEditor() { //构造函数
   super("Cucumber Doc Editor");  //调用父类构造函数
   setTitle("Cucumber Doc Editor");
   ((AbstractDocument) textPane.getDocument()).setDocumentFilter(new HighlightDocumentFilter(textPane));
@@ -56,21 +68,39 @@ public class EditorDemo extends JFrame {
 
   setJMenuBar(createJMenuBar(actions));  //设置菜单栏
   Container container = getContentPane(); //得到容器
-  statementCbx.addActionListener(new ActionListener() {
-  	public void actionPerformed(ActionEvent paramActionEvent) {
+
+  textPane.setMargin(new Insets(1, 3, 3, 3));
+  //container.add(createJToolBar(actions), BorderLayout.NORTH); //增加工具栏
+  //container.add(statementCbx, BorderLayout.NORTH);
+  //container.add(textPane, BorderLayout.CENTER); //增加文本窗格
+  container.add(statusBar, BorderLayout.SOUTH); //增加状态栏
+  
+  panel = new JPanel();
+  getContentPane().add(panel, BorderLayout.NORTH);
+  container.add(panel, BorderLayout.NORTH);
+  
+  btnGenerateDoc = new JButton("");
+  btnGenerateDoc.addActionListener(new ActionListener() {
+  	public void actionPerformed(ActionEvent e) {
   		String statement = statementCbx.getSelectedItem().toString();
   		String textall = textPane.getText();
   		textPane.setText(textall.replace(statement, Helper.getDocTemplate(statement, "azheng")));
   	}
   });
-  //container.add(createJToolBar(actions), BorderLayout.NORTH); //增加工具栏
-  container.add(statementCbx, BorderLayout.NORTH);
-  container.add(textPane, BorderLayout.CENTER); //增加文本窗格
-  container.add(statusBar, BorderLayout.SOUTH); //增加状态栏
-
+  btnGenerateDoc.setPreferredSize(new Dimension(30, 9));
+  btnGenerateDoc.setIcon(new ImageIcon(DocEditor.class.getResource("/com/sun/javafx/scene/control/skin/modena/HTMLEditor-Indent-Black.png")));
+  btnGenerateDoc.setToolTipText("Generate Doc for then Statement");
+  btnGenerateDoc.setVerticalAlignment(SwingConstants.TOP);
+  panel.setLayout(new BorderLayout(0, 0));
+  panel.add(statementCbx, BorderLayout.CENTER);
+  panel.add(btnGenerateDoc,BorderLayout.EAST);
+  
+  editorScrollPane = new JScrollPane(textPane);
+  getContentPane().add(editorScrollPane, BorderLayout.CENTER);
+  
   setSize(487, 420); //设置窗口尺寸
   setVisible(true);  //设置窗口可视
-  setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //关闭窗口时退出程序
+  setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);  //关闭窗口时退出程序
  }
 
  private JMenuBar createJMenuBar(Action[] actions) {  //创建菜单栏
@@ -83,9 +113,11 @@ public class EditorDemo extends JFrame {
   menuFile.add(menuItem); //增加新菜单项
   JMenuItem menuItem_1 = new JMenuItem(actions[1]);
   menuItem_1.setText("Open");
+  menuItem_1.setAccelerator(KeyStroke.getKeyStroke("F3"));
   menuFile.add(menuItem_1);
   JMenuItem menuItem_2 = new JMenuItem(actions[2]);
   menuItem_2.setText("Save");
+  menuItem_2.setAccelerator(KeyStroke.getKeyStroke("F5"));
   menuFile.add(menuItem_2);
   JMenuItem menuItem_3 = new JMenuItem(actions[7]);
   menuItem_3.setText("Quit");
@@ -132,25 +164,26 @@ public class EditorDemo extends JFrame {
    super("Open");
   }
   public void actionPerformed(ActionEvent e) {
-   int i = filechooser.showOpenDialog(EditorDemo.this); //显示打开文件对话框
-   if (i == JFileChooser.APPROVE_OPTION) { //点击对话框中打开选项
-    File f = filechooser.getSelectedFile(); //得到选择的文件
-    try {
-     InputStream is = new FileInputStream(f); //得到文件输入流
-     textPane.read(is, "d"); //读入文件到文本窗格
-     BufferedReader br = new BufferedReader(new FileReader(f));
-     StatementParser sParser = new StatementParser(f.getAbsolutePath());
-     sParser.processSteps();
-     DefaultComboBoxModel<String> cbxmodel = new DefaultComboBoxModel<String>();
-     for(Statement statement : sParser.getStatements())
-     {
-    	 
-    	 cbxmodel.addElement(statement.getContent());
-     }
-     statementCbx.setModel(cbxmodel);
-    } catch (Exception ex) {
-     ex.printStackTrace();  //输出出错信息
-    }
+	  tempFolder = new File(AutoTool.CucumberDirectoryPath, "General/step_definitions");
+	  filechooser.setCurrentDirectory(tempFolder);
+	   int i = filechooser.showOpenDialog(DocEditor.this); //显示打开文件对话框
+	   if (i == JFileChooser.APPROVE_OPTION) { //点击对话框中打开选项
+	    File f = filechooser.getSelectedFile(); //得到选择的文件
+	    try {
+	     InputStream is = new FileInputStream(f); //得到文件输入流
+	     textPane.read(is, "d"); //读入文件到文本窗格
+	     StatementParser sParser = new StatementParser(f.getAbsolutePath());
+	     sParser.processSteps();
+	     DefaultComboBoxModel<String> cbxmodel = new DefaultComboBoxModel<String>();
+	     for(Statement statement : sParser.getStatements())
+	     {
+	    	 
+	    	 cbxmodel.addElement(statement.getContent());
+	     }
+	     statementCbx.setModel(cbxmodel);
+	    } catch (Exception ex) {
+	     ex.printStackTrace();  //输出出错信息
+	    }
    }
   }
  }
@@ -160,15 +193,28 @@ public class EditorDemo extends JFrame {
    super("Save");
   }
   public void actionPerformed(ActionEvent e) {
-   int i = filechooser.showSaveDialog(EditorDemo.this); //显示保存文件对话框
+   int i = filechooser.showSaveDialog(DocEditor.this); //显示保存文件对话框
    if (i == JFileChooser.APPROVE_OPTION) {  //点击对话框中保存按钮
     File f = filechooser.getSelectedFile(); //得到选择的文件
     try {
-     FileOutputStream out = new FileOutputStream(f);  //得到文件输出流
-     out.write(textPane.getText().getBytes()); //写出文件    
+    	 f.setWritable(true);
+	     FileOutputStream out = new FileOutputStream(f);  //得到文件输出流
+	     out.write(textPane.getText().getBytes()); //写出文件    
+	     
     } catch (Exception ex) {
      ex.printStackTrace(); //输出出错信息
     }
+
+    StatementParser sParser = new StatementParser(f.getAbsolutePath());
+    sParser.processSteps();
+    DefaultComboBoxModel<String> cbxmodel = new DefaultComboBoxModel<String>();
+    for(Statement statement : sParser.getStatements())
+    {
+   	 
+   	 cbxmodel.addElement(statement.getContent());
+    }
+    statementCbx.setModel(cbxmodel);
+    
    }
   }
  }
@@ -214,12 +260,12 @@ public class EditorDemo extends JFrame {
    super("about");
   }
   public void actionPerformed(ActionEvent e) {
-   JOptionPane.showMessageDialog(EditorDemo.this, "cucumber doc editor"); //显示软件信息
+   JOptionPane.showMessageDialog(DocEditor.this, "cucumber doc editor"); //显示软件信息
   }
  }
 
  public static void main(String[] args) {
-  new EditorDemo();
+  new DocEditor();
  }
  
  

@@ -23,7 +23,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -59,6 +58,7 @@ import com.gd.pagetree.ElementBean;
 import com.gd.pagetree.PageBean;
 import com.gd.pagetree.PageTree;
 import com.gd.pogen.POGen;
+import com.gd.steps.serializer.DocEditor;
 
 
 public class AutoTool {
@@ -117,6 +117,7 @@ public class AutoTool {
     private JButton btnInspect;
     private JMenuItem mntmPageConverter;
     private JButton btnStart;
+    private JMenuItem mntmDocEditor;
     
 	/**
 	 * Launch the application.
@@ -916,6 +917,14 @@ public class AutoTool {
 			}
 		});
 		mnPlugins.add(mntmPageConverter);
+		
+		mntmDocEditor = new JMenuItem("Doc Editor");
+		mntmDocEditor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new DocEditor();
+			}
+		});
+		mnPlugins.add(mntmDocEditor);
 		
 		lblUrl = new JLabel("URL");
 		lblUrl.setBounds(5, 94, 46, 14);
