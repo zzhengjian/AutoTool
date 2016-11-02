@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import com.gd.common.Configuration;
 import com.gd.driver.AutoTool;
 import com.gd.driver.Customer;
 
@@ -22,7 +23,7 @@ import com.gd.driver.Customer;
 public class CucumberHelper {
 	
 	public static StringBuilder tcase;
-	public static Path runPath = Paths.get(AutoTool.CucumberDirectoryPath,"Projects\\GreenDot");
+	public static Path runPath = Paths.get(Configuration.CucumberWorkspace,"Projects\\GreenDot");
 	private static HashMap<String, String> custTypeArgs = new HashMap<String, String>();	
 	
 	public static HashMap<String, String> getCustTypeArgs() {
@@ -109,7 +110,7 @@ public class CucumberHelper {
 	public static List<String> loadCustomerTypes()
 	{
 		
-		File customertypeFile= new File(AutoTool.CucumberDirectoryPath, "/General/step_definitions/GetSpecificCustomerSteps.rb");
+		File customertypeFile= new File(Configuration.CucumberWorkspace, "/General/step_definitions/GetSpecificCustomerSteps.rb");
 		
 		List<String> custList = new ArrayList<String>();
 		FileReader fr = null;

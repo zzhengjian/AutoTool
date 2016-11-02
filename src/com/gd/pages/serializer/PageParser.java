@@ -1,6 +1,7 @@
 package com.gd.pages.serializer;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,12 +10,14 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
+import com.gd.common.ConverterSettings;
 import com.google.gson.Gson;
 
 
@@ -39,12 +42,42 @@ public class PageParser {
 		
 		json = new Gson().toJson(sSerializer);
 		try {
-			whenPostJsonRequestUsingHttpClient(json, "http://127.0.0.1:8000/pm-cw/skin_create");
+			whenPostJsonRequestUsingHttpClient(json, getCreateSkinEndpoint());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		
+	}
+	
+	public String getCreateSkinEndpoint() {
+		String url = null;
+		try {
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/pm-cw/skin_create/").toString();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return url;
+	}
+	
+	public String getSavePageEndpoint() {
+		String url = null;
+		try {
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/pm-cw/savefamily/").toString();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return url;
+	}
+
+	public String getSaveFamilyEndpoint() {
+		String url = null;
+		try {
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/pm-cw/savepage/").toString();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return url;
 	}
 
 	public void parse(String path)
@@ -62,7 +95,7 @@ public class PageParser {
 			{
 				json = new Gson().toJson(serializePage(family, FamilySerializer.class));
 				try {
-					whenPostStringRequestUsingHttpClient(json, "http://127.0.0.1:8000/pm-cw/savefamily/");
+					whenPostStringRequestUsingHttpClient(json, getSaveFamilyEndpoint());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -74,7 +107,7 @@ public class PageParser {
 			page.ProcessPage();
 			json = new Gson().toJson(serializePage(page, PageSerializer.class));
 			try {
-				whenPostStringRequestUsingHttpClient(json, "http://127.0.0.1:8000/pm-cw/savepage/");
+				whenPostStringRequestUsingHttpClient(json, getSavePageEndpoint());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

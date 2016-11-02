@@ -23,6 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
+import com.gd.common.Configuration;
 import com.gd.driver.AutoTool;
 import com.gd.driver.Customer;
 import com.gd.driver.Driver;
@@ -328,11 +329,11 @@ public class LoginPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if(cbxProject.getSelectedItem().equals("Walmart"))
 				{
-					CucumberHelper.runPath = Paths.get(AutoTool.CucumberDirectoryPath, "Projects/Walmart");
+					CucumberHelper.runPath = Paths.get(Configuration.CucumberWorkspace, "Projects/Walmart");
 				}
 				else
 				{
-					CucumberHelper.runPath = Paths.get(AutoTool.CucumberDirectoryPath, "Projects/GreenDot");
+					CucumberHelper.runPath = Paths.get(Configuration.CucumberWorkspace, "Projects/GreenDot");
 				}
 			}
 		});

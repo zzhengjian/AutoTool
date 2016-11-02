@@ -27,9 +27,6 @@ public class Property {
 	public static String fxprofilepath = "";
 	private static int Default_Wait_Time = 120;
 	
-	public static String CucumberWorkspace = "C:\\azheng-QA-Workspace\\QA\\Cucumber";
-	public static String EndPoint = "http://127.0.0.1:8000/";
-	
 	
 	public static void SetUp()
 	{

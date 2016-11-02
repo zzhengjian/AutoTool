@@ -33,6 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.DefaultStyledDocument;
 
+import com.gd.common.Configuration;
 import com.gd.driver.AutoTool;
 import com.gd.steps.doc.Helper;
 import javax.swing.JScrollPane;
@@ -164,7 +165,7 @@ public class DocEditor extends JFrame {
    super("Open");
   }
   public void actionPerformed(ActionEvent e) {
-	  tempFolder = new File(AutoTool.CucumberDirectoryPath, "General/step_definitions");
+	  tempFolder = new File(Configuration.CucumberWorkspace, "General/step_definitions");
 	  filechooser.setCurrentDirectory(tempFolder);
 	   int i = filechooser.showOpenDialog(DocEditor.this); //显示打开文件对话框
 	   if (i == JFileChooser.APPROVE_OPTION) { //点击对话框中打开选项

@@ -23,7 +23,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.gd.common.Property;
+import com.gd.common.Configuration;
+import com.gd.common.ConverterSettings;
 import com.gd.rest.DefaultResponseHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -54,9 +55,8 @@ public class StatementParser {
 	public String getSaveCategoryEndpoint() {
 		String url = null;
 		try {
-			url = new URIBuilder(Property.EndPoint).setPath("/sm-cw/savecategory/").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/sm-cw/savecategory/").toString();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return url;
@@ -65,9 +65,8 @@ public class StatementParser {
 	public String getSaveStatementEndpoint() {
 		String url = null;
 		try {
-			url = new URIBuilder(Property.EndPoint).setPath("/sm-cw/savestatement/").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/sm-cw/savestatement/").toString();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return url;
@@ -121,7 +120,7 @@ public class StatementParser {
 			if(!in_Valid.toString().trim().equals(""))
 			{
 			    try {
-			    	File invalidFile = new File(Property.CucumberWorkspace ,Paths.get("framework", Paths.get(path).getFileName().toString().replace(".rb", "-ErrorFormatred.rb")).toString());
+			    	File invalidFile = new File(Configuration.CucumberWorkspace ,Paths.get("framework", Paths.get(path).getFileName().toString().replace(".rb", "-ErrorFormatred.rb")).toString());
 			    	FileOutputStream out = new FileOutputStream(invalidFile);  //得到文件输出流
 			    	out.write(in_Valid.toString().getBytes()); //写出文件    
 			    } catch (Exception ex) {
@@ -147,7 +146,6 @@ public class StatementParser {
 	}
 	
 	private String processCucumbeDoc(BufferedReader br, String line) throws IOException {
-		// TODO Auto-generated method stub
 		doc = new JsonObject();
 		String key = null ;
 		String value = null ;

@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -20,15 +19,16 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import com.gd.common.Property;
+import com.gd.common.Configuration;
+import com.gd.common.ConverterSettings;
 import com.gd.pages.serializer.Page;
 import com.gd.pages.serializer.PageParser;
 import com.gd.steps.doc.Helper;
@@ -44,13 +44,7 @@ public class POConverter extends JPanel {
 
 	private ArrayList<File> filelist = new ArrayList<File>();
 	private JButton btnSelectFolder;
-	private JTextField tfSkin;
-	private JLabel lblSkin;
 	
-	private boolean isPageSelected = true;
-	private final ButtonGroup buttonGroup = new ButtonGroup();
-	private JRadioButton rdbtnPages;
-	private JRadioButton rdbtnStatements;
 	private JTextField selectedField;
 	private JTextField EndPointTextField;
 	private JComboBox<String> projectComboBox;
@@ -70,13 +64,20 @@ public class POConverter extends JPanel {
 	 * Create the panel.
 	 */
 	public POConverter() {		
-
+		
+		setProperEndPoint();
 		initComponents();
 		CreateEvents();
 
 	}
 
-	private void initComponents() {
+	private void setProperEndPoint() {
+		String endpoint =  JOptionPane.showInputDialog("set your endpoint", ConverterSettings.EndPoint);
+		ConverterSettings.EndPoint = endpoint;
+	}
+
+	private void initComponents() {		
+		
 		fileScrollPane = new JScrollPane();
 		
 		btnOpen = new JButton("Select Files");
@@ -89,19 +90,6 @@ public class POConverter extends JPanel {
 		
 		btnSelectFolder = new JButton("Select Folder");
 		
-		tfSkin = new JTextField();
-		tfSkin.setText(PageParser.Skin);
-		tfSkin.setColumns(10);
-		
-		lblSkin = new JLabel("Skin");
-		
-		rdbtnPages = new JRadioButton("pages");
-		rdbtnPages.setSelected(true);
-		buttonGroup.add(rdbtnPages);
-		
-		rdbtnStatements = new JRadioButton("statements");
-
-		buttonGroup.add(rdbtnStatements);
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel topPanel = new JPanel();
@@ -125,11 +113,11 @@ public class POConverter extends JPanel {
 		JLabel lblEndPoint = new JLabel("EndPoint");
 		
 		EndPointTextField = new JTextField();
-		EndPointTextField.setText(Property.EndPoint);
+		EndPointTextField.setText(ConverterSettings.EndPoint);
 		EndPointTextField.setColumns(10);
 		
 		wokspaceField = new JTextField();
-		wokspaceField.setText(Property.CucumberWorkspace);
+		wokspaceField.setText(Configuration.CucumberWorkspace);
 		wokspaceField.setColumns(10);
 		
 		JLabel lblWorkspace = new JLabel("workspace");
@@ -204,16 +192,16 @@ public class POConverter extends JPanel {
 		gl_statementPanel.setHorizontalGroup(
 			gl_statementPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_statementPanel.createSequentialGroup()
-					.addGap(29)
+					.addGap(24)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 471, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(24, Short.MAX_VALUE))
+					.addContainerGap(29, Short.MAX_VALUE))
 		);
 		gl_statementPanel.setVerticalGroup(
-			gl_statementPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_statementPanel.createSequentialGroup()
-					.addContainerGap(118, Short.MAX_VALUE)
+			gl_statementPanel.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_statementPanel.createSequentialGroup()
+					.addContainerGap(80, Short.MAX_VALUE)
 					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 186, GroupLayout.PREFERRED_SIZE)
-					.addGap(57))
+					.addGap(29))
 		);
 		
 		JTextPane pageLogTextPane = new JTextPane();
@@ -252,9 +240,9 @@ public class POConverter extends JPanel {
 					.addGroup(gl_pagePanel.createParallelGroup(Alignment.TRAILING)
 						.addComponent(skinComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(lblSkin_1))
-					.addGap(108)
-					.addComponent(logScrollPane, GroupLayout.PREFERRED_SIZE, 139, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(62, Short.MAX_VALUE))
+					.addGap(53)
+					.addComponent(logScrollPane, GroupLayout.PREFERRED_SIZE, 194, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		
 		JTextPane statementLogTextPane = new JTextPane();
@@ -282,7 +270,7 @@ public class POConverter extends JPanel {
 				File[] files;
 				fileListModel.clear();
 				filelist.clear();
-				fc = new JFileChooser(Property.CucumberWorkspace);
+				fc = new JFileChooser(Configuration.CucumberWorkspace);
 				fc.setMultiSelectionEnabled(true);
 				fc.setVisible(true);				
 				int returnVal = fc.showOpenDialog(null);
@@ -415,19 +403,6 @@ public class POConverter extends JPanel {
 			}
 		});
 		
-		rdbtnStatements.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent paramActionEvent) {
-				isPageSelected = false;
-				lblSkin.setText("Project");
-			}
-		});
-		
-		rdbtnPages.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent paramActionEvent) {
-				isPageSelected = true;
-				lblSkin.setText("Skin");
-			}
-		});
 		
 		btnSelectFolder.addMouseListener(new MouseAdapter() {
 
@@ -437,13 +412,19 @@ public class POConverter extends JPanel {
 				File fileOrDir;
 				fileListModel.clear();
 				filelist.clear();
-				fc = new JFileChooser(Property.CucumberWorkspace);
+				fc = new JFileChooser(Configuration.CucumberWorkspace);
 				fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				fc.setVisible(true);				
 				int returnVal = fc.showOpenDialog(null);
 				if (returnVal == JFileChooser.APPROVE_OPTION) 	
 				{
 					fileOrDir = fc.getSelectedFile();
+					
+					if(tabbedPane.getSelectedIndex() == 1)
+					{
+						fileOrDir = getPagesFolder(fileOrDir);
+					}
+					
 					if(fileOrDir.isDirectory())
 					{
 						selectedField.setText(fileOrDir.getAbsolutePath());
@@ -471,6 +452,27 @@ public class POConverter extends JPanel {
 			        }
 				
 			}
+			
+			
+			private File getPagesFolder(File dir) {
+				
+				File pageFolder = null;
+		        //get all the files from a directory
+		        File[] fList = dir.listFiles();
+		        for (File file : fList){
+		            if (file.isFile()){
+		            	continue;
+		            } 
+		            else if(file.isDirectory() && file.getName().equalsIgnoreCase("pages"))
+		            {
+		            	pageFolder = file;
+		            }
+		            else if (file.isDirectory()){
+		                listFilesAndFilesSubDirectories(file);
+		            }
+		        }
+			return pageFolder;
+		}
 		});
 		
 	}

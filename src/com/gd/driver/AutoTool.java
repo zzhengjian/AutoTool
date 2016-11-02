@@ -51,6 +51,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
+import com.gd.common.Configuration;
 import com.gd.common.Property;
 import com.gd.common.Utils;
 import com.gd.loginhelper.TestFrame;
@@ -81,8 +82,8 @@ public class AutoTool {
 
 	private HashMap<String, PageNode> pageNodeMap  = new LinkedHashMap<String, PageNode>();
 	private File file = null;	
-	public static String CucumberDirectoryPath = loadCucumberWorkspace();
-	public static String tempPath = Paths.get(CucumberDirectoryPath, Customer.projectPath.get("GreenDot")).toString() ;
+	//public static String CucumberDirectoryPath = loadCucumberWorkspace();
+	public static String tempPath;
 	public JScrollPane elementsScrollPane;
 	private final ButtonGroup actionButtonGroup = new ButtonGroup();
 	
@@ -141,14 +142,15 @@ public class AutoTool {
 	public AutoTool() {
 		
 		Property.SetUp();
+		loadCucumberWorkspace();
 		initialize();
 	}
 
-	private static String loadCucumberWorkspace() {
+	private void loadCucumberWorkspace() {
 
-		String message =  JOptionPane.showInputDialog("your cucumber location",Property.setting.getProperty("CucumberDirectoryPath", ""));
-		return message;
-		
+		String workspace =  JOptionPane.showInputDialog("your cucumber location",Configuration.CucumberWorkspace);
+		Configuration.CucumberWorkspace = workspace;	
+		Configuration.saveWorkspace();
 	}
 
 	/**
@@ -740,8 +742,7 @@ public class AutoTool {
 
 				JFileChooser fc;
 				
-				fc = new JFileChooser(tempPath);
-
+				fc = new JFileChooser(Paths.get(Configuration.CucumberWorkspace, Customer.projectPath.get("GreenDot")).toString());
 				fc.setVisible(true);				
 				int returnVal = fc.showOpenDialog(frmAutotool);
 				if (returnVal == JFileChooser.APPROVE_OPTION) 	
