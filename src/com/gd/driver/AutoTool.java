@@ -109,6 +109,8 @@ public class AutoTool {
     private JButton btnRemove;
     private JButton btnRefreshButton;
     
+    private final JTree tree =  new JTree();
+    
 	/**
 	 * Launch the application.
 	 */
@@ -149,334 +151,73 @@ public class AutoTool {
 	private void initialize() {
 		
 		initComponents();
-		createEvents();
-		
-		
-		
-		url = new JTextField();
-		url.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					URL sUrl = new URL(url.getText());
-					System.out.println(sUrl);
-					oWebDriver.manage().timeouts().pageLoadTimeout(90, TimeUnit.SECONDS);
-					oWebDriver.get(sUrl.toString());
-				} catch (MalformedURLException e) {	
-					logTextPane.setText(logTextPane.getText() + "Wrong url form" + "\n");
-					e.printStackTrace();
-				} catch (Exception e) {	
-					e.printStackTrace();
-				}						
-				
-			}
-		});
-		url.setBounds(5, 116, 387, 20);
-		frmAutotool.getContentPane().add(url);
-		url.setColumns(10);
-		
-		//nav to desired url
-		btnGoto = new JButton("");
-		btnGoto.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/rightArrow.png")));
-		btnGoto.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				try {
-					URL sUrl = new URL(url.getText());
-					System.out.println(sUrl);
-					oWebDriver.manage().timeouts().pageLoadTimeout(90, TimeUnit.SECONDS);
-					oWebDriver.get(sUrl.toString());
-				} catch (MalformedURLException e) {	
-					logTextPane.setText(logTextPane.getText() + "Wrong url form" + "\n");
-					e.printStackTrace();
-				} catch (Exception e) {	
-					e.printStackTrace();
-				}						
-				
-			}
-		});
-		btnGoto.setBounds(402, 116, 20, 20);
-		frmAutotool.getContentPane().add(btnGoto);
-		
-		final JTree tree = new JTree();
+		createMenuComponents();
+		createEvents();		
+		createMenuEvents();	
 
-		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-		tree.addTreeSelectionListener(new TreeSelectionListener() {
-			
-			public void valueChanged(TreeSelectionEvent e) {
-				DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-				String pageurl = "";
-				//new Added
-				if(selectionNode!=null)
-				{
-					
-					if(selectionNode.getUserObject() instanceof PageBean)
-					{
-						pageurl = ((PageBean)selectionNode.getUserObject()).getUrl();
+	}
 
-						elementTag.setText("");
-						
-					}
-					else if(selectionNode.getUserObject() instanceof ElementBean)
-					{
-						pageurl = ((PageBean)((DefaultMutableTreeNode) selectionNode.getParent()).getUserObject()).getUrl();
-
-						elementTag.setText(((ElementBean)selectionNode.getUserObject()).getSelector());
-					}
-					url.setText(pageurl);
-				}
-
-			}
-		});		
-
-		rootNode = new DefaultMutableTreeNode("Web Elements");
-		treeModel = new DefaultTreeModel(rootNode);
-		tree.setModel(treeModel);
-		
-		elementsScrollPane = new JScrollPane(tree);
-		elementsScrollPane.setBounds(453, 69, 250, 369);
-		frmAutotool.getContentPane().add(elementsScrollPane);
-		
-		logTextPane = new JTextPane();
-		logTextPane.setBounds(66, 386, 6, 20);
-		
-		logScrollPane = new JScrollPane(logTextPane);
-		logScrollPane.setBounds(5, 230, 430, 180);
-		frmAutotool.getContentPane().add(logScrollPane);
-		
-		btnRefreshButton = new JButton("");
-		btnRefreshButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/refresh.png")));
-		btnRefreshButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
-				
-				if(selectionNode!=null&&selectionNode.isLeaf())
-				{		
-					tree.setModel(treeModel);
-					DefaultMutableTreeNode node = null;
-					file = pageNodeMap.get(selectionNode.getParent().toString()).pageFile;
-					
-					PageNode pageNode = new PageNode();						 
-					pageNodeMap.put(pageNode.pageName, pageNode);	
-
-					node = new DefaultMutableTreeNode(pageNode.pageName);
-
-					
-					Iterator<Entry<String, String>> key = pageNode.elementsMap.entrySet().iterator();
-					
-					while(key.hasNext())
-					{
-						java.util.Map.Entry entry = (java.util.Map.Entry)key.next();
-						node.add(new DefaultMutableTreeNode(entry.getKey()));
-					 
-					}
-
-					treeModel.reload(node);
-					tree.revalidate();
-					tree.repaint();
-			        //Make sure the user can see the lovely new node.
-			        tree.scrollPathToVisible(new TreePath(node.getPath()));
-				}
-				else if(selectionNode!=null&&!selectionNode.equals(rootNode))
-				{
-					tree.setModel(treeModel);
-					DefaultMutableTreeNode node = null;
-					file = pageNodeMap.get(selectionNode.toString()).pageFile;
-					
-					PageNode pageNode = new PageNode();						 
-					pageNodeMap.put(pageNode.pageName, pageNode);	
-
-					node = new DefaultMutableTreeNode(pageNode.pageName);
-
-					
-					Iterator<Entry<String, String>> key = pageNode.elementsMap.entrySet().iterator();
-					
-					while(key.hasNext())
-					{
-						java.util.Map.Entry entry = (java.util.Map.Entry)key.next();
-						node.add(new DefaultMutableTreeNode(entry.getKey()));
-					 
-					}
-
-					treeModel.reload(node);
-					tree.revalidate();
-					tree.repaint();
-			        //Make sure the user can see the lovely new node.
-			        tree.scrollPathToVisible(new TreePath(node.getPath()));
-				}
-				
-
-			}
-		});
-		btnRefreshButton.setBounds(504, 41, 20, 20);
-		frmAutotool.getContentPane().add(btnRefreshButton);
-		
-		btnAddButton = new JButton("");
-		btnAddButton.setToolTipText("Add A Page to Tree Node");
-		btnAddButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/plus.png")));
-		btnAddButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-
-				JFileChooser fc;
-				
-				fc = new JFileChooser(Paths.get(Configuration.CucumberWorkspace, Customer.projectPath.get("GreenDot")).toString());
-				fc.setVisible(true);				
-				int returnVal = fc.showOpenDialog(frmAutotool);
-				if (returnVal == JFileChooser.APPROVE_OPTION) 	
-				{
-					file = fc.getSelectedFile();
-					tempPath = file.getAbsolutePath();
-				}
-				
-				if(file!=null&&returnVal == JFileChooser.APPROVE_OPTION)
-				{
-					tree.setModel(treeModel);
-					DefaultMutableTreeNode node = null;	
-					
-					String path = file.getAbsolutePath();
-					PageTree pageTree = new PageTree(path);
-					node = pageTree.getPageNode();
-					
-
-					treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
-					
-					tree.revalidate();
-					tree.repaint();
-			        //Make sure the user can see the lovely new node.
-			        tree.scrollPathToVisible(new TreePath(node.getPath()));
-				}
-				
-			}
-		});
-
-		
-		btnAddButton.setBounds(453, 41, 20, 20);
-		frmAutotool.getContentPane().add(btnAddButton);
-		
-		btnRemove = new JButton("");
-		btnRemove.setToolTipText("Remove a Page");
-		btnRemove.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/cancel.png")));
-		btnRemove.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				
-				 TreePath currentSelection = tree.getSelectionPath();
-			        if (currentSelection != null) {
-			        	
-			            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)
-			                         (currentSelection.getLastPathComponent());
-			            MutableTreeNode parent = (MutableTreeNode)(currentNode.getParent());
-			            if (parent != null && parent.equals(rootNode)) {
-			                treeModel.removeNodeFromParent(currentNode);
-			                return;
-			            }
-			            else if (parent != null &&!parent.equals(rootNode))
-			            {
-			                treeModel.removeNodeFromParent(parent);
-			                return;
-			            }
-			        } 
-
-			}
-		});
-		btnRemove.setBounds(478, 41, 20, 20);
-		frmAutotool.getContentPane().add(btnRemove);
-		
-		btnInspect = new JButton("inspect");
-		
-		btnInspect.setDisabledIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
-		btnInspect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-			}
-		});
-		btnInspect.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if(!(oWebDriver instanceof FirefoxDriver))
-				{
-					logTextPane.setText(logTextPane.getText() + "Inspect only works for firefox" + "\n");
-					return;
-				}				
-
-				String selector = null;
-				try {
-					selector = inspectOnElement(oWebDriver);					
-				} catch (NoSuchElementException e) {
-					e.printStackTrace();
-					if(e.toString().contains("Please make sure firepath is open"))		
-						logTextPane.setText(logTextPane.getText() + "Please make sure firepath is open" + "\n");
-				}
-				elementTag.setText(selector);
-			}
-
-			private String inspectOnElement(WebDriver driver) {
-				//this line to trigger firepath inspect mode					
-				oWebDriver.manage().ime().deactivate();
-				Utils.sleepFor(1);
-				//this line to get selector once element is inspected
-				return oWebDriver.manage().ime().getActiveEngine();
-			}
-		});
-		btnInspect.setBounds(220, 61, 77, 23);
-		frmAutotool.getContentPane().add(btnInspect);
-		
-		menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 756, 21);
-		frmAutotool.getContentPane().add(menuBar);
-		
-		mnPlugins = new JMenu("Plug-ins");
-		menuBar.add(mnPlugins);
-		
+	private void createMenuComponents() {
 		mntmLoginHelper = new JMenuItem("Login Helper");
+
+		mnPlugins.add(mntmLoginHelper);
+		
+		mntmAutoFill = new JMenuItem("Auto Fill");
+
+		mnPlugins.add(mntmAutoFill);
+		
+		mntmPoGen = new JMenuItem("POGen");
+
+		mnPlugins.add(mntmPoGen);
+		
+		mntmPageConverter = new JMenuItem("PageConverter");
+
+		mnPlugins.add(mntmPageConverter);
+		
+		mntmDocEditor = new JMenuItem("Doc Editor");
+
+		mnPlugins.add(mntmDocEditor);
+		
+		lblUrl = new JLabel("URL");
+		lblUrl.setBounds(5, 94, 46, 14);
+		frmAutotool.getContentPane().add(lblUrl);
+	}
+
+	private void createMenuEvents() {
 		mntmLoginHelper.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent paramMouseEvent) {
 				TestFrame.startLoginPanel();
 			}
 		});
-		mnPlugins.add(mntmLoginHelper);
 		
-		mntmAutoFill = new JMenuItem("Auto Fill");
 		mntmAutoFill.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent paramMouseEvent) {
 				TestFrame.startAutoFillPanel();
 			}
 		});
-		mnPlugins.add(mntmAutoFill);
 		
-		mntmPoGen = new JMenuItem("POGen");
 		mntmPoGen.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				POGen.startPOGen();
 			}
 		});
-		mnPlugins.add(mntmPoGen);
 		
-		mntmPageConverter = new JMenuItem("PageConverter");
 		mntmPageConverter.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				TestFrame.startConverterPanel();
 			}
 		});
-		mnPlugins.add(mntmPageConverter);
 		
-		mntmDocEditor = new JMenuItem("Doc Editor");
 		mntmDocEditor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new DocEditor();
 			}
 		});
-		mnPlugins.add(mntmDocEditor);
 		
-		lblUrl = new JLabel("URL");
-		lblUrl.setBounds(5, 94, 46, 14);
-		frmAutotool.getContentPane().add(lblUrl);
-		
-
 	}
 
 	private void createEvents() {
@@ -574,6 +315,225 @@ public class AutoTool {
 				}
 			}
 		});
+		
+		
+		url.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					URL sUrl = new URL(url.getText());
+					System.out.println(sUrl);
+					oWebDriver.manage().timeouts().pageLoadTimeout(90, TimeUnit.SECONDS);
+					oWebDriver.get(sUrl.toString());
+				} catch (MalformedURLException e) {	
+					logTextPane.setText(logTextPane.getText() + "Wrong url form" + "\n");
+					e.printStackTrace();
+				} catch (Exception e) {	
+					e.printStackTrace();
+				}						
+				
+			}
+		});
+		
+		btnGoto.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				try {
+					URL sUrl = new URL(url.getText());
+					System.out.println(sUrl);
+					oWebDriver.manage().timeouts().pageLoadTimeout(90, TimeUnit.SECONDS);
+					oWebDriver.get(sUrl.toString());
+				} catch (MalformedURLException e) {	
+					logTextPane.setText(logTextPane.getText() + "Wrong url form" + "\n");
+					e.printStackTrace();
+				} catch (Exception e) {	
+					e.printStackTrace();
+				}						
+				
+			}
+		});
+		
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		tree.addTreeSelectionListener(new TreeSelectionListener() {
+			
+			public void valueChanged(TreeSelectionEvent e) {
+				DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+				String pageurl = "";
+				//new Added
+				if(selectionNode!=null)
+				{
+					
+					if(selectionNode.getUserObject() instanceof PageBean)
+					{
+						pageurl = ((PageBean)selectionNode.getUserObject()).getUrl();
+
+						elementTag.setText("");
+						
+					}
+					else if(selectionNode.getUserObject() instanceof ElementBean)
+					{
+						pageurl = ((PageBean)((DefaultMutableTreeNode) selectionNode.getParent()).getUserObject()).getUrl();
+
+						elementTag.setText(((ElementBean)selectionNode.getUserObject()).getSelector());
+					}
+					url.setText(pageurl);
+				}
+
+			}
+		});		
+		
+		
+		btnRefreshButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+				
+				if(selectionNode!=null&&selectionNode.isLeaf())
+				{		
+					tree.setModel(treeModel);
+					DefaultMutableTreeNode node = null;
+					file = pageNodeMap.get(selectionNode.getParent().toString()).pageFile;
+					
+					PageNode pageNode = new PageNode();						 
+					pageNodeMap.put(pageNode.pageName, pageNode);	
+
+					node = new DefaultMutableTreeNode(pageNode.pageName);
+
+					
+					Iterator<Entry<String, String>> key = pageNode.elementsMap.entrySet().iterator();
+					
+					while(key.hasNext())
+					{
+						java.util.Map.Entry entry = (java.util.Map.Entry)key.next();
+						node.add(new DefaultMutableTreeNode(entry.getKey()));
+					 
+					}
+
+					treeModel.reload(node);
+					tree.revalidate();
+					tree.repaint();
+			        //Make sure the user can see the lovely new node.
+			        tree.scrollPathToVisible(new TreePath(node.getPath()));
+				}
+				else if(selectionNode!=null&&!selectionNode.equals(rootNode))
+				{
+					tree.setModel(treeModel);
+					DefaultMutableTreeNode node = null;
+					file = pageNodeMap.get(selectionNode.toString()).pageFile;
+					
+					PageNode pageNode = new PageNode();						 
+					pageNodeMap.put(pageNode.pageName, pageNode);	
+
+					node = new DefaultMutableTreeNode(pageNode.pageName);
+
+					
+					Iterator<Entry<String, String>> key = pageNode.elementsMap.entrySet().iterator();
+					
+					while(key.hasNext())
+					{
+						java.util.Map.Entry entry = (java.util.Map.Entry)key.next();
+						node.add(new DefaultMutableTreeNode(entry.getKey()));
+					 
+					}
+
+					treeModel.reload(node);
+					tree.revalidate();
+					tree.repaint();
+			        //Make sure the user can see the lovely new node.
+			        tree.scrollPathToVisible(new TreePath(node.getPath()));
+				}
+				
+
+			}
+		});
+		
+		btnRemove.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				
+				 TreePath currentSelection = tree.getSelectionPath();
+			        if (currentSelection != null) {
+			        	
+			            DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode)
+			                         (currentSelection.getLastPathComponent());
+			            MutableTreeNode parent = (MutableTreeNode)(currentNode.getParent());
+			            if (parent != null && parent.equals(rootNode)) {
+			                treeModel.removeNodeFromParent(currentNode);
+			                return;
+			            }
+			            else if (parent != null &&!parent.equals(rootNode))
+			            {
+			                treeModel.removeNodeFromParent(parent);
+			                return;
+			            }
+			        } 
+
+			}
+		});
+		
+		btnAddButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+
+				JFileChooser fc;
+				
+				fc = new JFileChooser(Paths.get(Configuration.CucumberWorkspace, Customer.projectPath.get("GreenDot")).toString());
+				fc.setVisible(true);				
+				int returnVal = fc.showOpenDialog(frmAutotool);
+				if (returnVal == JFileChooser.APPROVE_OPTION) 	
+				{
+					file = fc.getSelectedFile();
+					tempPath = file.getAbsolutePath();
+				}
+				
+				if(file!=null&&returnVal == JFileChooser.APPROVE_OPTION)
+				{
+					tree.setModel(treeModel);
+					DefaultMutableTreeNode node = null;	
+					
+					String path = file.getAbsolutePath();
+					PageTree pageTree = new PageTree(path);
+					node = pageTree.getPageNode();
+					
+
+					treeModel.insertNodeInto(node, rootNode, rootNode.getChildCount());
+					
+					tree.revalidate();
+					tree.repaint();
+			        //Make sure the user can see the lovely new node.
+			        tree.scrollPathToVisible(new TreePath(node.getPath()));
+				}
+				
+			}
+		});
+		
+		btnInspect.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				if(!(oWebDriver instanceof FirefoxDriver))
+				{
+					logTextPane.setText(logTextPane.getText() + "Inspect only works for firefox" + "\n");
+					return;
+				}				
+
+				String selector = null;
+				try {
+					selector = inspectOnElement(oWebDriver);					
+				} catch (NoSuchElementException e) {
+					e.printStackTrace();
+					if(e.toString().contains("Please make sure firepath is open"))		
+						logTextPane.setText(logTextPane.getText() + "Please make sure firepath is open" + "\n");
+				}
+				elementTag.setText(selector);
+			}
+
+			private String inspectOnElement(WebDriver driver) {
+				//this line to trigger firepath inspect mode					
+				oWebDriver.manage().ime().deactivate();
+				Utils.sleepFor(1);
+				//this line to get selector once element is inspected
+				return oWebDriver.manage().ime().getActiveEngine();
+			}
+		});
 	}
 
 	private void initComponents() {
@@ -630,6 +590,73 @@ public class AutoTool {
 		sParam.setBounds(161, 196, 164, 21);
 		frmAutotool.getContentPane().add(sParam);
 		sParam.setColumns(10);
+		
+		
+		url = new JTextField();
+
+		url.setBounds(5, 116, 387, 20);
+		frmAutotool.getContentPane().add(url);
+		url.setColumns(10);
+		
+		//nav to desired url
+		btnGoto = new JButton("");
+		btnGoto.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/rightArrow.png")));
+		
+		btnGoto.setBounds(402, 116, 20, 20);
+		frmAutotool.getContentPane().add(btnGoto);
+		
+
+		rootNode = new DefaultMutableTreeNode("Web Elements");
+		treeModel = new DefaultTreeModel(rootNode);
+		tree.setModel(treeModel);
+		
+		elementsScrollPane = new JScrollPane(tree);
+		elementsScrollPane.setBounds(453, 69, 250, 369);
+		frmAutotool.getContentPane().add(elementsScrollPane);
+		
+		logTextPane = new JTextPane();
+		logTextPane.setBounds(66, 386, 6, 20);
+		
+		logScrollPane = new JScrollPane(logTextPane);
+		logScrollPane.setBounds(5, 230, 430, 180);
+		frmAutotool.getContentPane().add(logScrollPane);
+		
+		btnRefreshButton = new JButton("");
+		btnRefreshButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/refresh.png")));
+		
+		btnRefreshButton.setBounds(504, 41, 20, 20);
+		frmAutotool.getContentPane().add(btnRefreshButton);
+		
+		btnAddButton = new JButton("");
+		btnAddButton.setToolTipText("Add A Page to Tree Node");
+		btnAddButton.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/plus.png")));
+
+
+		
+		btnAddButton.setBounds(453, 41, 20, 20);
+		frmAutotool.getContentPane().add(btnAddButton);
+		
+		btnRemove = new JButton("");
+		btnRemove.setToolTipText("Remove a Page");
+		btnRemove.setIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/cancel.png")));
+		
+		btnRemove.setBounds(478, 41, 20, 20);
+		frmAutotool.getContentPane().add(btnRemove);
+		
+		btnInspect = new JButton("inspect");
+		
+		btnInspect.setDisabledIcon(new ImageIcon(AutoTool.class.getResource("/com/gd/resources/arrow.png")));
+
+		
+		btnInspect.setBounds(220, 61, 77, 23);
+		frmAutotool.getContentPane().add(btnInspect);
+		
+		menuBar = new JMenuBar();
+		menuBar.setBounds(0, 0, 756, 21);
+		frmAutotool.getContentPane().add(menuBar);
+		
+		mnPlugins = new JMenu("Plug-ins");
+		menuBar.add(mnPlugins);
 	}
 }
 
