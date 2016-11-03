@@ -15,7 +15,6 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 
 import com.gd.common.Configuration;
-import com.gd.driver.AutoTool;
 import com.gd.driver.Customer;
 
 
@@ -124,14 +123,27 @@ public class CucumberHelper {
 		}
 		
 		String line = null;
+		boolean start = false;
 		try {
 			while((line=br.readLine()) != null)
 			{
-				if(line.startsWith("#customertype"))
+				if(line.startsWith("#custTypeDocListStart"))
 				{
-					String custType = line.substring(line.indexOf('.') + 1, line.indexOf(':'));
+					start = true;	
+					continue;
+				}	
+				else if(line.startsWith("#custTypeDocListEnd"))
+				{
+					break;
+				}
+				
+				if(start)
+				{
+					String custType = line.split("'")[1];
 					custList.add(custType);
-				}				
+				}
+				
+				
 			}
 			
 		} catch (IOException e) {

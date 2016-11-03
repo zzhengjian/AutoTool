@@ -24,7 +24,6 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import com.gd.common.Configuration;
-import com.gd.driver.AutoTool;
 import com.gd.driver.Customer;
 import com.gd.driver.Driver;
 
