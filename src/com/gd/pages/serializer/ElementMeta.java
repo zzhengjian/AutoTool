@@ -5,6 +5,11 @@ public class ElementMeta {
 	private String value;
 	private String inlineComment;
 
+	
+	public ElementMeta(String key, String value) {
+		this(key, value, "");
+	}
+	
 	public ElementMeta(String key, String value, String inlineComment) {
 		this.key = key;
 		this.value = value;

@@ -8,29 +8,31 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
-import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gd.common.ConverterSettings;
+import com.gd.rest.DefaultResponseHandler;
 import com.google.gson.Gson;
 
 
 public class PageParser {
 	
+	private static final Logger logger = LoggerFactory.getLogger(PageParser.class);
+	
 	public static String Skin = "1";
+	private boolean convertOn = true;
 	
-	@Test
-	public void testParser()
+	public void turnOffConvert()
 	{
-		parse("C:/azheng-QA-Workspace/QA/Cucumber/Projects/GreenDot/features/pages/Web/GreenDot/SharedElements.rb");
+		convertOn = false;		
 	}
-	
 	
 	public void createSkin(String skinName)
 	{
@@ -45,17 +47,17 @@ public class PageParser {
 			whenPostJsonRequestUsingHttpClient(json, getCreateSkinEndpoint());
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		
-		
+			logger.debug(e.getMessage());
+		}		
 	}
 	
 	public String getCreateSkinEndpoint() {
 		String url = null;
 		try {
-			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/pm-cw/skin_create/").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/pm-cw/skin_create/").toString();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
+			logger.debug(e.getMessage());
 		}
 		return url;
 	}
@@ -63,9 +65,10 @@ public class PageParser {
 	public String getSavePageEndpoint() {
 		String url = null;
 		try {
-			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/pm-cw/savefamily/").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/pm-cw/savepage/").toString();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
+			logger.debug(e.getMessage());
 		}
 		return url;
 	}
@@ -73,9 +76,10 @@ public class PageParser {
 	public String getSaveFamilyEndpoint() {
 		String url = null;
 		try {
-			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/pm-cw/savepage/").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/pm-cw/savefamily/").toString();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
+			logger.debug(e.getMessage());
 		}
 		return url;
 	}
@@ -95,10 +99,12 @@ public class PageParser {
 			{
 				json = new Gson().toJson(serializePage(family, FamilySerializer.class));
 				try {
-					whenPostStringRequestUsingHttpClient(json, getSaveFamilyEndpoint());
+					if(convertOn){
+						whenPostStringRequestUsingHttpClient(json, getSaveFamilyEndpoint());
+					} 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					logger.debug(e.getMessage());
 				}
 			}
 		}
@@ -107,13 +113,15 @@ public class PageParser {
 			page.ProcessPage();
 			json = new Gson().toJson(serializePage(page, PageSerializer.class));
 			try {
-				whenPostStringRequestUsingHttpClient(json, getSavePageEndpoint());
+				if(convertOn){
+					whenPostStringRequestUsingHttpClient(json, getSavePageEndpoint());
+				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				logger.debug(e.getMessage());
 			}
 		}
-		System.out.println(json);
+		logger.info(json);
 
 	}
 	
@@ -125,8 +133,8 @@ public class PageParser {
 			    List<NameValuePair> params = new ArrayList<NameValuePair>(2);
 				params.add(new BasicNameValuePair("myjsondata", json));
 				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
-			    CloseableHttpResponse response = client.execute(httpPost);
-			    //System.out.println(response.getStatusLine().getStatusCode());
+				String response = client.execute(httpPost,new DefaultResponseHandler());
+			    System.out.println(response);
 			    client.close();
 			}
 	
@@ -140,8 +148,8 @@ public class PageParser {
 			    httpPost.setHeader("Accept", "application/json");
 			    httpPost.setHeader("Content-type", "application/json");
 			    			 
-			    CloseableHttpResponse response = client.execute(httpPost);
-			    System.out.println(response.getStatusLine().getStatusCode());
+			    String response = client.execute(httpPost,new DefaultResponseHandler());
+			    System.out.println(response);
 			    client.close();
 			}
 	
@@ -173,7 +181,6 @@ public class PageParser {
                         metaserializer.browser = "";
                         metaserializer.platform = "2";
                         metaserializer.description = "xxx";
-
 
                     }
                     else if (meta.getKey().contains("desktop"))

@@ -1,6 +1,5 @@
 package com.gd.driver;
 
-import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -46,19 +45,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.gd.common.Configuration;
-import com.gd.common.Property;
 import com.gd.common.Utils;
-import com.gd.loginhelper.TestFrame;
 import com.gd.pages.serializer.Element;
 import com.gd.pages.serializer.ElementMeta;
 import com.gd.pages.serializer.GdPageTree;
 import com.gd.pages.serializer.Page;
-import com.gd.pogen.POGen;
-import com.gd.steps.serializer.DocEditor;
 
+public class WebDriverHelper extends JPanel {
 
-public class AutoTool {
-	private static final Logger logger = LoggerFactory.getLogger(AutoTool.class);
+private static final Logger logger = LoggerFactory.getLogger(AutoTool.class);
 	
 	static AutoTool window;
 	private JFrame frmAutotool;
@@ -85,15 +80,8 @@ public class AutoTool {
     protected DefaultTreeModel treeModel;	
     
     public static String PageName = "";
-    private JMenuBar menuBar;
-    private JMenuItem mntmPoGen;
-    private JMenuItem mntmLoginHelper;
-    private JMenuItem mntmAutoFill;
-    private JMenu mnPlugins;
     private JLabel lblUrl;
-    private JMenuItem mntmPageConverter;
     private JButton btnStart;
-    private JMenuItem mntmDocEditor;
     private JButton btnInspect;
     private JButton btnGoto;
     private JButton btnHighlight;
@@ -108,121 +96,17 @@ public class AutoTool {
     private JTable metaTable;
     private DefaultTableModel tableModel;
     private JScrollPane metaScrollPane;
-    
 	/**
-	 * Launch the application.
+	 * Create the panel.
 	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					window = new AutoTool();
-					window.frmAutotool.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+	public WebDriverHelper() {
 
-	/**
-	 * Create the application.
-	 */
-	public AutoTool() {
-		
-		Property.SetUp();
-		loadCucumberWorkspace();
-		initialize();
-	}
-
-	private void loadCucumberWorkspace() {
-
-		String workspace =  JOptionPane.showInputDialog("your cucumber location",Configuration.CucumberWorkspace);
-		Configuration.CucumberWorkspace = workspace;	
-		Configuration.saveWorkspace();
-	}
-
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void initialize() {
-		
 		initComponents();
-		createMenuComponents();
-		createEvents();		
-		createMenuEvents();	
-
+		createEvents();
 	}
 
-	private void createMenuComponents() {
-		
-		menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 756, 21);
-		frmAutotool.getContentPane().add(menuBar);
-		
-		mnPlugins = new JMenu("Plug-ins");
-		menuBar.add(mnPlugins);
-		
-		mntmLoginHelper = new JMenuItem("Login Helper");
-
-		mnPlugins.add(mntmLoginHelper);
-		
-		mntmAutoFill = new JMenuItem("Auto Fill");
-
-		mnPlugins.add(mntmAutoFill);
-		
-		mntmPoGen = new JMenuItem("POGen");
-
-		mnPlugins.add(mntmPoGen);
-		
-		mntmPageConverter = new JMenuItem("PageConverter");
-
-		mnPlugins.add(mntmPageConverter);
-		
-		mntmDocEditor = new JMenuItem("Doc Editor");
-
-		mnPlugins.add(mntmDocEditor);		
-		
-	}
-
-	private void createMenuEvents() {
-		mntmLoginHelper.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent paramMouseEvent) {
-				TestFrame.startLoginPanel();
-			}
-		});
-		
-		mntmAutoFill.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent paramMouseEvent) {
-				TestFrame.startAutoFillPanel();
-			}
-		});
-		
-		mntmPoGen.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				POGen.startPOGen();
-			}
-		});
-		
-		mntmPageConverter.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				TestFrame.startConverterPanel();
-			}
-		});
-		
-		mntmDocEditor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new DocEditor();
-			}
-		});
-		
-	}
-
+	
+	
 	private void createEvents() {
 		btnStart.addMouseListener(new MouseAdapter() {
 			@Override
@@ -302,7 +186,6 @@ public class AutoTool {
 				if(oWebDriver!=null)
 				{
 					try {
-						window.frmAutotool.setVisible(false);
 						DebugWebElement debugelement = new DebugWebElement(elementTag.getText(),oWebDriver);						
 						if(!debugelement.oWebElement.isDisplayed())
 							logTextPane.setText(logTextPane.getText() + "Element is hidden" + "\n");
@@ -316,7 +199,6 @@ public class AutoTool {
 						logTextPane.setText(logTextPane.getText() + "Unknow error" + "\n");
 						logger.error("Unknow error: {}", e1);					
 					} finally{
-						window.frmAutotool.setVisible(true);
 					}
 				}
 			}
@@ -621,4 +503,3 @@ public class AutoTool {
 		metaScrollPane.setViewportView(metaTable);
 	}
 }
-

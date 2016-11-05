@@ -1,0 +1,22 @@
+<configuration>
+	<property name="LOG_PATH" value="C:/QA/AutoTool/out/logs" />
+	<timestamp key="TIME_STAMP" datePattern="MMddyyyy-HHmmss"/>
+	
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_PATH}/${TIME_STAMP}.txt</file>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %.-4level %5.35logger{0}  ===  %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %.-4level %5.35logger{0}  ===  %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<root level="trace">
+		<appender-ref ref="FILE" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

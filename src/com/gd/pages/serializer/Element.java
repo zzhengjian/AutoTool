@@ -3,6 +3,9 @@ package com.gd.pages.serializer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gd.common.Utils;
+import com.gd.driver.Platform;
+
 public class Element {
 	
 	private String elementName;
@@ -10,7 +13,7 @@ public class Element {
 	private List<ElementMeta> metas = new ArrayList<ElementMeta>();
 	
 	public Element(String elementName) {
-		this.elementName = elementName;
+		this(elementName, "");
 	}
 
 	public Element(String elementName, String creationLine) {
@@ -55,14 +58,57 @@ public class Element {
 		return null;
 	}
 	
+	public String getSelector(){
+		
+		for(ElementMeta meta : metas)
+		{
+			if(meta.getKey().contains(Platform.getPlatform()))
+				return meta.getValue();
+			
+		}
+		return null;
+		
+	}
+	
+	public void addSelector(String selector)
+	{
+		for(ElementMeta meta : metas)
+		{
+			if(meta.getKey().contains(Platform.getPlatform())){
+				
+				if(Utils.isXpath(selector)){
+					meta.setKey(":" + Platform.getPlatform() + "xpath");
+					meta.setValue(selector);
+				}
+				else{
+					meta.setKey(":" + Platform.getPlatform() + "css");
+					meta.setValue(selector);
+				}
+					
+			}	
+			return;
+		}
+		
+		
+		ElementMeta meta; 
+		String key;
+		if(Utils.isXpath(selector)){			
+			key = ":" + Platform.getPlatform() + "xpath";			
+		}
+		else{
+			key = ":" + Platform.getPlatform() + "css";
+		}
+		meta = new ElementMeta(key, selector);
+		this.metas.add(meta);
+		
+	}
 	
 	public boolean hasElementMetaKey(String key)
 	{
 		for(ElementMeta meta : metas)
 		{
 			if(meta.getKey().equals(key))
-				return true;
-			
+				return true;			
 		}
 		return false;
 	}

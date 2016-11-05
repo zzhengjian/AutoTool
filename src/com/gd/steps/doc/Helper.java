@@ -11,7 +11,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
 import com.gd.common.ConverterSettings;
-import com.gd.common.Property;
 import com.gd.rest.DefaultResponseHandler;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -63,7 +62,7 @@ public class Helper {
 	{
 		String url = null;
 		try {
-			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/common/allprojects").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/api-cw/allprojects").toString();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -79,7 +78,7 @@ public class Helper {
 	{
 		String url = null;
 		try {
-			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/pm-cw/get-skins").addParameter("project", project).toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/pm-cw/get-skins").addParameter("project", project).toString();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

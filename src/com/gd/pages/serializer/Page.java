@@ -7,7 +7,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Page {
+	
+	
+	private static final Logger logger = LoggerFactory.getLogger(Page.class);
+	
 	public final static String SharedElements = "SharedElements";
 	
 	private String PageName;
@@ -20,63 +27,60 @@ public class Page {
 	
 	private Element currentElement;
 	
+	private boolean convertingPage = true; 
+	
+	public Page(){
+		 
+	}
+	
+	public Page(String pageName){
+	     this.PageName = pageName;
+	}
 
-
+		
 	public List<Page> getFamilies() {
 		return families;
 	}
-
+	
 	public String getPageName() {
 		return PageName;
 	}
-
+	
 	public ArrayList<Element> getElements() {
 		return elements;
 	}
-
+	
 	public void setElements(ArrayList<Element> elements) {
 		this.elements = elements;
 	}
-
+	
 	public ArrayList<String> getPageFamilies() {
 		return pageFamilies;
 	}
-
+	
 	public void setPageFamilies(ArrayList<String> pageFamilies) {
 		this.pageFamilies = pageFamilies;
 	}
-
+	
 	public void setPageName(String pageName) {
 		PageName = pageName;
 	}
-
+	
 	public String getUrl() {
 		return Url;
 	}
-
+	
 	public void setUrl(String url) {
 		Url = url;
 	}
-
+	
 	public String getPagePath() {
 		return PagePath;
 	}
-
+	
 	public void setPagePath(String pagePath) {
 		PagePath = pagePath;
 	}
-	
-	 public Page()
-	 {
-		 
-	 }
-	
-	 public Page(String pageName)
-	 {
-	     this.PageName = pageName;
-	 }
-		
-
 	 
      public void ProcessPage()
      {
@@ -85,17 +89,16 @@ public class Page {
 		try {
 			br = new BufferedReader(new FileReader(PagePath));
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			logger.error("file not found:", e1);
 		}
 
          String line;
-         int lineCount = 0;
+         boolean StartPage = false;
          try {
 			while ((line = br.readLine()) != null)
 			 {
 			     String action = "None";
-			     lineCount++;
 
 			     if (line.trim().startsWith("#"))
 			     {
@@ -105,6 +108,7 @@ public class Page {
 			     else if (line.contains("GdPage.new"))
 			     {
 			         action = "GdPage";
+			         StartPage = true;
 
 			     }
 			     // Handle page family assignment
@@ -126,11 +130,13 @@ public class Page {
 			     else if (line.contains("Pages.addSharedElement("))
 			     {
 			         action = "AddSharedElement";
+			         StartPage = true;
 			     }
 			     // Handle adding a page family element
 			     else if (line.contains("Pages.addFamilyElement("))
 			     {
 			         action = "AddFamilyElement";
+			         StartPage = true;
 			     }
 			     // Handle element metadata
 			     else if (line.contains("=>"))
@@ -138,13 +144,13 @@ public class Page {
 			         action = "AddElementMeta";
 			     }
 			     
-			     processLine(action, line, br);
+			     if(StartPage) processLine(action, line, br);
 			 }
 			
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
      }
@@ -187,11 +193,7 @@ public class Page {
                  String[] elementSplit = line.split("\"");
                  currentElement = new Element(elementSplit[1].trim(), line);
                  elements.add(currentElement);
-//                 if (elementSplit.length > 3)
-//                 {
-//                     rewritten = MalformedLine(2, lineCount, line, out newLine);                        
-//                 }
-                 // Deal with element name syntax warnings - WHP3
+
                  break;
              case "AddPage":
                  String[] pageNameSplit = line.split("\"");
@@ -268,6 +270,7 @@ public class Page {
     							metaValue = metaValue + " " + nextline;
     						} catch (IOException e) {
     							e.printStackTrace();
+    							logger.error(e.getMessage());
     						}
                     		if(nextline.endsWith("\"") ||nextline.endsWith("\","))
                     		{
@@ -330,14 +333,16 @@ public class Page {
 
                  if (contained)
                  {
-                	//log error message here
+                	logger.debug("something wrong with building element meta");
                  }
                  else if (multiElementLine)
                  {
+                	 logger.warn("multi meta in one line: {}", line);
                 	//log error message here
                  }
                  else if (elementMetaSplit.length > 2 && !hasExtraQuote && elementMetaSplit[2] != ",")
                  {
+                	 logger.warn("meta line is error formatted : {}", line);
                 	//log error message here
                  }
                  else
@@ -351,14 +356,49 @@ public class Page {
      }
      
      
-     public void addElement(Element element)
+     public void addElement(Element e)
      {
     	 //the element in pageFamilies should be included
-    	 if(!elements.contains(element))
-    	 {
-    		 this.elements.add(element);
-    	 }
-    		 	 
+//    	 if(!elements.contains(element))
+//    	 {
+//    		 this.elements.add(element);
+//    	 }
+    	
+    	int index = 0;
+ 		while(!convertingPage && elements.contains(e))
+ 		{
+ 			//make duplicated elementName to be ElementName_Tag_1
+ 			String elementName = e.getElementName();
+ 			int len = elementName.split("_").length;
+
+ 			try { 				
+ 				index = Integer.parseInt(elementName.split("_")[len-1]);				
+ 				e.setElementName(elementName.replace("_"+index, "_" + (index + 1)));				
+ 			} catch (NumberFormatException e1) {
+ 				
+ 				e.setElementName(elementName + "_" + (index + 1));
+ 			}			
+ 		}
+ 		
+ 		elements.add(e);    		 	 
+     }
+     
+     
+ 	public void removeElement(Element e)
+ 	{
+ 		elements.remove(e);	
+ 	}
+ 	
+ 	
+ 	public int getElementCount()
+ 	{		
+ 		return elements.size();
+ 	}
+     
+     public void savePage()
+     {
+    	 
+    	 
      }
 
 	@Override

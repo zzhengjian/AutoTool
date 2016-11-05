@@ -22,9 +22,7 @@ public class Configuration {
 			CucumberWorkspace = "C:\\azheng-QA-Workspace\\QA\\Cucumber";
 			saveWorkspace();
 		}
-			
-		
-		
+					
 		FileReader fr = null;
 		BufferedReader br = null;
 		try {

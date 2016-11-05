@@ -22,6 +22,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gd.common.Configuration;
 import com.gd.common.ConverterSettings;
@@ -32,6 +34,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class StatementParser {
+	
+	private static final Logger logger = LoggerFactory.getLogger(StatementParser.class);
 	
 	private String path;
 	private List<Statement> statements;
@@ -55,9 +59,10 @@ public class StatementParser {
 	public String getSaveCategoryEndpoint() {
 		String url = null;
 		try {
-			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/sm-cw/savecategory/").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/sm-cw/savecategory/").toString();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
+			logger.error("url: {} syntax error", e.getInput());
 		}
 		return url;
 	}
@@ -65,9 +70,10 @@ public class StatementParser {
 	public String getSaveStatementEndpoint() {
 		String url = null;
 		try {
-			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/sm-cw/savestatement/").toString();
+			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/sm-cw/savestatement/").toString();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
+			logger.error("url: {} syntax error", e.getInput());
 		}
 		return url;
 	}
@@ -79,8 +85,8 @@ public class StatementParser {
 		try {
 			br = new BufferedReader(new FileReader(path));
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			logger.error(e1.getMessage());
 		}
 		category = new File(path).getName().replace(".rb", "");
 		
@@ -121,10 +127,11 @@ public class StatementParser {
 			{
 			    try {
 			    	File invalidFile = new File(Configuration.CucumberWorkspace ,Paths.get("framework", Paths.get(path).getFileName().toString().replace(".rb", "-ErrorFormatred.rb")).toString());
-			    	FileOutputStream out = new FileOutputStream(invalidFile);  //得到文件输出流
-			    	out.write(in_Valid.toString().getBytes()); //写出文件    
+			    	FileOutputStream out = new FileOutputStream(invalidFile);  
+			    	out.write(in_Valid.toString().getBytes()); 
 			    } catch (Exception ex) {
-			    	ex.printStackTrace(); //输出出错信息
+			    	ex.printStackTrace(); 
+			    	logger.error(ex.getMessage());
 			    }
 			}
 
@@ -132,6 +139,7 @@ public class StatementParser {
         catch(IOException e)
         {
         	e.printStackTrace();
+        	logger.error(e.getMessage());
         }
 		
 	}
@@ -198,7 +206,8 @@ public class StatementParser {
 			}	
 			
 		}
-		System.out.println(doc.toString());
+		//System.out.println(doc.toString());
+		logger.trace(doc.toString());
 		return doc.toString();
 	}
 
@@ -381,12 +390,12 @@ public class StatementParser {
 			String category_id = responseBody.get("ID").toString();
 			convertStatement(category_id);
 			
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
+		} catch (ClientProtocolException e) {			
 			e.printStackTrace();
+			logger.error("Error on convertCategory", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error("Error on convertCategory", e);
 		}
 	}
 
@@ -401,11 +410,13 @@ public class StatementParser {
 				System.out.println(new Gson().toJson(oStatementSerializer));
 				whenPostStringRequestUsingHttpClient(new Gson().toJson(oStatementSerializer), this.getSaveStatementEndpoint());
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 			
 		}
@@ -424,8 +435,8 @@ public class StatementParser {
 				params.add(new BasicNameValuePair("data", json));
 				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 				String response = client.execute(httpPost, responseHandler);
-			    System.out.println(response);
-			    //System.out.println(response.getStatusLine().getStatusCode());
+			    //System.out.println(response);
+			    logger.info(response);
 			    client.close();
 			    return response;
 			}

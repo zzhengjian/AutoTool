@@ -35,10 +35,15 @@ public class testArgument {
 	public void testPageParser()
 	{
 
+		
 		PageParser parser = new PageParser();
-		parser.createSkin("NewAdded");	
+		parser.turnOffConvert();
+		PageParser.Skin = "2";
+		parser.parse("C:/azheng-QA-Workspace/QA/Cucumber/Projects/Customer Care - CRM/features/pages/web/Case/AddDisputeItemPage.rb");
 		
 		
 	}
+
+	
 	
 }

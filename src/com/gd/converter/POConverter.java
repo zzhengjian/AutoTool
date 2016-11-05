@@ -74,6 +74,7 @@ public class POConverter extends JPanel {
 	private void setProperEndPoint() {
 		String endpoint =  JOptionPane.showInputDialog("set your endpoint", ConverterSettings.EndPoint);
 		ConverterSettings.EndPoint = endpoint;
+		ConverterSettings.saveEndPoint();
 	}
 
 	private void initComponents() {		
@@ -313,7 +314,7 @@ public class POConverter extends JPanel {
 					
 					for(File f : filelist)
 					{
-						if(f.getName().equals(Page.SharedElements))
+						if(f.getName().contains(Page.SharedElements))
 						{
 							try {
 								new PageParser().parse(f.getAbsolutePath());
@@ -326,7 +327,7 @@ public class POConverter extends JPanel {
 					for(File f : filelist)
 					{
 						
-						if(f.getName().equals(Page.SharedElements))
+						if(f.getName().contains(Page.SharedElements))
 						{
 							continue;
 						}
@@ -420,11 +421,6 @@ public class POConverter extends JPanel {
 				{
 					fileOrDir = fc.getSelectedFile();
 					
-					if(tabbedPane.getSelectedIndex() == 1)
-					{
-						fileOrDir = getPagesFolder(fileOrDir);
-					}
-					
 					if(fileOrDir.isDirectory())
 					{
 						selectedField.setText(fileOrDir.getAbsolutePath());
@@ -443,7 +439,7 @@ public class POConverter extends JPanel {
 			        //get all the files from a directory
 			        File[] fList = fileOrDir.listFiles();
 			        for (File file : fList){
-			            if (file.isFile() && file.getName().endsWith(".rb")){
+			            if (file.isFile() && file.getName().endsWith(".rb") && !file.getName().endsWith("-ErrorFormatred.rb")){
 			            	filelist.add(file);
 			            } 
 			            else if (file.isDirectory()){
@@ -453,26 +449,6 @@ public class POConverter extends JPanel {
 				
 			}
 			
-			
-			private File getPagesFolder(File dir) {
-				
-				File pageFolder = null;
-		        //get all the files from a directory
-		        File[] fList = dir.listFiles();
-		        for (File file : fList){
-		            if (file.isFile()){
-		            	continue;
-		            } 
-		            else if(file.isDirectory() && file.getName().equalsIgnoreCase("pages"))
-		            {
-		            	pageFolder = file;
-		            }
-		            else if (file.isDirectory()){
-		                listFilesAndFilesSubDirectories(file);
-		            }
-		        }
-			return pageFolder;
-		}
 		});
 		
 	}
