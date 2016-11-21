@@ -61,7 +61,6 @@ public class StatementParser {
 		try {
 			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/sm-cw/savecategory/").toString();
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
 			logger.error("url: {} syntax error", e.getInput());
 		}
 		return url;
@@ -72,7 +71,6 @@ public class StatementParser {
 		try {
 			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/sm-cw/savestatement/").toString();
 		} catch (URISyntaxException e) {
-			e.printStackTrace();
 			logger.error("url: {} syntax error", e.getInput());
 		}
 		return url;
@@ -81,6 +79,7 @@ public class StatementParser {
 
 	public void processSteps()
 	{
+		logger.info("parser statement file: {}", path);
    	 	BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(path));
@@ -130,16 +129,14 @@ public class StatementParser {
 			    	FileOutputStream out = new FileOutputStream(invalidFile);  
 			    	out.write(in_Valid.toString().getBytes()); 
 			    } catch (Exception ex) {
-			    	ex.printStackTrace(); 
-			    	logger.error(ex.getMessage());
+			    	logger.error(ex.getMessage(),ex);
 			    }
 			}
 
         }
         catch(IOException e)
         {
-        	e.printStackTrace();
-        	logger.error(e.getMessage());
+        	logger.error(e.getMessage(),e);
         }
 		
 	}
@@ -157,7 +154,7 @@ public class StatementParser {
 		doc = new JsonObject();
 		String key = null ;
 		String value = null ;
-		ArrayList<String> desc = null; 
+		ArrayList<String> desc = new ArrayList<String>(); 
 		int count = 0;
 		int followcount = 0;
 		boolean Stop = false;
@@ -206,7 +203,6 @@ public class StatementParser {
 			}	
 			
 		}
-		//System.out.println(doc.toString());
 		logger.trace(doc.toString());
 		return doc.toString();
 	}
@@ -229,17 +225,16 @@ public class StatementParser {
 
 
 	private String proccessParams(BufferedReader br, String line) throws IOException {
-		// TODO Auto-generated method stub
 		JsonObject params = new JsonObject();
 		String key = null ;
 		String value = null ;
-		ArrayList<String> desc = null; 
+		ArrayList<String> desc = new ArrayList<String>(); 
 		int count = 0;
 		int followcount = 0;
 		boolean Stop = false;
 		while ((!Stop && (line = br.readLine()) != null) )
 		{
-			System.out.println(line);
+			logger.trace("line: {}", line);
 			if(line.trim().equals(""))
 				continue;
 			else if(line.indexOf("Returns::") > 0 || line.indexOf("Example::") > 0 || line.indexOf("#End_DOC::") > 0||isValidStatementLine(line))
@@ -382,19 +377,17 @@ public class StatementParser {
 		CategorySerializer oCategorySerializer = serializeCategory(category, project);
 		try {
 			
-			System.out.println(new Gson().toJson(oCategorySerializer));
+			logger.debug("Category Serializer Request: {}", new Gson().toJson(oCategorySerializer));
 			String response = whenPostStringRequestUsingHttpClient(new Gson().toJson(oCategorySerializer), this.getSaveCategoryEndpoint());
-			System.out.println(response);
+			logger.info("Receiving response: {}", response);
 			JsonParser parser = new JsonParser();
 			JsonObject responseBody = parser.parse(response).getAsJsonObject();
 			String category_id = responseBody.get("ID").toString();
 			convertStatement(category_id);
 			
-		} catch (ClientProtocolException e) {			
-			e.printStackTrace();
+		} catch (ClientProtocolException e) {		
 			logger.error("Error on convertCategory", e);
 		} catch (IOException e) {
-			e.printStackTrace();
 			logger.error("Error on convertCategory", e);
 		}
 	}
@@ -402,20 +395,17 @@ public class StatementParser {
 	public void convertStatement(String categoryid)
 	{
 		
-		System.out.println("convert statements");
 		for(Statement s : statements)
 		{
 			StatementSerializer oStatementSerializer = serializeStatement(s, categoryid, project);
 			try {
-				System.out.println(new Gson().toJson(oStatementSerializer));
+				logger.debug("Statement Serializer Request: {}", new Gson().toJson(oStatementSerializer));
 				whenPostStringRequestUsingHttpClient(new Gson().toJson(oStatementSerializer), this.getSaveStatementEndpoint());
 			} catch (ClientProtocolException e) {
 
-				e.printStackTrace();
 				logger.error(e.getMessage(), e);
 			} catch (IOException e) {
 
-				e.printStackTrace();
 				logger.error(e.getMessage(), e);
 			}
 			
@@ -435,7 +425,6 @@ public class StatementParser {
 				params.add(new BasicNameValuePair("data", json));
 				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 				String response = client.execute(httpPost, responseHandler);
-			    //System.out.println(response);
 			    logger.info(response);
 			    client.close();
 			    return response;
@@ -451,7 +440,6 @@ public class StatementParser {
 		sSerializer.statement = statement.getStatement();
 		sSerializer.content = statement.getContent();
 		sSerializer.description = statement.getDescription();
-		statement.getArgs();
 		ArgumentSerializer aSerializer;
 		for(Argument arg : statement.getArgs())
 		{

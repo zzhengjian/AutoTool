@@ -34,7 +34,7 @@ public class ConverterSettings {
 			fr = new FileReader(endPointFile);
 			br = new BufferedReader(fr);
 		} catch (FileNotFoundException e) {
-			logger.debug(EndPoint, e.getStackTrace());
+			logger.error(EndPoint, e.getStackTrace());
 		}
 		
 		String line = null;
@@ -49,7 +49,7 @@ public class ConverterSettings {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Unknown Error: {}", e);
 		}finally
 		{
 			
@@ -57,7 +57,7 @@ public class ConverterSettings {
 				fr.close();
 				br.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("Unknown Error: {}", e);
 			}
 		}		
 
@@ -72,9 +72,9 @@ public class ConverterSettings {
 			FileOutputStream out = new FileOutputStream(endPointFile);
 			out.write(line.toString().getBytes()); 
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error("Unknown Error: {}", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Unknown Error: {}", e);
 		}
 		
 	}

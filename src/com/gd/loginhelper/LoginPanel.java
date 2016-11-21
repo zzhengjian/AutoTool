@@ -275,8 +275,9 @@ public class LoginPanel extends JPanel {
 				CucumberHelper.getCustTypeArgs().put("AccountAge", tfAccountAge.getText());
 				CucumberHelper.getCustTypeArgs().put("AccountBalance", tfAccountBalance.getText());
 				CucumberHelper.getCustTypeArgs().put("Email", "");
+				CucumberHelper.getCustTypeArgs().put("project", cbxProject.getSelectedItem().toString());
 				
-				CucumberHelper.getUserId();
+				CucumberHelper.getSpecificCustomer();
 				if(Customer.UserId.equals(Customer.Customer_Not_Exist))
 				{
 					JOptionPane.showMessageDialog(null, "Customer not found");

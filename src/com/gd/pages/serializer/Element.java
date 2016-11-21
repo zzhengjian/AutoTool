@@ -113,6 +113,12 @@ public class Element {
 		return false;
 	}
 
+	
+	public void addElementMeta(String metaKey, String metaValue) {
+		ElementMeta meta = new ElementMeta(metaKey,metaValue, "");
+		addElementMeta(meta);	
+	}
+	
 	public void addElementMeta(String metaKey, String metaValue, String comment) {
 		ElementMeta meta = new ElementMeta(metaKey,metaValue, comment);
 		addElementMeta(meta);	

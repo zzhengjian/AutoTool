@@ -1,18 +1,26 @@
 package com.gd.pages.serializer;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Stack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 public class Page {
-	
-	
+		
 	private static final Logger logger = LoggerFactory.getLogger(Page.class);
 	
 	public final static String SharedElements = "SharedElements";
@@ -26,6 +34,7 @@ public class Page {
 	private List<Page> families;
 	
 	private Element currentElement;
+	private String line = "";
 	
 	private boolean convertingPage = true; 
 	
@@ -84,20 +93,24 @@ public class Page {
 	 
      public void ProcessPage()
      {
-    	 
+    	 logger.info("Parsing Page: {}", PagePath);
     	 BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(PagePath));
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-			logger.error("file not found:", e1);
-		}
+    	 try {
+    		 FileInputStream fis = new FileInputStream(new File(PagePath));
+    		 //UnicodeReader ur = new UnicodeReader(fis);
+    		 Reader chars = new InputStreamReader(fis, StandardCharsets.UTF_8);
+    		 br = new BufferedReader(chars);
+    		 //br = new BufferedReader(new FileReader(PagePath));
+    	 } catch (FileNotFoundException e1) {
+    		 e1.printStackTrace();
+    		 logger.error("file not found:", e1);
+    	 }
 
-         String line;
          boolean StartPage = false;
          try {
-			while ((line = br.readLine()) != null)
+			while ( (line = br.readLine()) != null)
 			 {
+
 			     String action = "None";
 
 			     if (line.trim().startsWith("#"))
@@ -109,6 +122,7 @@ public class Page {
 			     {
 			         action = "GdPage";
 			         StartPage = true;
+			         pageFamilies.add(SharedElements);
 
 			     }
 			     // Handle page family assignment
@@ -144,7 +158,7 @@ public class Page {
 			         action = "AddElementMeta";
 			     }
 			     
-			     if(StartPage) processLine(action, line, br);
+			     if(StartPage) processLine(action,  br);
 			 }
 			
 			
@@ -156,31 +170,20 @@ public class Page {
      }
      
      
-     private void processLine(String actionType, String line, BufferedReader br)
+     private void processLine(String actionType, BufferedReader br)
      {
     	 switch (actionType)
          {
              case "Comment":
                  break;
              case "GdPage":
-                 String[] pageSplit = line.split("\"");
-                 // Get rid of $URL hack for GoBank
-//                 if (pageSplit.length > 2 && pageSplit[1] != "$URL+")
-//                 {
-//                     rewritten = MalformedLine(1, lineCount, line, out newLine);
-//                 }
-                 if (pageSplit[1] == "$URL+")
-                 {
-                     this.Url = pageSplit[1] + pageSplit[2];
-                 }
-                 else
-                 {
-                	 this.Url = pageSplit[1];
-                 }
+                 String[] pageSplit = line.split("GdPage.new\\(");
+                 
+                 this.Url = getUrl(pageSplit[1]);
                  
                  if(line.contains(":pageFamily"))
                  {
-                	 String[] pageFamily = line.split("=>")[1].split("\"");
+                	 String[] pageFamily = line.split("pageFamily")[1].split("\"");
                 	 this.pageFamilies.add(pageFamily[1].trim());
                  }
                  
@@ -200,7 +203,7 @@ public class Page {
                  PageName = pageNameSplit[1];
                  break;
              case "AddSharedElement":
-                 String[] sharedElementSplit = line.split("");
+                 String[] sharedElementSplit = line.split("\"");
                  currentElement = new Element(sharedElementSplit[1].trim(), line);
                  Page SharedPage = new Page(SharedElements);
                  if(families==null)
@@ -211,11 +214,11 @@ public class Page {
                  {
                 	 families.add(SharedPage);
                  }
-                 for(Page page : families)
+                 for(Page _page : families)
                  {
-                	 if(page.equals(SharedPage))
+                	 if(_page.equals(SharedPage))
                 	 {
-                		 page.elements.add(currentElement);
+                		 _page.elements.add(currentElement);
                 	 }
                  }               
                  
@@ -241,128 +244,201 @@ public class Page {
                  }    
                  break;
              case "AddElementMeta":
-                 //What causes meta to break need to put out these conditions
-                 String[] elementMetaSplit = line.split("=>");
+            	 StringBuilder metaline = new StringBuilder();
+            	 try {
+            		 while(!appendSingleMetaLine(metaline, line)) {
+        				line = br.readLine();
+        				if(line.trim().startsWith("#")) continue;											
+            		 }
+            	 } catch (IOException e1) {
+            		 logger.error(e1.getMessage(), e1);
+            	 }
+            	 
+            	 JsonObject metas = new ElementMetaReader().metaMatcher(metaline.toString());
+            	 
+            	 for(Entry<String, JsonElement> meta : metas.entrySet()){
+            		 
+            		 ElementMeta elementMeta;
+            		 if(meta.getKey().equals("text") && meta.getValue().isJsonObject()){
+            			 JsonObject texts = metas.getAsJsonObject("text");
+            			 for(Entry<String, JsonElement> text : texts.entrySet()){
+            				 if(text.getKey().contains("rwd")){
+            					 elementMeta = new ElementMeta(text.getKey(), text.getValue().getAsString());
+            					 elementMeta.setPlatform("2");
+            				 }
+            				 else{
+            					 elementMeta = new ElementMeta(text.getKey(), text.getValue().getAsString());
+            					 elementMeta.setPlatform("1");
+            				 }
+            				 
+            			 }
+            				 
+            		 }
+            		 else{
 
-                 int valueIndex = 1;
+            			 currentElement.addElementMeta(meta.getKey(), meta.getValue().getAsString());
+            		 }	 
+            		 
+            	 }            	 
 
-                 boolean hasExtraQuote = (line.contains("\\\"") || (elementMetaSplit.length > 2 && elementMetaSplit[1].trim().startsWith("'")));
-                 boolean contained = currentElement.hasElementMetaKey(elementMetaSplit[0].trim());
-                 boolean multiElementLine = line.indexOf("=>") != line.lastIndexOf("=>");
-                 boolean containsComment = false;
-
-                 String comment = "";
-                 String metaKey = elementMetaSplit[0].replace(":", "").trim();
-                 String metaValue = elementMetaSplit.length < 2 ? "" : elementMetaSplit[1].trim();
-                 if(!"".equals(metaValue))
-                 {
-                	 metaValue = metaValue.replace("\\s+", " ");
-                	 metaValue = metaValue.replace("\" ,", "\",");
-                	 //deal with multiple lines of metavalue like text...
-                	 if(!metaValue.endsWith("\"") && !metaValue.endsWith("\","))
-                	 {
-                		 String nextline = "";
-                    	 boolean toReturn = true;
-                    	 while(toReturn)
-                    	 {
-                    		 try {
-    							nextline = br.readLine().trim().replace("\\s+", " ").replace("\" ,", "\",");
-    							metaValue = metaValue + " " + nextline;
-    						} catch (IOException e) {
-    							e.printStackTrace();
-    							logger.error(e.getMessage());
-    						}
-                    		if(nextline.endsWith("\"") ||nextline.endsWith("\","))
-                    		{
-                    			toReturn = false;
-                    		}                    		 
-                    	 }
-                	 }
-                	 
-                	 
-                	 metaValue = metaValue.substring(metaValue.indexOf('"') + 1, metaValue.lastIndexOf('"'));
-                 }
-                 
-
-                 if (elementMetaSplit.length == 1)
-                 {
-                    //log error message here
-                 }
-                 else if (!contained && hasExtraQuote)
-                 {
-                     for (int i = 2; i < elementMetaSplit.length; i++)
-                     {
-                         if (elementMetaSplit[i].trim() != "," && elementMetaSplit[i].trim() != ")")
-                         {
-                             metaValue += "\"" + elementMetaSplit[i] ;
-                         }
-                     }
-                     if (line.endsWith("\"\""))
-                     {
-                         metaValue += "\"";
-                     }
-                     if (elementMetaSplit[1].startsWith("'"))
-                     {
-                         //log error message here
-                     }
-                 }
-                 else if (elementMetaSplit.length > 2 && "".equals(metaValue))
-                 {
-                     for (int i = 2; i < elementMetaSplit.length; i++)
-                     {
-                         if ("".equals(metaValue) && !"".equals(elementMetaSplit[i]) && elementMetaSplit[i].trim() != "," && elementMetaSplit[i].trim() != ")")
-                         {
-                             valueIndex = i;
-                             metaValue = elementMetaSplit[i];
-                         }
-                     }
-                     //log error message here
-                     
-                     if (!contained && elementMetaSplit.length > 2)
-                     {
-                         for (int i = valueIndex + 1; i < elementMetaSplit.length; i++)
-                         {
-                             if (elementMetaSplit[i].contains("#") || containsComment)
-                             {
-                                 comment += elementMetaSplit[i];
-                                 containsComment = true;
-                             }
-                         }
-                     }
-                 }
-
-                 if (contained)
-                 {
-                	logger.debug("something wrong with building element meta");
-                 }
-                 else if (multiElementLine)
-                 {
-                	 logger.warn("multi meta in one line: {}", line);
-                	//log error message here
-                 }
-                 else if (elementMetaSplit.length > 2 && !hasExtraQuote && elementMetaSplit[2] != ",")
-                 {
-                	 logger.warn("meta line is error formatted : {}", line);
-                	//log error message here
-                 }
-                 else
-                 {
-                	 currentElement.addElementMeta(metaKey, metaValue, comment);
-                 }
                  break;
          }
 
     	 
      }
+
+ 	private boolean appendSingleMetaLine(StringBuilder metaLine, String str) {
+
+		Stack<Character> stack = new Stack<Character>();
+	    stack.push('(');
+
+	    char c;
+	    for(int i=0; i < str.length(); i++) {
+	        c = str.charAt(i);
+	        
+	        if(stack.size() == 1)
+	        {
+	        	if(c == '#'){
+        			break;
+        		}  
+	        }
+	        
+	        if(stack.isEmpty()){
+    			break;    			        	
+	        }
+	        else{
+	        	if(c == '\\'){
+	        		metaLine.append(c);
+		        	i++;
+		        	c = str.charAt(i);
+		        	metaLine.append(c);
+		        }	        
+		        else if(c == '\''){
+		        	
+		        	if(stack.peek() == '\''){
+		        		stack.pop();
+		        	}
+		        	else{
+		        		stack.push('\'');
+		        	}
+		        	metaLine.append(c);
+	
+		        }
+		        else if(c == '"'){
+		        	
+		        	if(stack.peek() == '"'){
+		        		stack.pop();
+		        	}		               
+		        	else{
+		        		stack.push('"');
+		        	}	   
+		        	metaLine.append(c);
+		        }
+		        else if(c== '('){
+		        	stack.push('(');
+		        	metaLine.append(c);
+		        }
+		        else if(c== ')'){
+		        	if(stack.peek() == '('){
+		        		stack.pop();
+		        		if(stack.isEmpty()){
+		        			return true;
+		        		}
+		        	}	
+		        	metaLine.append(c);
+		        }
+		        else{
+		        	metaLine.append(c);
+		        }
+	        	
+	        }
+
+	    }
+	    
+	    return false;
+	}
+ 	
+ 	private String getUrl(String str) {
+
+	    Stack<Character> stack = new Stack<Character>();
+	    
+	    StringBuilder url = new StringBuilder(); 
+	    StringBuilder varUrl = new StringBuilder();
+	    String returnLine = "";
+
+	    char c;
+	    for(int i=0; i < str.length(); i++) {
+	        c = str.charAt(i);
+	        
+	        if(stack.isEmpty()){
+        		if(c=='\'' || c=='"'){
+        			stack.push(c);
+        		}
+        		else if(c=='+'){
+        			if(!varUrl.toString().trim().equals(""))
+        				url.append("#{").append(varUrl.toString().trim()).append("}");
+        		}
+        		else if(c == ',' || c== ')'){
+        			if(!varUrl.toString().trim().equals(""))
+        				url.append("#{").append(varUrl.toString().trim()).append("}");
+        			
+        			break;
+        		}
+        		else if(i==str.length() - 1){
+        			varUrl.append(c);
+        			url.append("#{").append(varUrl.toString().trim()).append("}");
+        		}
+        		else if(c == ' '){
+        			continue;
+        		}  
+        		
+        		else{
+        			varUrl.append(c);
+        		}       	
+	        	
+	        }
+	        else{
+	        	varUrl = new StringBuilder();
+	        	if(c == '\\'){
+		        	url.append(c);
+		        	i++;
+		        	c = str.charAt(i);
+		        }	        
+		        else if(c == '\''){
+		        	
+		        	if(stack.peek() == c)
+		                stack.pop();
+		        	if(stack.isEmpty()){
+		        		continue;
+		        	}	
+		        }
+		        else if(c == '"'){
+		        	
+		        	if(stack.peek() == c)
+		                stack.pop();
+		        	if(stack.isEmpty()){
+		        		continue;
+		        	}	        		
+		        }
+		        else{
+		        	url.append(c);
+		        }
+	        	
+	        }
+
+	    }
+	    
+	    returnLine = url.toString().trim();
+	    return returnLine;
+	}
      
+     private boolean selectorShouldNotbeEmptyString(String metaKey, String metaValue){
+    	 return ("".equals(metaValue) && (metaKey.contains("css") || metaKey.contains("xpath")));
+    	 
+     }
      
      public void addElement(Element e)
      {
-    	 //the element in pageFamilies should be included
-//    	 if(!elements.contains(element))
-//    	 {
-//    		 this.elements.add(element);
-//    	 }
     	
     	int index = 0;
  		while(!convertingPage && elements.contains(e))

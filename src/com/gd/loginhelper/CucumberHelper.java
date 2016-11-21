@@ -13,13 +13,18 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gd.common.Configuration;
 import com.gd.driver.Customer;
+import com.google.gson.Gson;
 
 
 
 public class CucumberHelper {
+	private static final Logger logger = LoggerFactory.getLogger(CucumberHelper.class);
+	
 	
 	public static StringBuilder tcase;
 	public static Path runPath = Paths.get(Configuration.CucumberWorkspace,"Projects\\GreenDot");
@@ -40,7 +45,6 @@ public class CucumberHelper {
 		
 		Runtime rt = Runtime.getRuntime();
 		Process pr;
-		
 		int exitVal = 0;
 		try {
 			pr = rt.exec("cmd /c cucumber auto.feature", null, new File(runPath.toUri()));
@@ -66,15 +70,14 @@ public class CucumberHelper {
 	        
 	        exitVal = pr.waitFor();
 		} catch (IOException | InterruptedException e1) {
-			e1.printStackTrace();
+			logger.error("Exception: {}", e1);
 		}
 
-        
-        System.out.println("Exited with error code "+exitVal);
+		logger.info("Exited with error code: {}", exitVal);
 	}
 	
 
-	public static void buildCucumberSteps()
+	private static void buildCucumberSteps()
 	{	
 		
 		tcase = new StringBuilder();
@@ -89,11 +92,11 @@ public class CucumberHelper {
 	
 		
 		File file = new File(runPath.toString(), "auto.feature");
-	
+		logger.trace("building case: {}", tcase.toString());
 		try {
 			FileUtils.writeStringToFile(file, tcase.toString(), "utf-8");
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Exception: {}", e);
 		}
 	}
 	
@@ -118,8 +121,7 @@ public class CucumberHelper {
 			fr = new FileReader(customertypeFile);
 			br = new BufferedReader(fr);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("File not found Exception: {}", e);
 		}
 		
 		String line = null;
@@ -147,7 +149,7 @@ public class CucumberHelper {
 			}
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Exception: {}", e);
 		}finally
 		{
 			
@@ -155,11 +157,57 @@ public class CucumberHelper {
 				fr.close();
 				br.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("Exception: {}", e);
 			}
 		}		
 
 		return custList;
+	}
+	
+	
+	public static void getSpecificCustomer(){
+		
+		Runtime rt = Runtime.getRuntime();
+		Process pr;
+		
+		int exitVal = 0;
+		try {
+			
+			custTypeArgs.put("processor", "TSYS");
+			custTypeArgs.put("environment", "QA4");
+//			custTypeArgs.put("project", "greendot");
+//			custTypeArgs.put("CustomerType", "Perso|NotUserIdCreated");
+//			custTypeArgs.put("ProductCode", "GDC30");
+			String args = new Gson().toJson(custTypeArgs);
+			logger.info("Customer Type Args =: {}", args);
+			pr = rt.exec("cmd /c ruby " + Configuration.CucumberWorkspace + "/General/Framework/getspecificcustomer.rb 'non-cucumber' '" + args + "'", null, new File(runPath.toUri()));
+			BufferedReader input = new BufferedReader(new InputStreamReader(pr.getInputStream()));
+			String line=null;
+			 
+	        while((line=input.readLine()) != null) {
+	        	logger.info(line);
+	            if(line.contains("UserId:"))
+        		{
+	            	Customer.UserId = line.split("UserId:")[1].trim(); 
+        		}
+	            else if(line.contains("Password:"))
+	            {
+	            	Customer.Password = line.split("Password:")[1].trim();
+	            }	            
+	            else if(line.contains(Customer.Customer_Not_Exist))
+	            {
+	            	Customer.UserId = Customer.Customer_Not_Exist;
+	            	break;
+	            }
+	        }
+	        
+	        exitVal = pr.waitFor();
+		} catch (IOException | InterruptedException e1) {
+			logger.error("Exception: {}", e1);
+		}
+
+		logger.info("Exited with error code: {}", exitVal);
+		
 	}
 	
 }

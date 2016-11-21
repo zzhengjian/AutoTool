@@ -9,6 +9,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.gd.common.ConverterSettings;
 import com.gd.rest.DefaultResponseHandler;
@@ -17,7 +19,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 public class Helper {
-	
+	private static final Logger logger = LoggerFactory.getLogger(Helper.class);
 	
 	public static String getDocTemplate(String line, String author)
 	{
@@ -64,8 +66,7 @@ public class Helper {
 		try {
 			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/api-cw/allprojects").toString();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("URL Systax Error: {}", e);
 		}
 		
 		JsonElement projects = getJsonResponse(url);
@@ -80,8 +81,7 @@ public class Helper {
 		try {
 			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/pm-cw/get-skins").addParameter("project", project).toString();
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("URL Systax Error: {}", e);
 		}
 		JsonElement skins = getJsonResponse(url);
 
@@ -95,11 +95,9 @@ public class Helper {
 		try {
 			response = getRequestUsingHttpClient(url);
 		}  catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Unknown Error: {}", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Unknown Error: {}", e);
 		}
 		
 		return response;	
@@ -111,13 +109,11 @@ public class Helper {
 				CloseableHttpClient httpclient = HttpClients.createDefault();
 				HttpGet httpget = new HttpGet(endPoint);
 				 
-				System.out.println("Triggering request " + httpget.getRequestLine());
-				 
+				logger.info("Triggering request: {}", httpget.getRequestLine());
 				// Custom Response Handler
 				ResponseHandler<String> responseHandler = new DefaultResponseHandler();
-				String responseBody = httpclient.execute(httpget, responseHandler);
-				
-				
+				String responseBody = httpclient.execute(httpget, responseHandler);				
+				logger.debug("Receiving response: {}", responseBody);
 			    return new Gson().fromJson(responseBody, JsonArray.class);
 			}
 

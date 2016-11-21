@@ -66,6 +66,7 @@ public class PageParser {
 		String url = null;
 		try {
 			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/pm-cw/savepage/").toString();
+			logger.trace("savepage endpoint: {}", url);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
@@ -77,6 +78,7 @@ public class PageParser {
 		String url = null;
 		try {
 			url = new URIBuilder(ConverterSettings.EndPoint).setPath("/writer/pm-cw/savefamily/").toString();
+			logger.trace("savefamily endpoint: {}", url);
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			logger.debug(e.getMessage());
@@ -103,8 +105,7 @@ public class PageParser {
 						whenPostStringRequestUsingHttpClient(json, getSaveFamilyEndpoint());
 					} 
 				} catch (IOException e) {
-					e.printStackTrace();
-					logger.debug(e.getMessage());
+					logger.error(e.getMessage(), e);
 				}
 			}
 		}
@@ -117,11 +118,10 @@ public class PageParser {
 					whenPostStringRequestUsingHttpClient(json, getSavePageEndpoint());
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
-				logger.debug(e.getMessage());
+				logger.error(e.getMessage(), e);
 			}
 		}
-		logger.info(json);
+		logger.trace(json);
 
 	}
 	
@@ -134,7 +134,7 @@ public class PageParser {
 				params.add(new BasicNameValuePair("myjsondata", json));
 				httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 				String response = client.execute(httpPost,new DefaultResponseHandler());
-			    System.out.println(response);
+			    logger.info("server response: {}", response);
 			    client.close();
 			}
 	
@@ -149,7 +149,7 @@ public class PageParser {
 			    httpPost.setHeader("Content-type", "application/json");
 			    			 
 			    String response = client.execute(httpPost,new DefaultResponseHandler());
-			    System.out.println(response);
+			    logger.info("server response: {}", response);
 			    client.close();
 			}
 	
@@ -196,7 +196,7 @@ public class PageParser {
                         metaserializer.metaKey = meta.getKey().replace(":", "");
                         metaserializer.metaValue = meta.getValue();
                         metaserializer.browser = "";
-                        metaserializer.platform = "";
+                        metaserializer.platform = meta.getPlatform();;
                         metaserializer.description = "xxx";
                     }
 		    		metaserializer.screenShot = "";
