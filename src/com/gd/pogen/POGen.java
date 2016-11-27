@@ -31,9 +31,6 @@ public class POGen {
 	private JTextField fileNameTextField;
 	private JLabel lblFilename;
 
-	
-	
-	private WebDriver driver;
 	private JButton btnRun;
 	private JLabel lblPageName;
 	private JTextField tfPageName;
@@ -80,8 +77,7 @@ public class POGen {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		driver = Driver.oWebDriver;
-		
+				
 		frame = new JFrame();
 		frame.setIconImage(Toolkit.getDefaultToolkit().getImage(POGen.class.getResource("/com/gd/resources/se.png")));
 		frame.setBounds(100, 100, 450, 277);
@@ -93,9 +89,9 @@ public class POGen {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				Property.SaveToPath = filePathTextField.getText();
-				Property.url = driver.getCurrentUrl();
+				Property.url = Driver.getWebDriver().getCurrentUrl();
 				Property.pageFileName = tfPageName.getText();
-				new ElementGenerator().GeneratePageObject(driver);
+				new ElementGenerator().GeneratePageObject(Driver.getWebDriver());
 			}
 		});
 		
@@ -119,9 +115,9 @@ public class POGen {
 		btnGetPageName.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				String pageName = PageHelper.generatePageNameWithUrl(driver.getCurrentUrl());
+				String pageName = PageHelper.generatePageNameWithUrl(Driver.getWebDriver().getCurrentUrl());
 				tfPageName.setText(pageName);
-				String fileName = Utils.getPageNameFromUrl(driver.getCurrentUrl());
+				String fileName = Utils.getPageNameFromUrl(Driver.getWebDriver().getCurrentUrl());
 				fileNameTextField.setText(fileName);
 			}
 		});

@@ -24,14 +24,13 @@ public class Page {
 	private static final Logger logger = LoggerFactory.getLogger(Page.class);
 	
 	public final static String SharedElements = "SharedElements";
+	private static List<Page> families = new ArrayList<Page>();
 	
-	private String PageName;
-	private String Url;
-	
+	private String PageName = "";
+	private String Url = "";	
 	private String PagePath;	
 	private ArrayList<Element> elements = new ArrayList<Element>();
 	private ArrayList<String> pageFamilies = new ArrayList<String>();
-	private List<Page> families;
 	
 	private Element currentElement;
 	private String line = "";
@@ -47,7 +46,7 @@ public class Page {
 	}
 
 		
-	public List<Page> getFamilies() {
+	public static List<Page> getFamilies() {
 		return families;
 	}
 	
@@ -66,11 +65,7 @@ public class Page {
 	public ArrayList<String> getPageFamilies() {
 		return pageFamilies;
 	}
-	
-	public void setPageFamilies(ArrayList<String> pageFamilies) {
-		this.pageFamilies = pageFamilies;
-	}
-	
+		
 	public void setPageName(String pageName) {
 		PageName = pageName;
 	}
@@ -97,12 +92,9 @@ public class Page {
     	 BufferedReader br = null;
     	 try {
     		 FileInputStream fis = new FileInputStream(new File(PagePath));
-    		 //UnicodeReader ur = new UnicodeReader(fis);
     		 Reader chars = new InputStreamReader(fis, StandardCharsets.UTF_8);
     		 br = new BufferedReader(chars);
-    		 //br = new BufferedReader(new FileReader(PagePath));
     	 } catch (FileNotFoundException e1) {
-    		 e1.printStackTrace();
     		 logger.error("file not found:", e1);
     	 }
 
@@ -163,7 +155,6 @@ public class Page {
 			
 			
 		} catch (IOException e) {
-			e.printStackTrace();
 			logger.error(e.getMessage());
 		}
 
@@ -206,10 +197,7 @@ public class Page {
                  String[] sharedElementSplit = line.split("\"");
                  currentElement = new Element(sharedElementSplit[1].trim(), line);
                  Page SharedPage = new Page(SharedElements);
-                 if(families==null)
-                 {
-                	 families = new ArrayList<Page>();
-                 }
+
                  if(!families.contains(SharedPage))
                  {
                 	 families.add(SharedPage);
@@ -227,10 +215,7 @@ public class Page {
                  String[] familyElementSplit = line.split("\"");
                  Page familyPage = new Page(familyElementSplit[1].trim());
                  currentElement = new Element(familyElementSplit[3].trim(), line);
-                 if(families==null)
-                 {
-                	 families = new ArrayList<Page>();
-                 }
+
                  if(!families.contains(familyPage))
                  {
                 	 families.add(familyPage);
@@ -275,8 +260,8 @@ public class Page {
             				 
             		 }
             		 else{
-
-            			 currentElement.addElementMeta(meta.getKey(), meta.getValue().getAsString());
+            			 if(!selectorShouldNotbeEmptyString(meta.getKey(), meta.getValue().getAsString()))
+            				 currentElement.addElementMeta(meta.getKey(), meta.getValue().getAsString());
             		 }	 
             		 
             	 }            	 

@@ -106,7 +106,7 @@ public class AutoFillPanel extends JPanel {
 			public void mouseClicked(MouseEvent arg0) {
 				String registerCustomerType = (String) cbxCustomerType.getSelectedItem();
 				String addressType = (String) cbxAddressType.getSelectedItem();
-				AutoFillHelper.fill(Driver.oWebDriver, registerCustomerType, addressType);
+				AutoFillHelper.fill(Driver.getWebDriver(), registerCustomerType, addressType);
 			}
 		});
 		

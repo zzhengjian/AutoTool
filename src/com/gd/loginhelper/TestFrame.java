@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.gd.autofill.AutoFillPanel;
 import com.gd.converter.POConverter;
+import com.gd.driver.AutoTool;
 
 public class TestFrame extends JFrame {
 
@@ -25,8 +26,10 @@ public class TestFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					TestFrame frame = new TestFrame("LoginPanel");
+					TestFrame frame = new TestFrame();					
 					frame.setVisible(true);
+					
+					//startAutoTool();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -74,6 +77,18 @@ public class TestFrame extends JFrame {
 		});
 	}
 	
+	public static void startAutoTool() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					AutoTool.startAutoTool();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -87,6 +102,21 @@ public class TestFrame extends JFrame {
 			contentPane = new AutoFillPanel();
 		else if(panel.equals("POConverter"))	
 			contentPane = new POConverter();
+
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+
+	}
+	
+	/**
+	 * Create the frame.
+	 */
+	public TestFrame() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(TestFrame.class.getResource("/com/gd/resources/login.jpg")));
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 544, 549);
+		contentPane = new InitPanel();		
+
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 

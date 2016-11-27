@@ -60,15 +60,14 @@ import com.gd.steps.serializer.DocEditor;
 public class AutoTool {
 	private static final Logger logger = LoggerFactory.getLogger(AutoTool.class);
 	
-	static AutoTool window;
+	public static AutoTool window;
 	private JFrame frmAutotool;
 	private JTextField elementTag;
 	private JTextField url;
 	private JTextField sParam;
 	
 	private JTextPane logTextPane;
-	
-	private WebDriver oWebDriver;
+
 	private String sBrowserType;
 	private String sCommand;	
 
@@ -87,13 +86,13 @@ public class AutoTool {
     public static String PageName = "";
     private JMenuBar menuBar;
     private JMenuItem mntmPoGen;
-    private JMenuItem mntmLoginHelper;
+    private JMenuItem mntmCustomeHelper;
     private JMenuItem mntmAutoFill;
     private JMenu mnPlugins;
     private JLabel lblUrl;
     private JMenuItem mntmPageConverter;
     private JButton btnStart;
-    private JMenuItem mntmDocEditor;
+	private JMenuItem mntmDocEditor;
     private JButton btnInspect;
     private JButton btnGoto;
     private JButton btnHighlight;
@@ -124,22 +123,28 @@ public class AutoTool {
 			}
 		});
 	}
+	
+	public static void startAutoTool() {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					window = new AutoTool();
+					window.frmAutotool.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	/**
 	 * Create the application.
 	 */
 	public AutoTool() {
 		
-		Property.SetUp();
-		loadCucumberWorkspace();
+//		Property.SetUp();
+//		loadCucumberWorkspace();
 		initialize();
-	}
-
-	private void loadCucumberWorkspace() {
-
-		String workspace =  JOptionPane.showInputDialog("your cucumber location",Configuration.CucumberWorkspace);
-		Configuration.CucumberWorkspace = workspace;	
-		Configuration.saveWorkspace();
 	}
 
 	/**
@@ -155,6 +160,10 @@ public class AutoTool {
 
 	}
 
+    public static JButton getBtnStart() {
+		return window.btnStart;
+	}
+    
 	private void createMenuComponents() {
 		
 		menuBar = new JMenuBar();
@@ -164,9 +173,9 @@ public class AutoTool {
 		mnPlugins = new JMenu("Plug-ins");
 		menuBar.add(mnPlugins);
 		
-		mntmLoginHelper = new JMenuItem("Login Helper");
+		mntmCustomeHelper = new JMenuItem("CustomerHelper");
 
-		mnPlugins.add(mntmLoginHelper);
+		mnPlugins.add(mntmCustomeHelper);
 		
 		mntmAutoFill = new JMenuItem("Auto Fill");
 
@@ -187,7 +196,7 @@ public class AutoTool {
 	}
 
 	private void createMenuEvents() {
-		mntmLoginHelper.addMouseListener(new MouseAdapter() {
+		mntmCustomeHelper.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent paramMouseEvent) {
 				TestFrame.startLoginPanel();
@@ -233,18 +242,14 @@ public class AutoTool {
 					{
 						sBrowserType = browserType.getSelectedItem().toString();
 						System.out.println(sBrowserType);
-						oWebDriver = new Driver().StartWebDriver(sBrowserType);		
-						oWebDriver.manage().timeouts().pageLoadTimeout(50000, TimeUnit.MILLISECONDS);
+						Driver.StartWebDriver(sBrowserType);						
 						btnStart.setText("Stop");
 					}
 					
 					else if(btnStart.getText().equals("Stop"))
 					{
 						try {
-								if(oWebDriver!=null)
-								{
-									oWebDriver.quit();
-								}
+							Driver.quitDriver();
 						} catch (Exception e1) {							
 							logTextPane.setText(logTextPane.getText() + "Browser may already be closed" + "\n");
 							logger.error("Browser may already be closed: {}",e1);
@@ -252,11 +257,7 @@ public class AutoTool {
 						
 						btnStart.setText("Start");						
 					}
-					else
-					{
-						
-					}
-					
+				
 					
 				} catch (Exception e1) {
 					e1.printStackTrace();
@@ -280,7 +281,7 @@ public class AutoTool {
 				if("".equalsIgnoreCase(elementTag.getText()))
 				{
 					//responseText = new DebugRemoteDriver(remoteAddress,sessionid).sendCommand(sCommand, param);	
-					responseText = new DebugRemoteDriver(oWebDriver).sendCommand(sCommand, param);
+					responseText = new DebugRemoteDriver(Driver.getWebDriver()).sendCommand(sCommand, param);
 					System.out.println(responseText);
 					logTextPane.setText(logTextPane.getText()+responseText+"\n");
 					
@@ -288,7 +289,7 @@ public class AutoTool {
 				else
 				{
 					//responseText = new DebugWebElement(elementTag.getText(),new DebugRemoteDriver(remoteAddress,sessionid)).sendCommand(sCommand, param);				
-					responseText = new DebugWebElement(elementTag.getText(),oWebDriver).sendCommand(sCommand, param);
+					responseText = new DebugWebElement(elementTag.getText(),Driver.getWebDriver()).sendCommand(sCommand, param);
 					System.out.println(responseText);
 					logTextPane.setText(logTextPane.getText()+responseText+"\n");
 				}
@@ -299,11 +300,11 @@ public class AutoTool {
 		btnHighlight.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(oWebDriver!=null)
+				if(Driver.getWebDriver()!=null)
 				{
 					try {
 						window.frmAutotool.setVisible(false);
-						DebugWebElement debugelement = new DebugWebElement(elementTag.getText(),oWebDriver);						
+						DebugWebElement debugelement = new DebugWebElement(elementTag.getText(),Driver.getWebDriver());						
 						if(!debugelement.oWebElement.isDisplayed())
 							logTextPane.setText(logTextPane.getText() + "Element is hidden" + "\n");
 						else
@@ -328,8 +329,8 @@ public class AutoTool {
 				try {
 					URL sUrl = new URL(url.getText());
 					System.out.println(sUrl);
-					oWebDriver.manage().timeouts().pageLoadTimeout(90, TimeUnit.SECONDS);
-					oWebDriver.get(sUrl.toString());
+					
+					Driver.getWebDriver().get(sUrl.toString());
 				} catch (MalformedURLException e) {	
 					logTextPane.setText(logTextPane.getText() + "Wrong url form" + "\n");
 					logger.error("Wrong url form: {}", e);	
@@ -345,9 +346,8 @@ public class AutoTool {
 			public void mouseClicked(MouseEvent arg0) {
 				try {
 					URL sUrl = new URL(url.getText());
-					System.out.println(sUrl);
-					oWebDriver.manage().timeouts().pageLoadTimeout(90, TimeUnit.SECONDS);
-					oWebDriver.get(sUrl.toString());
+					System.out.println(sUrl);					
+					Driver.getWebDriver().get(sUrl.toString());
 				} catch (MalformedURLException e) {	
 					logTextPane.setText(logTextPane.getText() + "Wrong url form" + "\n");
 					logger.error("Wrong url form: {}", e);
@@ -461,7 +461,7 @@ public class AutoTool {
 		btnInspect.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				if(!(oWebDriver instanceof FirefoxDriver))
+				if(!(Driver.getWebDriver() instanceof FirefoxDriver))
 				{
 					logTextPane.setText(logTextPane.getText() + "Inspect only works for firefox" + "\n");
 					return;
@@ -469,7 +469,7 @@ public class AutoTool {
 
 				String selector = null;
 				try {
-					selector = inspectOnElement(oWebDriver);					
+					selector = inspectOnElement(Driver.getWebDriver());					
 				} catch (NoSuchElementException e) {
 					e.printStackTrace();
 					if(e.toString().contains("Please make sure firepath is open"))		
@@ -480,10 +480,10 @@ public class AutoTool {
 
 			private String inspectOnElement(WebDriver driver) {
 				//this line to trigger firepath inspect mode					
-				oWebDriver.manage().ime().deactivate();
+				Driver.getWebDriver().manage().ime().deactivate();
 				Utils.sleepFor(1);
 				//this line to get selector once element is inspected
-				return oWebDriver.manage().ime().getActiveEngine();
+				return Driver.getWebDriver().manage().ime().getActiveEngine();
 			}
 		});
 	}
@@ -493,11 +493,11 @@ public class AutoTool {
 		frmAutotool.setTitle("AutoHelper");
 		frmAutotool.setIconImage(Toolkit.getDefaultToolkit().getImage(AutoTool.class.getResource("/org/openqa/grid/images/selenium.png")));
 		frmAutotool.setBounds(100, 100, 779, 733);
-		frmAutotool.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmAutotool.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		frmAutotool.getContentPane().setLayout(null);
 		
 		browserType = new JComboBox<String>();
-		browserType.setModel(new DefaultComboBoxModel<String>(new String[] { "Chrome","Firefox", "IE"}));
+		browserType.setModel(new DefaultComboBoxModel(new String[] {"Firefox", "Chrome", "IE"}));
 		browserType.setBounds(5, 61, 71, 22);
 		frmAutotool.getContentPane().add(browserType);
 		

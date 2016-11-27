@@ -21,7 +21,7 @@ import com.gd.common.Property;
 public class Driver {
 
 	public static boolean Reload = false;
-	public static WebDriver oWebDriver = null;
+	private static WebDriver oWebDriver = null;
 	
 	private HashMap<Enum<Browser>, WebDriver> driverMap = new HashMap<Enum<Browser>, WebDriver>(); 
 	
@@ -29,6 +29,19 @@ public class Driver {
 	public WebDriver getDriver(String browser)
 	{
 		return driverMap.get(Enum.valueOf(Browser.class, browser));		
+	}
+	
+	
+	public static WebDriver getWebDriver()
+	{
+		if(oWebDriver == null || oWebDriver.toString().contains("null")){
+			oWebDriver = StartWebDriver("Firefox");
+			if(AutoTool.window!=null && AutoTool.getBtnStart() != null){
+				AutoTool.getBtnStart().setText("Stop");
+			}
+		}
+		
+		return oWebDriver;
 	}
 	
 	/**
@@ -42,52 +55,55 @@ public class Driver {
 	 * 
 	 * @throws Exception
 	 */
-	public WebDriver StartWebDriver(String sBrowserType) throws Exception
+	public static WebDriver StartWebDriver(String sBrowserType)
 	{		
-		DesiredCapabilities dc;
-		
-		try
-		{
-			switch (sBrowserType.toUpperCase())
-			{
-				case "CHROME":	
-					DesiredCapabilities caps = new DesiredCapabilities();
-					ChromeOptions options = new ChromeOptions();
-					options.addArguments("--disable-popup-blocking");
-					caps.setCapability(ChromeOptions.CAPABILITY, options);
-					oWebDriver = new ChromeDriver(caps);					
-					return oWebDriver;
-						
-				case "IE":
-					dc = DesiredCapabilities.internetExplorer();
-					dc.setCapability("nativeEvents", true);
-					oWebDriver = new InternetExplorerDriver(dc);					
-					return oWebDriver;
-					
-				case "FIREFOX":
-					FirefoxProfile profile = new FirefoxProfile(new File(Property.DefaultPath + "/conf/fxprofile"));					
-					profile.setPreference("xpinstall.signatures.required", false);
-					oWebDriver =  new FirefoxDriver(profile);					
-					return oWebDriver;
-					
-//				case "PHANTOMJS":
-//					oWebDriver = new com.browser.debug.phantomjs.PhantomJSDriver();					
-//					return oWebDriver;
-//					
-				default:
-					throw new Exception("Failed to instantiate WebDriver!");
-					
-					
-			}			
 
-			
-		}
-		catch (Exception e)
+		switch (sBrowserType.toUpperCase())
 		{
-			throw new Exception("Failed to instantiate WebDriver!", e);
-		}
+			case "CHROME":	
+				oWebDriver = startChrome();					
+				break;
+					
+			case "IE":
+				oWebDriver = startIE();				
+				break;
+				
+			case "FIREFOX":
+				oWebDriver =  startFirefox();					
+				break;
+				
+			default:
+				oWebDriver =  startFirefox();			
+				break;				
+				
+		}			
+		return oWebDriver;
 		
-		
+	}
+	
+	private static WebDriver startFirefox(){
+		FirefoxProfile profile = new FirefoxProfile(new File(Property.DefaultPath + "/conf/fxprofile"));					
+		profile.setPreference("xpinstall.signatures.required", false);
+		return  new FirefoxDriver(profile);	
+	}
+	
+	private static WebDriver startChrome(){
+		DesiredCapabilities caps = new DesiredCapabilities();
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--disable-popup-blocking");
+		caps.setCapability(ChromeOptions.CAPABILITY, options);
+		return new ChromeDriver(caps);
+	}
+	
+	private static WebDriver startIE(){		
+		DesiredCapabilities dc = DesiredCapabilities.internetExplorer();
+		dc.setCapability("nativeEvents", true);
+		return new InternetExplorerDriver(dc);
+	}
+	
+	public static void quitDriver(){
+		if(oWebDriver != null)
+			oWebDriver.quit();
 	}
 	
 	/**

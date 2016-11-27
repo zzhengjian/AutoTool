@@ -41,6 +41,7 @@ public class StatementParser {
 	private List<Statement> statements;
 	private String category;
 	private JsonObject doc;
+	private ArrayList<String> custTypeList;
 	public static String project = "1";
 	private List<String> invalidStatements = new ArrayList<String>();
 	
@@ -95,6 +96,11 @@ public class StatementParser {
         try {
 			while ((line = br.readLine()) != null)
 			{
+				if(line.startsWith("#custTypeDocListStart"))
+				{
+					processCustomerTypes(br);
+				}
+				
 				if(line.startsWith("#Start_DOC"))
 				{
 					doc = processCucumbeDoc(br, line);
@@ -141,6 +147,30 @@ public class StatementParser {
 		
 	}
 	
+	private void processCustomerTypes(BufferedReader br) {
+		String line = "";
+		custTypeList = new ArrayList<String>();
+		try {
+			while((line=br.readLine()) != null)
+			{
+				if(line.startsWith("#custTypeDocListEnd"))
+				{
+					break;
+				}
+				
+				int start = line.indexOf("{");
+				int end = line.indexOf("}");
+				String custType = line.substring(start+1, end).replace("=>", ":");;
+				custTypeList.add(custType);			
+				
+			}
+		} catch (IOException e) {
+			logger.error("Unknown error", e);
+		}
+		
+	}
+
+
 	private boolean isValidStatementLine(String line)
 	{
 		boolean toReturn = false;
@@ -259,7 +289,15 @@ public class StatementParser {
 			else
 			{
 				value = line.trim().substring(1);
-				desc.add("" + value + ""); 
+				if(line.contains("@custTypeDocList")){
+					for(String cutType : custTypeList){
+						desc.add("" + cutType + ""); 
+					}
+				}
+				else{
+					desc.add("" + value + ""); 
+				}
+				
 			}				
 
 		}

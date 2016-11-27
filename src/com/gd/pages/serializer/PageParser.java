@@ -1,5 +1,6 @@
 package com.gd.pages.serializer;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -28,10 +29,17 @@ public class PageParser {
 	
 	public static String Skin = "1";
 	private boolean convertOn = true;
+	private List<File> filelist = new ArrayList<File>();
+	private static boolean stop = false;
 	
 	public void turnOffConvert()
 	{
 		convertOn = false;		
+	}
+	
+	public static void stopParsing()
+	{
+		stop = true;		
 	}
 	
 	public void createSkin(String skinName)
@@ -86,6 +94,7 @@ public class PageParser {
 		return url;
 	}
 
+	@Deprecated
 	public void parse(String path)
 	{
 		String json = null;
@@ -122,6 +131,107 @@ public class PageParser {
 			}
 		}
 		logger.trace(json);
+
+	}
+
+	public void parsePageFolder(String path)
+	{
+		List<File> pagefiles = listFilesAndFilesSubDirectories(new File(path));
+		List<Page> projectPages = new ArrayList<Page>();
+		for(File f : pagefiles){
+			Page page = new Page();
+			page.setPagePath(f.getAbsolutePath());
+			page.ProcessPage();
+			projectPages.add(page);
+		}
+		
+		String json = null;
+		
+		List<Page> families = Page.getFamilies();
+		for(Page family : families)
+		{
+			if(stop){
+				return;
+			}
+			json = new Gson().toJson(serializePage(family, FamilySerializer.class));
+			logger.trace(json);
+			try {
+				if(convertOn){
+					whenPostStringRequestUsingHttpClient(json, getSaveFamilyEndpoint());
+				} 
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+		
+		for(Page page : projectPages){
+			if(stop){
+				return;
+			}
+			if(!page.getPageName().equals("")){
+				json = new Gson().toJson(serializePage(page, PageSerializer.class));
+				logger.trace(json);
+				try {
+					if(convertOn){
+						whenPostStringRequestUsingHttpClient(json, getSavePageEndpoint());
+					}
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}	
+		}
+
+	}
+	
+	private List<File> listFilesAndFilesSubDirectories(File fileOrDir) {
+		
+
+        //get all the files from a directory
+        File[] fList = fileOrDir.listFiles();
+        for (File file : fList){
+            if (file.isFile() && file.getName().endsWith(".rb")){
+            	filelist.add(file);
+            } 
+            else if (file.isDirectory()){
+                listFilesAndFilesSubDirectories(file);
+            }
+        }
+        return filelist;
+	
+	}
+	
+	public void updatedParse(String path)
+	{
+		String json = null;
+		Page page = new Page();
+		page.setPagePath(path);
+		page.ProcessPage();
+		
+
+		List<Page> families = Page.getFamilies();
+		for(Page family : families)
+		{
+			json = new Gson().toJson(serializePage(family, FamilySerializer.class));
+			logger.trace(json);
+			try {
+				if(convertOn){
+					whenPostStringRequestUsingHttpClient(json, getSaveFamilyEndpoint());
+				} 
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+		if(!page.getPageName().equals("")){
+			json = new Gson().toJson(serializePage(page, PageSerializer.class));
+			logger.trace(json);
+			try {
+				if(convertOn){
+					whenPostStringRequestUsingHttpClient(json, getSavePageEndpoint());
+				}
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}	
 
 	}
 	

@@ -9,7 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -315,23 +317,10 @@ public class POConverter extends JPanel {
 				converting = new Thread(){
 					private ArrayList<String> invalidFiles = new ArrayList<String>();
 					@Override
-					public void run(){
+					public void run(){							
+						Queue<File> fileQueue = new LinkedList<File>();
 						
-						Stack<File> fileStack = new Stack<File>();
-						
-						if(isOnPage){
-							for(File f : filelist)
-							{
-								if(!f.getName().contains(Page.SharedElements)){
-									fileStack.push(f);
-								}
-							}
-							for(File f : filelist)
-							{
-								if(f.getName().contains(Page.SharedElements)){
-									fileStack.push(f);
-								}
-							}	
+						if(isOnPage){														
 							String skinName = skinComboBox.getSelectedItem().toString();
 							String skinid = null;
 							
@@ -346,12 +335,14 @@ public class POConverter extends JPanel {
 							PageParser.Skin = skinid;
 							
 						}
-						else{
+						else{	
 							
-							for(File f : filelist)
+							
+							for(int i = 0; i< filelist.size(); i++ )
 							{
-								fileStack.push(f);
-							}	
+								File f = filelist.get(i);
+								fileQueue.offer(f);
+							}
 							
 							String projectname = projectComboBox.getSelectedItem().toString();
 							String projectid = null;
@@ -368,20 +359,29 @@ public class POConverter extends JPanel {
 							
 						}
 						btnConvert.setText("Converting");
-						while(!Thread.currentThread().isInterrupted() && !fileStack.isEmpty())
+						while(!Thread.currentThread().isInterrupted())
 						{
 							
-							File f = fileStack.pop();
+							
 							if(isOnPage){									
 								try {
-									new PageParser().parse(f.getAbsolutePath());
+									//new PageParser().updatedParse(f.getAbsolutePath());
+									PageParser pageparse = new PageParser();
+									pageparse.parsePageFolder(selectedField.getText());
+									Thread.currentThread().interrupt();
+									break;
+									
 								} catch (Exception e) {
-									invalidFiles.add(f.getAbsolutePath());
 									logger.error("parsing pages error: {}", e);
 								}
 							}
 							else{
-								try {
+								
+								if(fileQueue.isEmpty()){
+									break;
+								}
+								File f = fileQueue.poll();
+								try {									
 									StatementParser parser = new StatementParser(f.getAbsolutePath());									
 									parser.processSteps();
 									parser.convertCategory();
@@ -391,80 +391,7 @@ public class POConverter extends JPanel {
 								}
 							}
 							
-						}
-						
-//						if(isOnPage)
-//						{							
-//							String skinName = skinComboBox.getSelectedItem().toString();
-//							String skinid = null;
-//							
-//							for(JsonElement skin : skins.getAsJsonArray())
-//							{
-//								if(skin.getAsJsonObject().get("skinName").getAsString().equals(skinName))
-//								{
-//									skinid = skin.getAsJsonObject().get("id").getAsString();
-//									break;
-//								}
-//							}
-//							PageParser.Skin = skinid;
-//							
-//							for(File f : filelist)
-//							{
-//								if(f.getName().contains(Page.SharedElements))
-//								{
-//									try {
-//										new PageParser().parse(f.getAbsolutePath());
-//									} catch (Exception e) {
-//										invalidFiles.add(f.getAbsolutePath());
-//										logger.error("parsing shared elements error: {}", e);
-//									}
-//								}
-//							}
-//							for(File f : filelist)
-//							{
-//								
-//								if(f.getName().contains(Page.SharedElements))
-//								{
-//									continue;
-//								}
-//								
-//								try {
-//									new PageParser().parse(f.getAbsolutePath());
-//								} catch (Exception e) {
-//									invalidFiles.add(f.getAbsolutePath());
-//									logger.error("parsing pages error: {}", e);
-//								}
-//							}
-//						}
-//						else
-//						{
-//							for(File f : filelist)
-//							{
-//								
-//								try {
-//									
-//									String projectname = projectComboBox.getSelectedItem().toString();
-//									String projectid = null;
-//									
-//									for(JsonElement project : projects.getAsJsonArray())
-//									{
-//										if(project.getAsJsonObject().get("projectName").getAsString().equals(projectname))
-//										{
-//											projectid = project.getAsJsonObject().get("id").getAsString();
-//											break;
-//										}
-//									}
-//									StatementParser.project = projectid;
-//									StatementParser parser = new StatementParser(f.getAbsolutePath());									
-//									parser.processSteps();
-//									parser.convertCategory();
-//								} catch (Exception e) {
-//									invalidFiles.add(f.getAbsolutePath());
-//									logger.error("parsing statements error: {}", e);
-//								}
-//
-//							}
-//						}
+						}						
 						
 						
 						for(String file : invalidFiles)
@@ -486,6 +413,7 @@ public class POConverter extends JPanel {
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent paramActionEvent) {
 				converting.interrupt();
+				PageParser.stopParsing();				
 			}
 		});
 		

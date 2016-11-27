@@ -104,7 +104,7 @@ public class ElementGenerator {
 
 	private String getSelectFromElement(WebElement e) {
 		
-		WebDriver driver = Driver.oWebDriver;
+		WebDriver driver = Driver.getWebDriver();
 		Response response = null;
 		String selector = "";
 		Command command = new Command(((RemoteWebDriver)driver).getSessionId(),DriverCommand.ELEMENT_EQUALS,ImmutableMap.of("id", ((RemoteWebElement)e).getId(),"other", ((RemoteWebElement)e).getId()));
@@ -123,7 +123,7 @@ public class ElementGenerator {
 
 	private void waitForPageReady()
 	{
-		WebDriver driver = Driver.oWebDriver;
+		WebDriver driver = Driver.getWebDriver();
 		WebDriverWait wait = new WebDriverWait(driver, 5000);
 		wait.until(PageHelper.pageLoaded(driver));
 		wait.until(ExpectedConditions.presenceOfElementLocated(Utils.getBy(Property.parentNodeLocator)));
