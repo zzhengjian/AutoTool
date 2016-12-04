@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -28,14 +29,16 @@ public class Page {
 	
 	private String PageName = "";
 	private String Url = "";	
-	private String PagePath;	
+	private File pageFile;	
 	private ArrayList<Element> elements = new ArrayList<Element>();
-	private ArrayList<String> pageFamilies = new ArrayList<String>();
-	
+	private ArrayList<String> pageFamilies = new ArrayList<String>();	
 	private Element currentElement;
-	private String line = "";
-	
+	private String line = "";	
 	private boolean convertingPage = true; 
+	
+	private String pageVariable = "";
+	private String pageComment = "";
+	private StringBuilder comment = new StringBuilder();
 	
 	public Page(){
 		 
@@ -78,20 +81,20 @@ public class Page {
 		Url = url;
 	}
 	
-	public String getPagePath() {
-		return PagePath;
+	public File getPageFile() {
+		return pageFile;
 	}
 	
-	public void setPagePath(String pagePath) {
-		PagePath = pagePath;
+	public void setPageFile(File pageFile) {
+		this.pageFile = pageFile;
 	}
 	 
      public void ProcessPage()
      {
-    	 logger.info("Parsing Page: {}", PagePath);
+    	 logger.info("Parsing Page: {}", pageFile.getAbsolutePath());
     	 BufferedReader br = null;
     	 try {
-    		 FileInputStream fis = new FileInputStream(new File(PagePath));
+    		 FileInputStream fis = new FileInputStream(pageFile);
     		 Reader chars = new InputStreamReader(fis, StandardCharsets.UTF_8);
     		 br = new BufferedReader(chars);
     	 } catch (FileNotFoundException e1) {
@@ -105,15 +108,18 @@ public class Page {
 
 			     String action = "None";
 
-			     if (line.trim().startsWith("#"))
+			     if (!StartPage && line.trim().startsWith("#"))
 			     {
-			         action = "None";
+			    	 this.comment.append(line);
+			         action = "Comments";
 			     }
 			     // Handle processing of GDPage.new declaration
 			     else if (line.contains("GdPage.new"))
 			     {
 			         action = "GdPage";
 			         StartPage = true;
+			         this.pageComment = comment.toString();
+			         comment.setLength(0);
 			         pageFamilies.add(SharedElements);
 
 			     }
@@ -149,7 +155,7 @@ public class Page {
 			     {
 			         action = "AddElementMeta";
 			     }
-			     
+		     
 			     if(StartPage) processLine(action,  br);
 			 }
 			
@@ -165,9 +171,10 @@ public class Page {
      {
     	 switch (actionType)
          {
-             case "Comment":
+             case "Comments":
                  break;
              case "GdPage":
+            	 this.pageVariable = line.split("=")[0].trim();
                  String[] pageSplit = line.split("GdPage.new\\(");
                  
                  this.Url = getUrl(pageSplit[1]);
@@ -267,6 +274,8 @@ public class Page {
             	 }            	 
 
                  break;
+             default:
+            	 break;
          }
 
     	 
@@ -456,10 +465,39 @@ public class Page {
  		return elements.size();
  	}
      
-     public void savePage()
-     {
+	private String formatPage()
+	{
+		StringBuilder pageBuilder = new StringBuilder();
+		pageBuilder.append("# encoding=utf-8").append("\n\n");
+		pageBuilder.append(this.getPageName());
+		pageBuilder.append(" = GdPage.new(\"");
+		pageBuilder.append(this.getUrl()).append("\")").append("\n\n");
+		
+		for(Element ele : this.getElements()){
+			pageBuilder.append(this.pageVariable);
+			pageBuilder.append(".addElement(\"").append(ele.getElementName()).append("\",").append("\n");
+			pageBuilder.append("	GdElement.new(").append("\n");
+			for(ElementMeta meta : ele.getMetas()){
+				pageBuilder.append("		:"+ meta.getKey() +" => \"").append(meta.getValue()).append("\"");
+			}
+			pageBuilder.append("\n").append("		)").append("\n");
+			pageBuilder.append("	)").append("\n\n");
+		}
+			 
+		pageBuilder.append("Pages.addPage(\"").append(this.pageVariable).append("\", ").append(this.getPageName()).append(")");
+		return pageBuilder.toString();
+	 }
+	     
+     
+    public void saveToFile(){
     	 
-    	 
+    	String page = formatPage();
+    	try {
+				FileOutputStream out = new FileOutputStream(pageFile);  
+				out.write(page.toString().getBytes()); 
+		    } catch (Exception ex) {
+		    	logger.error(ex.getMessage(),ex);
+		    }
      }
 
 	@Override

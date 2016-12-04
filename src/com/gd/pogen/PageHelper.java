@@ -94,9 +94,7 @@ public class PageHelper {
 	
 	public static StringBuilder buildTopPageLine(StringBuilder page, String url)
 	{
-		
-		//page.append(PageHelper.getPagePrefix(PageHelper.getProjectFromUrl(url)));
-		//page.append(Utils.getPageNameFromUrl(url));
+
 		page.append("# encoding=utf-8").append("\n\n");
 		page.append(Property.pageFileName);
 		page.append(" = GdPage.new(\"");

@@ -1,18 +1,18 @@
 package com.gd.pages.serializer;
 
+import java.io.File;
+
 import com.gd.pagetree.POMutableTreeNode;
 
 public class GdPageTree {
 	
-	private String PagePath;
 	private POMutableTreeNode pageNode;
 	
 	
-	public GdPageTree(String pagePath) {
-		PagePath = pagePath;
+	public GdPageTree(File pageFile) {
 		
 		Page page = new Page();
-		page.setPagePath(pagePath);
+		page.setPageFile(pageFile);
 		page.ProcessPage();
 		pageNode = new POMutableTreeNode();
 		pageNode.setUserObject(page);		

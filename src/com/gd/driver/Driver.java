@@ -3,6 +3,7 @@ package com.gd.driver;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,9 +21,11 @@ import com.gd.common.Property;
 
 public class Driver {
 
-	public static boolean Reload = false;
-	private static WebDriver oWebDriver = null;
+	private static WebDriver oWebDriver;
 	
+	private static String parentNode = "//body";
+	private static String currentUrl = "";
+
 	private HashMap<Enum<Browser>, WebDriver> driverMap = new HashMap<Enum<Browser>, WebDriver>(); 
 	
 	
@@ -35,13 +38,31 @@ public class Driver {
 	public static WebDriver getWebDriver()
 	{
 		if(oWebDriver == null || oWebDriver.toString().contains("null")){
-			oWebDriver = StartWebDriver("Firefox");
-			if(AutoTool.window!=null && AutoTool.getBtnStart() != null){
-				AutoTool.getBtnStart().setText("Stop");
-			}
+			oWebDriver = StartWebDriver("Chrome");
+
 		}
 		
 		return oWebDriver;
+	}
+	
+	
+	public static String getParentNode() {
+		return parentNode;
+	}
+
+
+	public static void setParentNode(String parentNode) {
+		Driver.parentNode = parentNode;
+	}
+	
+	
+	public static String getCurrentUrl() {
+		return currentUrl;
+	}
+
+
+	public static void setCurrentUrl(String currentUrl) {
+		Driver.currentUrl = currentUrl;
 	}
 	
 	/**
@@ -104,6 +125,17 @@ public class Driver {
 	public static void quitDriver(){
 		if(oWebDriver != null)
 			oWebDriver.quit();
+	}
+	
+	
+	public void setPageLoadTimeOut(int seconds){
+		if(oWebDriver != null)
+			oWebDriver.manage().timeouts().pageLoadTimeout(seconds, TimeUnit.SECONDS);		
+	}
+	
+	public void setImplicitylyWait(int seconds){
+		if(oWebDriver != null)
+			oWebDriver.manage().timeouts().implicitlyWait(seconds * 1000, TimeUnit.MILLISECONDS);		
 	}
 	
 	/**

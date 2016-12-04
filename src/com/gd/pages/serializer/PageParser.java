@@ -94,45 +94,6 @@ public class PageParser {
 		return url;
 	}
 
-	@Deprecated
-	public void parse(String path)
-	{
-		String json = null;
-		Page page = new Page();
-		page.setPagePath(path);
-		//page.setPageName(Page.SharedElements);
-		if(path.contains(Page.SharedElements))
-		{
-			page.setPageName(Page.SharedElements);
-			page.ProcessPage();
-			List<Page> families = page.getFamilies();
-			for(Page family : families)
-			{
-				json = new Gson().toJson(serializePage(family, FamilySerializer.class));
-				try {
-					if(convertOn){
-						whenPostStringRequestUsingHttpClient(json, getSaveFamilyEndpoint());
-					} 
-				} catch (IOException e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-		}
-		else
-		{
-			page.ProcessPage();
-			json = new Gson().toJson(serializePage(page, PageSerializer.class));
-			try {
-				if(convertOn){
-					whenPostStringRequestUsingHttpClient(json, getSavePageEndpoint());
-				}
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-		logger.trace(json);
-
-	}
 
 	public void parsePageFolder(String path)
 	{
@@ -140,7 +101,7 @@ public class PageParser {
 		List<Page> projectPages = new ArrayList<Page>();
 		for(File f : pagefiles){
 			Page page = new Page();
-			page.setPagePath(f.getAbsolutePath());
+			page.setPageFile(f);
 			page.ProcessPage();
 			projectPages.add(page);
 		}
@@ -200,11 +161,11 @@ public class PageParser {
 	
 	}
 	
-	public void updatedParse(String path)
+	public void updatedParse(File pageFile)
 	{
 		String json = null;
 		Page page = new Page();
-		page.setPagePath(path);
+		page.setPageFile(pageFile);
 		page.ProcessPage();
 		
 

@@ -114,22 +114,23 @@ public class Element {
 	}
 
 	
-	public void addElementMeta(String metaKey, String metaValue) {
+	public boolean addElementMeta(String metaKey, String metaValue) {
 		ElementMeta meta = new ElementMeta(metaKey,metaValue, "");
-		addElementMeta(meta);	
+		return addElementMeta(meta);	
 	}
 	
-	public void addElementMeta(String metaKey, String metaValue, String comment) {
+	public boolean addElementMeta(String metaKey, String metaValue, String comment) {
 		ElementMeta meta = new ElementMeta(metaKey,metaValue, comment);
-		addElementMeta(meta);	
+		return addElementMeta(meta);	
 	}
 	
-	public void addElementMeta(ElementMeta meta) {
+	public boolean addElementMeta(ElementMeta meta) {
 		if(!metas.contains(meta))
 		{
 			metas.add(meta);
-		}
-					
+			return true;
+		}	
+		return false;
 	}
 
 	@Override

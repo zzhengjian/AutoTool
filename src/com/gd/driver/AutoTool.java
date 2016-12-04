@@ -84,15 +84,8 @@ public class AutoTool {
     protected DefaultTreeModel treeModel;	
     
     public static String PageName = "";
-    private JMenuBar menuBar;
-    private JMenuItem mntmPoGen;
-    private JMenuItem mntmCustomeHelper;
-    private JMenuItem mntmAutoFill;
-    private JMenu mnPlugins;
     private JLabel lblUrl;
-    private JMenuItem mntmPageConverter;
     private JButton btnStart;
-	private JMenuItem mntmDocEditor;
     private JButton btnInspect;
     private JButton btnGoto;
     private JButton btnHighlight;
@@ -141,9 +134,6 @@ public class AutoTool {
 	 * Create the application.
 	 */
 	public AutoTool() {
-		
-//		Property.SetUp();
-//		loadCucumberWorkspace();
 		initialize();
 	}
 
@@ -154,9 +144,7 @@ public class AutoTool {
 	private void initialize() {
 		
 		initComponents();
-		createMenuComponents();
 		createEvents();		
-		createMenuEvents();	
 
 	}
 
@@ -164,74 +152,6 @@ public class AutoTool {
 		return window.btnStart;
 	}
     
-	private void createMenuComponents() {
-		
-		menuBar = new JMenuBar();
-		menuBar.setBounds(0, 0, 756, 21);
-		frmAutotool.getContentPane().add(menuBar);
-		
-		mnPlugins = new JMenu("Plug-ins");
-		menuBar.add(mnPlugins);
-		
-		mntmCustomeHelper = new JMenuItem("CustomerHelper");
-
-		mnPlugins.add(mntmCustomeHelper);
-		
-		mntmAutoFill = new JMenuItem("Auto Fill");
-
-		mnPlugins.add(mntmAutoFill);
-		
-		mntmPoGen = new JMenuItem("POGen");
-
-		mnPlugins.add(mntmPoGen);
-		
-		mntmPageConverter = new JMenuItem("PageConverter");
-
-		mnPlugins.add(mntmPageConverter);
-		
-		mntmDocEditor = new JMenuItem("Doc Editor");
-
-		mnPlugins.add(mntmDocEditor);		
-		
-	}
-
-	private void createMenuEvents() {
-		mntmCustomeHelper.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent paramMouseEvent) {
-				TestFrame.startLoginPanel();
-			}
-		});
-		
-		mntmAutoFill.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent paramMouseEvent) {
-				TestFrame.startAutoFillPanel();
-			}
-		});
-		
-		mntmPoGen.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				POGen.startPOGen();
-			}
-		});
-		
-		mntmPageConverter.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-				TestFrame.startConverterPanel();
-			}
-		});
-		
-		mntmDocEditor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new DocEditor();
-			}
-		});
-		
-	}
-
 	private void createEvents() {
 		btnStart.addMouseListener(new MouseAdapter() {
 			@Override
@@ -442,8 +362,7 @@ public class AutoTool {
 					tree.setModel(treeModel);
 					DefaultMutableTreeNode node = null;	
 					
-					String path = file.getAbsolutePath();
-					GdPageTree pageTree = new GdPageTree(path);
+					GdPageTree pageTree = new GdPageTree(file);
 					node = pageTree.getPageNode();
 					
 

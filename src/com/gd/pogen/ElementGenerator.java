@@ -3,7 +3,9 @@ package com.gd.pogen;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
@@ -20,6 +22,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.gd.common.Property;
 import com.gd.common.Utils;
 import com.gd.driver.Driver;
+import com.gd.pages.serializer.Element;
 import com.gd.pagetree.ElementBean;
 import com.gd.pagetree.PageBean;
 import com.google.common.collect.ImmutableMap;
@@ -29,12 +32,12 @@ public class ElementGenerator {
 	private String url;
 	
 	public void GeneratePageObject(WebDriver oWebDriver) {
-		url = Property.url;
+		url = Driver.getCurrentUrl();
 		waitForPageReady();
 		List<WebElement> allElements = new ArrayList<WebElement>();
 		for(String xpath : ElementHelper.xpaths())
 		{
-			WebElement parent = oWebDriver.findElement(Utils.getBy(Property.parentNodeLocator));
+			WebElement parent = oWebDriver.findElement(Utils.getBy(Driver.getParentNode()));
 			allElements.addAll(parent.findElements(By.xpath(xpath)));
 		}
 
@@ -46,7 +49,7 @@ public class ElementGenerator {
 			
 			if(e.isDisplayed())
 			{				
-				String selector = getSelectFromElement(e);				
+				String selector = getSelectorFromElement(e);				
 				
 				if("".equals(selector))
 				{
@@ -102,7 +105,49 @@ public class ElementGenerator {
 		}
 	}
 
-	private String getSelectFromElement(WebElement e) {
+	/**
+	 * To generate an ElementList from give page and parent node
+	 * [default parent would be "//body"]
+	 * 
+	 * */
+	public Queue<Element> generateElementList(WebDriver driver){
+		
+		Queue<Element> elementQueue = new LinkedList<Element>();
+		waitForPageReady();
+		List<WebElement> allElements = new ArrayList<WebElement>();
+		for(String xpath : ElementHelper.xpaths())
+		{
+			WebElement parent = driver.findElement(Utils.getBy(Driver.getParentNode()));
+			allElements.addAll(parent.findElements(By.xpath(xpath)));
+		}
+		
+		for(WebElement e : allElements)
+		{
+			
+			if(e.isDisplayed())
+			{				
+				String selector = getSelectorFromElement(e);				
+				
+				if("".equals(selector))
+				{
+					continue;
+				}				
+				
+				ElementHelper elementHelper = new ElementHelper(e);
+				String elementName = elementHelper.evaluateElementName();
+				
+				Element ele = new Element(elementName);
+				ele.addSelector(selector);
+				elementQueue.offer(ele);
+			}				
+		}		
+		
+		return elementQueue;		
+	}
+	
+	
+	
+	private String getSelectorFromElement(WebElement e) {
 		
 		WebDriver driver = Driver.getWebDriver();
 		Response response = null;
@@ -126,7 +171,7 @@ public class ElementGenerator {
 		WebDriver driver = Driver.getWebDriver();
 		WebDriverWait wait = new WebDriverWait(driver, 5000);
 		wait.until(PageHelper.pageLoaded(driver));
-		wait.until(ExpectedConditions.presenceOfElementLocated(Utils.getBy(Property.parentNodeLocator)));
+		wait.until(ExpectedConditions.presenceOfElementLocated(Utils.getBy(Driver.getParentNode())));
 		
 	}
 	
